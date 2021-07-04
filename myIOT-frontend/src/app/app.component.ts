@@ -7,4 +7,5 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'myIOT-frontend';
+  subtitle = 'Version 0.3a'
 }

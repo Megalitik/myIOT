@@ -1,5 +1,15 @@
 <app-navbar></app-navbar>
-<app-sidebar></app-sidebar>
+
+<div class="container-fluid">
+  <div class="row" id="mainContent">
+    <app-sidebar class="col-sm-3"></app-sidebar>
+    <div class="col-sm-9" id="dashboard">
+      <p>Dashboard fica aqui</p>
+    </div>
+  </div>
+</div>
+
+
 <div style="text-align: center;">
   <h1>
     {{title}}

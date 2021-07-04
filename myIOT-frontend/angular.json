@@ -31,9 +31,15 @@
               "src/assets"
             ],
             "styles": [
+              "../myIOT-frontend/node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [
+              "../myIOT-frontend/node_modules/jquery/dist/jquery.min.js",
+              "../myIOT-frontend/node_modules/@popperjs/core/dist/umd/popper.min.js",
+              "../myIOT-frontend/node_modules/bootstrap/dist/js/bootstrap.min.js",
+              "../myIOT-frontend/node_modules/chart.js/dist/Chart.min.js"
+            ]
           },
           "configurations": {
             "production": {

@@ -8,7 +8,10 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { SettingsComponent } from './userPanel/settings/settings.component';
 import { DashboardComponent } from './userPanel/dashboard/dashboard.component';
+import { SensorsComponent } from './userPanel/sensors/sensors.component';
+import { ControllersComponent } from './userPanel/controllers/controllers.component';
 import { appRoutes } from 'src/routes';
+
 
 @NgModule({
   declarations: [
@@ -16,7 +19,9 @@ import { appRoutes } from 'src/routes';
     NavbarComponent,
     SidebarComponent,
     SettingsComponent,
-    DashboardComponent
+    DashboardComponent,
+    SensorsComponent,
+    ControllersComponent
   ],
   imports: [
     BrowserModule,

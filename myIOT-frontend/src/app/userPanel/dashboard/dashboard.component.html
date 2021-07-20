@@ -11,4 +11,23 @@
             </div>
         </div>
     </div>
+
+    <table class="table table-dark table-inverse table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Tipo</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let device of devices">
+                <td>{{ device.DeviceID }}</td>
+                <td>{{ device.Name }}</td>
+                <td>{{ device.DeviceType.Name }}</td>
+                <td>{{ device.DeviceState }}</td>
+            </tr>
+        </tbody>
+    </table>
 </div>

@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "xn4lb6aVGC4RLJlZeDvfkMIl6dPEAOySb7edRRr1FLHREqvcYJW3LqOg+prkHtqt2w+TMwGL/4tbN5ol4xW+zQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Carvalho\\Desktop\\ProjetoPAP\\myIOT-1\\MIOTWebAPI\\MIOTWebAPI\\MIOTWebAPI.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Carvalho\\.nuget\\packages\\microsoft.extensions.apidescription.server\\3.0.0\\microsoft.extensions.apidescription.server.3.0.0.nupkg.sha512",
+    "C:\\Users\\Carvalho\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
+    "C:\\Users\\Carvalho\\.nuget\\packages\\swashbuckle.aspnetcore\\5.6.3\\swashbuckle.aspnetcore.5.6.3.nupkg.sha512",
+    "C:\\Users\\Carvalho\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\5.6.3\\swashbuckle.aspnetcore.swagger.5.6.3.nupkg.sha512",
+    "C:\\Users\\Carvalho\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\5.6.3\\swashbuckle.aspnetcore.swaggergen.5.6.3.nupkg.sha512",
+    "C:\\Users\\Carvalho\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\5.6.3\\swashbuckle.aspnetcore.swaggerui.5.6.3.nupkg.sha512"
+  ],
+  "logs": []
+}

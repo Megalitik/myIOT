@@ -34,8 +34,7 @@ namespace MIOTWebAPI
         {
 
             services.AddDbContext<AppDBContext>(opt => {
-                opt.UseSqlServer(Configuration.GetConnectionString("Default"));
-            });
+                opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));});
             services.AddIdentity<AppUser, IdentityRole>(opt => {}).AddEntityFrameworkStores<AppDBContext>();
             services.AddControllers();
             services.AddSwaggerGen(c =>

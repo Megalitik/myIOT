@@ -45,13 +45,17 @@ namespace MIOTWebAPI
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>{
 
                 var key = Encoding.ASCII.GetBytes(Configuration["JWTConfig:Key"]);
+                var issuer = Configuration["JWTConfig:Issuer"];
+                var audience = Configuration["JWTConfig:Audience"];
 
                 opt.TokenValidationParameters = new TokenValidationParameters(){
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    RequireExpirationTime = true
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    RequireExpirationTime = true,
+                    ValidIssuer = issuer,
+                    ValidAudience = audience
                 };
 
             });

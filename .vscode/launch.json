@@ -26,11 +26,12 @@
             "WARNING16": "button at the bottom of this file.",
             "WARNING17": "*********************************************************************************",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/MIOTWebAPI/bin/Debug/net5.0/MIOTWebAPI.dll",
+            "program": "${workspaceFolder}\\MIOTWebAPI\\bin\\Debug\\net5.0\\MIOTWebAPI.dll",
             "args": [],
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}\\MIOTWebAPI\\",
             "console": "internalConsole",
-            "stopAtEntry": false
+            "stopAtEntry": false,
+            "enableStepFiltering": false
         },
         {
             "name": ".NET Core Attach",

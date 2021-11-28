@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/MIOTWebAPI/MIOTWebAPI.csproj"
+                "${workspaceFolder}\\MIOTWebAPI\\MIOTWebAPI.csproj"
             ],
             "problemMatcher": "$msCompile"
         }

@@ -58,6 +58,12 @@ namespace MIOTWebAPI.Controllers
             }
         }
 
+        [HttpPost("RegisterUser")]
+        public async Task<object> Login([FromBody] LoginBindingModel model)
+        {
+            return await Task.FromResult("Parameters are missing");
+        }
+
         [HttpGet("GetAllUsers")]
         public async Task<object> GetAllUsers()
         {

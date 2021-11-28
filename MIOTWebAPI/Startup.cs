@@ -11,6 +11,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
+using Claim.Data;
+using Claim.Data.Entities;
 
 namespace MIOTWebAPI
 {
@@ -27,11 +33,16 @@ namespace MIOTWebAPI
         public void ConfigureServices(IServiceCollection services)
         {
 
+            services.AddDbContext<AppDBContext>(opt => {
+                opt.UseSqlServer(Configuration.GetConnectionString("Default"));
+            });
+            services.AddIdentity<AppUser, IdentityRole>(opt => {}).AddEntityFrameworkStores<AppDBContext>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MIOTWebAPI", Version = "v1" });
             });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

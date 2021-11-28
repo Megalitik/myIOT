@@ -1,6 +1,6 @@
 //https://www.youtube.com/watch?v=BIk7PssaDe8&ab_channel=DevBugFix
 
-namespace Claim.BindingModel
+namespace Models.BindingModel
 {
 
     public class CRUDUserBindingModel

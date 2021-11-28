@@ -17,6 +17,10 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 using Claim.Data;
 using Claim.Data.Entities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using Models;
 
 namespace MIOTWebAPI
 {
@@ -32,10 +36,26 @@ namespace MIOTWebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<JWTConfig>(Configuration.GetSection("JWTConfig"));
 
             services.AddDbContext<AppDBContext>(opt => {
                 opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));});
             services.AddIdentity<AppUser, IdentityRole>(opt => {}).AddEntityFrameworkStores<AppDBContext>();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>{
+
+                var key = Encoding.ASCII.GetBytes(Configuration["JWTConfig:Key"]);
+
+                opt.TokenValidationParameters = new TokenValidationParameters(){
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    RequireExpirationTime = true
+                };
+
+            });
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

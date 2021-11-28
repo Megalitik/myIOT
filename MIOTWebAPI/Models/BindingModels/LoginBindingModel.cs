@@ -2,7 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace BindingModel
+namespace Models.BindingModel
 {
 
     public class LoginBindingModel

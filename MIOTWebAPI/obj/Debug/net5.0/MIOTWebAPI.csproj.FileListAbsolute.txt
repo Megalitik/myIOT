@@ -93,3 +93,4 @@ C:\Users\Carvalho\Desktop\ProjetoPAP\myIOT-1\MIOTWebAPI\obj\Debug\net5.0\scopedc
 C:\Users\Carvalho\Desktop\ProjetoPAP\myIOT-1\MIOTWebAPI\obj\Debug\net5.0\MIOTWebAPI.RazorTargetAssemblyInfo.cache
 C:\Users\Carvalho\Desktop\ProjetoPAP\myIOT-1\MIOTWebAPI\obj\Debug\net5.0\MIOTWebAPI.csproj.CopyComplete
 C:\Users\Carvalho\Desktop\ProjetoPAP\myIOT-1\MIOTWebAPI\obj\Debug\net5.0\MIOTWebAPI.genruntimeconfig.cache
+C:\Users\Carvalho\Desktop\ProjetoPAP\myIOT-1\MIOTWebAPI\bin\Debug\net5.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

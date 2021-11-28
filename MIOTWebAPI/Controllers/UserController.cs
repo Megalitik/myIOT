@@ -6,10 +6,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
-using DTO;
-using Claim.BindingModel;
+using Models.DTO;
 using Claim.Data.Entities;
-using BindingModel;
+using Models.BindingModel;
+using Models;
+using Microsoft.Extensions.Options;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using System.Net;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace MIOTWebAPI.Controllers
 {
@@ -21,13 +29,15 @@ namespace MIOTWebAPI.Controllers
         private readonly ILogger<UserController> _logger;
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly JWTConfig _jwtConfig;
 
         public UserController(ILogger<UserController> logger, UserManager<AppUser> userManager,
-            SignInManager<AppUser> signInManager)
+            SignInManager<AppUser> signInManager, IOptions<JWTConfig> jwtConfig)
         {
             _logger = logger;
             _userManager = userManager;
             _signInManager = signInManager;
+            _jwtConfig = jwtConfig.Value;
         }
 
         [HttpPost("RegisterUser")]
@@ -66,14 +76,17 @@ namespace MIOTWebAPI.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    return await Task.FromResult("Parameters are missing");
 
 
                     var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
 
                     if (result.Succeeded)
                     {
-                        return await Task.FromResult("Login Successful");
+                        var appUser = await _userManager.FindByEmailAsync(model.Email);
+                        var user = new UserDTO(appUser.FullName, appUser.Email, appUser.UserName, appUser.DateCreated);
+                        user.Token = GenerateToken(appUser);
+
+                        return await Task.FromResult(user);
                     }
                 }
 
@@ -82,25 +95,50 @@ namespace MIOTWebAPI.Controllers
             catch (Exception ex)
             {
                 return await Task.FromResult(ex.Message);
-    }
-}
+            }
+        }
 
-[HttpGet("GetAllUsers")]
-public async Task<object> GetAllUsers()
-{
-    try
-    {
-        var users = _userManager.Users.Select(x => new UserDTO(x.FullName,
-                                                               x.Email,
-                                                               x.UserName,
-                                                               x.DateCreated));
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet("GetAllUsers")]
+        public async Task<object> GetAllUsers()
+        {
+            try
+            {
+                var users = _userManager.Users.Select(x => new UserDTO(x.FullName,
+                                                                       x.Email,
+                                                                       x.UserName,
+                                                                       x.DateCreated));
 
-        return await Task.FromResult(users);
-    }
-    catch (Exception ex)
-    {
-        return await Task.FromResult(ex.Message);
-    }
-}
+                return await Task.FromResult(users);
+            }
+            catch (Exception ex)
+            {
+                return await Task.FromResult(ex.Message);
+            }
+        }
+
+        private string GenerateToken(AppUser user)
+        {
+            var jwtTokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_jwtConfig.Key);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new System.Security.Claims.Claim(JwtRegisteredClaimNames.NameId, user.Id),
+                    new System.Security.Claims.Claim(JwtRegisteredClaimNames.Email, user.Email),
+                    new System.Security.Claims.Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                }),
+                Expires = DateTime.UtcNow.AddHours(12),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = jwtTokenHandler.CreateToken(tokenDescriptor);
+
+            return jwtTokenHandler.WriteToken(token);
+
+
+        }
     }
 }

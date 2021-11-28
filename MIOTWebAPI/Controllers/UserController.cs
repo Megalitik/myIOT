@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using DTO;
 using Claim.BindingModel;
 using Claim.Data.Entities;
+using BindingModel;
 
 namespace MIOTWebAPI.Controllers
 {
@@ -58,28 +59,48 @@ namespace MIOTWebAPI.Controllers
             }
         }
 
-        [HttpPost("RegisterUser")]
+        [HttpPost("Login")]
         public async Task<object> Login([FromBody] LoginBindingModel model)
-        {
-            return await Task.FromResult("Parameters are missing");
-        }
-
-        [HttpGet("GetAllUsers")]
-        public async Task<object> GetAllUsers()
         {
             try
             {
-                var users = _userManager.Users.Select(x => new UserDTO(x.FullName,
-                                                                       x.Email,
-                                                                       x.UserName,
-                                                                       x.DateCreated));
+                if (ModelState.IsValid)
+                {
+                    return await Task.FromResult("Parameters are missing");
 
-                return await Task.FromResult(users);
+
+                    var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
+
+                    if (result.Succeeded)
+                    {
+                        return await Task.FromResult("Login Successful");
+                    }
+                }
+
+                return await Task.FromResult("Login Failed");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return await Task.FromResult(ex.Message);
-            }
-        }
+    }
+}
+
+[HttpGet("GetAllUsers")]
+public async Task<object> GetAllUsers()
+{
+    try
+    {
+        var users = _userManager.Users.Select(x => new UserDTO(x.FullName,
+                                                               x.Email,
+                                                               x.UserName,
+                                                               x.DateCreated));
+
+        return await Task.FromResult(users);
+    }
+    catch (Exception ex)
+    {
+        return await Task.FromResult(ex.Message);
+    }
+}
     }
 }

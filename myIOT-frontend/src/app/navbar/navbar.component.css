@@ -7,11 +7,11 @@
 .logo-left {
     background-color: #1560eb;
     padding: 3px 5px 3px 8px;
+    margin-left: 20px;
     border-radius: 4px;
 }
 
 .logo-right {
     padding: 3px 8px 3px 3px;
-    margin-left: -5px;
     border-radius: 4px;
 }

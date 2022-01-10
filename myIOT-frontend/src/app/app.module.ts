@@ -14,6 +14,8 @@ import { ControllersComponent } from './userPanel/controllers/controllers.compon
 import { appRoutes } from 'src/routes';
 import { LineChartComponent } from './charts/line-chart/line-chart.component';
 import { BarChartComponent } from './charts/bar-chart/bar-chart.component';
+import { LoginComponent } from './accountManagement/login/login.component';
+import { SignUpComponent } from './accountManagement/sign-up/sign-up.component';
 
 
 @NgModule({
@@ -26,7 +28,9 @@ import { BarChartComponent } from './charts/bar-chart/bar-chart.component';
     SensorsComponent,
     ControllersComponent,
     LineChartComponent,
-    BarChartComponent
+    BarChartComponent,
+    LoginComponent,
+    SignUpComponent
   ],
   imports: [
     BrowserModule,

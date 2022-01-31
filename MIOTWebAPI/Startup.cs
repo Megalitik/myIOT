@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
@@ -26,6 +27,7 @@ namespace MIOTWebAPI
 {
     public class Startup
     {
+        private readonly string _loginOrigin = "_localorigin";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -60,6 +62,14 @@ namespace MIOTWebAPI
 
             });
 
+            services.AddCors(opt => {
+                opt.AddPolicy(_loginOrigin, builder => {
+                    builder.AllowAnyOrigin();
+                    builder.AllowAnyHeader();
+                    builder.AllowAnyMethod();
+                });
+            });
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -79,6 +89,8 @@ namespace MIOTWebAPI
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors(_loginOrigin);
 
             app.UseRouting();
 

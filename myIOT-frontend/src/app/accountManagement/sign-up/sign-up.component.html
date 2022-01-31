@@ -1,2 +1,39 @@
-<app-navbar id="navbar" class="navbar navbar-dark fixed-top bg-dark">
-</app-navbar>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-6">
+
+
+            <div class="card">
+                <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Sign Up</h5>
+                        <div class="mb-3 row">
+                            <label for="registerEmail" class="col-sm-2 col-form-label">Email</label>
+                            <div class="col-sm-10">
+                                <input type="text" formControlName="email" class="form-control" id="registerEmail"
+                                    value="">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="registerPassword" class="col-sm-2 col-form-label">Password</label>
+                            <div class="col-sm-10">
+                                <input type="password" formControlName="password" class="form-control"
+                                    id="registerPassword">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="registerConfirmPassword" class="col-sm-2 col-form-label">Confirm Password</label>
+                            <div class="col-sm-10">
+                                <input type="password" formControlName="confirmPassword" class="form-control"
+                                    id="registerConfirmPassword">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col text-center">
+                        <button type="submit" class="btn btn-primary" [disabled]="!registerForm.valid">Sign Up</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

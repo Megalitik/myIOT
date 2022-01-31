@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule } from '@angular/common/http'
 import { ChartsModule } from 'ng2-charts';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -16,6 +17,7 @@ import { LineChartComponent } from './charts/line-chart/line-chart.component';
 import { BarChartComponent } from './charts/bar-chart/bar-chart.component';
 import { LoginComponent } from './accountManagement/login/login.component';
 import { SignUpComponent } from './accountManagement/sign-up/sign-up.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -36,6 +38,9 @@ import { SignUpComponent } from './accountManagement/sign-up/sign-up.component';
     BrowserModule,
     RouterModule.forRoot(appRoutes),
     AppRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
+    HttpClientModule,
     ChartsModule
   ],
   providers: [],

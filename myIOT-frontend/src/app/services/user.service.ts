@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 })
 export class UserService {
   
-  private readonly baseUrl:string="http://localhost:5000/"; //TODO: Por url em ficheiro json encriptado
+  private readonly baseUrl:string="http://localhost:5000/user/"; //TODO: Por url em ficheiro json encriptado
 
   constructor(private httpClient:HttpClient) { }
 
@@ -17,7 +17,7 @@ export class UserService {
       Password:password
     }
     
-    return this.httpClient.post(this.baseUrl+"user/Login", body);
+    return this.httpClient.post(this.baseUrl+"Login", body);
   }
 
   public Register (email:string, password:string)
@@ -27,6 +27,6 @@ export class UserService {
       Password:password
     }
     
-    return this.httpClient.post(this.baseUrl+"user/RegisterUser", body);
+    return this.httpClient.post(this.baseUrl+"RegisterUser", body);
   }
 }

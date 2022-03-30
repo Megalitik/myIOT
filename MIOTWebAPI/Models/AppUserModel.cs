@@ -1,10 +1,10 @@
-//https://www.youtube.com/watch?v=BIk7PssaDe8&ab_channel=DevBugFix
+using System;
 
-namespace Models.BindingModel
+namespace MIOTWebAPI.Models
 {
-
-    public class CRUDUserBindingModel
+    public class AppUserModel
     {
+        public  string UserName { get; set; }
         public string FullName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }

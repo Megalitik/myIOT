@@ -14,20 +14,19 @@ using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-using Claim.Data;
-using Claim.Data.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Models;
+using MIOTWebAPI.Models;
 
 namespace MIOTWebAPI
 {
     public class Startup
     {
-        private readonly string _loginOrigin = "_localorigin";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -38,37 +37,13 @@ namespace MIOTWebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<JWTConfig>(Configuration.GetSection("JWTConfig"));
 
-            services.AddDbContext<AppDBContext>(opt => {
+            services.AddDbContext<AuthenticationContext>(opt => {
                 opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));});
-            services.AddIdentity<AppUser, IdentityRole>(opt => {}).AddEntityFrameworkStores<AppDBContext>();
+            
+            services.AddDefaultIdentity<AppUser>()
+                .AddEntityFrameworkStores<AuthenticationContext>();
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>{
-
-                var key = Encoding.ASCII.GetBytes(Configuration["JWTConfig:Key"]);
-                var issuer = Configuration["JWTConfig:Issuer"];
-                var audience = Configuration["JWTConfig:Audience"];
-
-                opt.TokenValidationParameters = new TokenValidationParameters(){
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    RequireExpirationTime = true,
-                    ValidIssuer = issuer,
-                    ValidAudience = audience
-                };
-
-            });
-
-            services.AddCors(opt => {
-                opt.AddPolicy(_loginOrigin, builder => {
-                    builder.AllowAnyOrigin();
-                    builder.AllowAnyHeader();
-                    builder.AllowAnyMethod();
-                });
-            });
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -90,11 +65,9 @@ namespace MIOTWebAPI
 
             app.UseHttpsRedirection();
 
-            app.UseCors(_loginOrigin);
-
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseAuthentication();        
 
             app.UseEndpoints(endpoints =>
             {

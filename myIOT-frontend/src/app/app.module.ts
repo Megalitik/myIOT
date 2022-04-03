@@ -18,6 +18,8 @@ import { BarChartComponent } from './charts/bar-chart/bar-chart.component';
 import { LoginComponent } from './accountManagement/login/login.component';
 import { SignUpComponent } from './accountManagement/sign-up/sign-up.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { UserComponent } from './accountManagement/user/user.component';
+import { UserService } from './shared/user.service';
 
 
 @NgModule({
@@ -32,7 +34,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     LineChartComponent,
     BarChartComponent,
     LoginComponent,
-    SignUpComponent
+    SignUpComponent,
+    UserComponent
   ],
   imports: [
     BrowserModule,
@@ -43,7 +46,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     HttpClientModule,
     ChartsModule
   ],
-  providers: [],
+  providers: [UserService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

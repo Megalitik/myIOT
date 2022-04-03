@@ -1,33 +1,39 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { UserService } from 'src/app/services/user.service';
+import { UserService } from 'src/app/shared/user.service';
 
 @Component({
   selector: 'app-sign-up',
-  templateUrl: './sign-up.component.html',
-  styleUrls: ['./sign-up.component.css']
+  templateUrl: './sign-up.component.html'
 })
 export class SignUpComponent implements OnInit {
 
-  public registerForm = this.formBuilder.group({
-    email:['', [Validators.email, Validators.required]],
-    password:['', Validators.required],
-    confirmPassword:['', Validators.required]
-  });
-
-  constructor(private formBuilder:FormBuilder, private userService:UserService) { }
+  constructor(public userService: UserService) { }
 
   ngOnInit(): void {
+    this.userService.formModel.reset();
   }
 
   onSubmit() {
     console.log("On submit...");
-    let email = this.registerForm.controls["email"].value;
-    let password = this.registerForm.controls["password"].value;
 
-    this.userService.Register(email, password).subscribe((data)=>{
-      console.log("Response: ", data);
-    })
+
+    this.userService.Register().subscribe(
+      (response: any) => {
+        if (response.succeded) {
+          this.userService.formModel.reset();
+        }
+        else {
+          response.errors.array.forEach((element: any) => {
+            switch (element.code) {
+              case 'DuplicateUserName':
+                break;
+              default:
+                break;
+            }
+          });
+        }
+      })
   }
 
 }

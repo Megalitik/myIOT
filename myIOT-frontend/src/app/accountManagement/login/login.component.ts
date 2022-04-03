@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { UserService } from 'src/app/services/user.service';
+import { UserService } from 'src/app/shared/user.service';
 
 @Component({
   selector: 'app-login',
@@ -18,13 +18,13 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
   }
   onSubmit() {
-    console.log("On submit...")
-    let email = this.loginForm.controls["email"].value;
-    let password = this.loginForm.controls["password"].value;
+    // console.log("On submit...")
+    // let email = this.loginForm.controls["email"].value;
+    // let password = this.loginForm.controls["password"].value;
 
 
-    this.userService.Login(email, password).subscribe((data) => {
-      console.log("Response: ", data);
-    })
+    // this.userService.Login(email, password).subscribe((data) => {
+    //   console.log("Response: ", data);
+    // })
   }
 }

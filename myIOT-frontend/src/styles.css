@@ -64,6 +64,10 @@ div.form-group.required>label:first-child:after{
     padding-left: 5px;
 }
 
+#toast-container > div {
+    opacity: 1;
+}
+
 
 
 

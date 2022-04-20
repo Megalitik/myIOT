@@ -37,6 +37,8 @@ namespace MIOTWebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Inject AppSettings
+            services.Configure<>(Configuration.GetSection("JWTConfig"))
 
             services.AddDbContext<AuthenticationContext>(opt => {
                 opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));});
@@ -49,6 +51,30 @@ namespace MIOTWebAPI
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MIOTWebAPI", Version = "v1" });
+            });
+
+            services.AddCors;
+            
+            var key = Encoding.UTF8.GetBytes(Configuration["ApplicationSettings:Key"].ToString());
+            var issuer = Encoding.UTF8.GetBytes(Configuration["ApplicationSettings:Issuer"].ToString());
+            var audience = Encoding.UTF8.GetBytes(Configuration["ApplicationSettings:Audience"].ToString());
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = false;
+                x.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters 
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
+                } 
             });
 
         }
@@ -66,6 +92,12 @@ namespace MIOTWebAPI
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(builder =>
+            builder.WithOrigins(Configuration["ApplicationSettings:Client_URL"].ToString())
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            );
 
             app.UseAuthentication();        
 

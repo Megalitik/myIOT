@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, NgForm, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Toast, ToastrService } from 'ngx-toastr';
 import { UserService } from 'src/app/shared/user.service';
 
 @Component({
@@ -9,22 +11,33 @@ import { UserService } from 'src/app/shared/user.service';
 })
 export class LoginComponent implements OnInit {
 
-  public loginForm = this.formBuilder.group({
-    email: ['', [Validators.email, Validators.required]],
-    password: ['', Validators.required]
-  });
-  constructor(private formBuilder: FormBuilder, private userService: UserService) { }
+  formModel = {
+    UserName: '',
+    Password: ''
+  };
+
+  constructor(private userService: UserService, private router: Router, private toastr: ToastrService) { }
 
   ngOnInit(): void {
   }
-  onSubmit() {
-    // console.log("On submit...")
-    // let email = this.loginForm.controls["email"].value;
-    // let password = this.loginForm.controls["password"].value;
+  onSubmit(form:NgForm) {
 
+    this.userService.Login(form.value).subscribe(
+      (res:any)=>{
+        localStorage.setItem('token', res.token);
+        this.router.navigateByUrl('/home');
+      },
+      error => {
+        if(error.status == 400)
+        {
+          this.toastr.error("Nome de Utilizador ou Password incorrecto.", "Autenticação falhou.")
+        }
+        else
+        {
+          console.log(error);
+        }
+      }
+    );
 
-    // this.userService.Login(email, password).subscribe((data) => {
-    //   console.log("Response: ", data);
-    // })
   }
 }

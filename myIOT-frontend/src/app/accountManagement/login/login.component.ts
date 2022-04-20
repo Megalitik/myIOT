@@ -19,21 +19,22 @@ export class LoginComponent implements OnInit {
   constructor(private userService: UserService, private router: Router, private toastr: ToastrService) { }
 
   ngOnInit(): void {
+    if (localStorage.getItem("token") != null) {
+      this.router.navigateByUrl('');
+    }
   }
-  onSubmit(form:NgForm) {
+  onSubmit(form: NgForm) {
 
     this.userService.Login(form.value).subscribe(
-      (res:any)=>{
+      (res: any) => {
         localStorage.setItem('token', res.token);
-        this.router.navigateByUrl('/home');
+        this.router.navigateByUrl('');
       },
       error => {
-        if(error.status == 400)
-        {
+        if (error.status == 400) {
           this.toastr.error("Nome de Utilizador ou Password incorrecto.", "Autenticação falhou.")
         }
-        else
-        {
+        else {
           console.log(error);
         }
       }

@@ -26,7 +26,7 @@ namespace MIOTWebAPI.Controllers
 
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
-        private readonly ApplicationSettingsModel _appSettings;
+        private readonly ApplicationSettings _appSettings;
 
         public AppUserController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IOptions<ApplicationSettings> appSettings)
         {
@@ -89,7 +89,7 @@ namespace MIOTWebAPI.Controllers
             }
             else
             {
-                return BadRequest(new { message = "Nome de Utilizador ou Palavra-Passe está incorreta."})
+                return BadRequest(new { message = "Nome de Utilizador ou Palavra-Passe está incorreta."});
             }
         }
     }

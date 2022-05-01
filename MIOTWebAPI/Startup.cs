@@ -38,7 +38,7 @@ namespace MIOTWebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             //Inject AppSettings
-            services.Configure<>(Configuration.GetSection("JWTConfig"))
+            services.Configure<ApplicationSettings>(Configuration.GetSection("JWTConfig"));
 
             services.AddDbContext<AuthenticationContext>(opt => {
                 opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));});
@@ -53,7 +53,17 @@ namespace MIOTWebAPI
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MIOTWebAPI", Version = "v1" });
             });
 
-            services.AddCors;
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    builder =>
+                    {
+                        builder
+                        .AllowAnyOrigin() 
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                    });
+            });
             
             var key = Encoding.UTF8.GetBytes(Configuration["ApplicationSettings:Key"].ToString());
             var issuer = Encoding.UTF8.GetBytes(Configuration["ApplicationSettings:Issuer"].ToString());
@@ -74,7 +84,7 @@ namespace MIOTWebAPI
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     ClockSkew = TimeSpan.Zero
-                } 
+                }; 
             });
 
         }
@@ -89,15 +99,11 @@ namespace MIOTWebAPI
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MIOTWebAPI v1"));
             }
 
+            app.UseCors("AllowAll");
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
-            app.UseCors(builder =>
-            builder.WithOrigins(Configuration["ApplicationSettings:Client_URL"].ToString())
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            );
 
             app.UseAuthentication();        
 

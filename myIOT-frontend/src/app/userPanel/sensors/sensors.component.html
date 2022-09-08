@@ -2,16 +2,8 @@
     <div class="cards">
         <div class="card-deck">
             <div class="card mb-3 shadow card-theme">
-                <div class="card-header card-header-theme">
-                    <h1>Sensores</h1>
-                </div>
-                <div class="card-body">
-                    <div class="row" style="display: flex">
-                        <app-temperature [temp]="streamData.temperature" [deviceId]="streamData.deviceId">
-                        </app-temperature>
-                        <app-humidity [humidity]="streamData.humidity" [deviceId]="streamData.deviceId"></app-humidity>
-                    </div>
-                </div>
+                <app-temperature-sensor></app-temperature-sensor>
+                <app-humidity-sensor></app-humidity-sensor>
             </div>
         </div>
     </div>

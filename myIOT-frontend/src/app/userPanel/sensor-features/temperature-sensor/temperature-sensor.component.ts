@@ -8,7 +8,7 @@ import { SensorFeaturesConfig } from '../sensor-features-config';
 })
 export class TemperatureSensorComponent implements OnInit {
 
-  @Input() temp: any;
+  @Input() temperature: any;
   @Input() deviceId: any;
   gaugeValue: any;
   config = SensorFeaturesConfig;
@@ -20,10 +20,10 @@ export class TemperatureSensorComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.temp && changes.temp.currentValue == null) {
-      this.temp = changes.temp.previousValue;
+      this.temperature = changes.temp.previousValue;
     }
     else {
-      this.temp = "N/A";
+      this.temperature = "N/A";
     }
   }
 

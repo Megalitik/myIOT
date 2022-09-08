@@ -56,7 +56,9 @@ import { TemperatureSensorComponent } from './userPanel/sensor-features/temperat
       progressBar: true
     })
   ],
-  providers: [UserService],
+  providers: [
+    UserService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

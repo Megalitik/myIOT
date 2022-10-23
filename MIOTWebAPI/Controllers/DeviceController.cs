@@ -1,24 +1,35 @@
 using System;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MIOTWebAPI.Models;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Azure.Devices;
 
 namespace MIOTWebAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    private class DeviceController : ControllerBase
+    public class DeviceController : ControllerBase
     {
         static ServiceClient serviceClient;
-        static string connectionString = "{iot hub connection string}";
+        public string connectionString { get; set; }
 
-
-        public DeviceController(AuthenticationContext context)
+        public DeviceController (IConfiguration _configuration)
         {
-            
+            connectionString = _configuration.GetConnectionString("IoTHubConnection");
         }
 
-        private async static Task SendCloudToDeviceMessageAsync(string targetDevice)
+
+
+        [HttpPost("SendCloudToDeviceMessageAsync")]
+        //POST: /api/Device/SendCloudToDeviceMessageAsync
+        private async Task SendCloudToDeviceMessageAsync(string targetDevice)
         {
             serviceClient = ServiceClient.CreateFromConnectionString(connectionString);
 
@@ -26,7 +37,9 @@ namespace MIOTWebAPI.Controllers
             await serviceClient.SendAsync(targetDevice, commandMessage);
         }
 
-        private async static void ReceiveFeedbackAsync()
+        [HttpGet("ReceiveFeedbackAsync")]
+        //GET: /api/Device/ReceiveFeedbackAsync
+        private async void ReceiveFeedbackAsync()
         {
             serviceClient = ServiceClient.CreateFromConnectionString(connectionString);
             var feedbackReceiver = serviceClient.GetFeedbackReceiver();

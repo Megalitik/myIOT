@@ -41,7 +41,7 @@ namespace MIOTWebAPI
             services.Configure<ApplicationSettings>(Configuration.GetSection("JWTConfig"));
 
             services.AddDbContext<AuthenticationContext>(opt => {
-                opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));});
+                opt.UseSqlServer(Configuration.GetConnectionString("SQLConnection"));});
             
             services.AddDefaultIdentity<AppUser>()
                 .AddEntityFrameworkStores<AuthenticationContext>();

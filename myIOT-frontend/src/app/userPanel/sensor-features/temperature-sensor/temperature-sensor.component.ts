@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, SimpleChanges, OnChanges } from '@angular/core';
 import { SensorFeaturesConfig } from '../sensor-features-config';
 
 @Component({
@@ -6,7 +6,7 @@ import { SensorFeaturesConfig } from '../sensor-features-config';
   templateUrl: './temperature-sensor.component.html',
   styleUrls: ['./temperature-sensor.component.css']
 })
-export class TemperatureSensorComponent implements OnInit {
+export class TemperatureSensorComponent implements OnInit, OnChanges {
 
   @Input() temperature: any;
   @Input() deviceId: any;

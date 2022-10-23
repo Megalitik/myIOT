@@ -25,5 +25,4 @@ export class HumiditySensorComponent implements OnInit {
       this.humidity = "N/A";
     }
   }
-
 }

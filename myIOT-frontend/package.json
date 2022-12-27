@@ -11,7 +11,7 @@
   },
   "browser": {
     "http": false,
-    "https":false,
+    "https": false,
     "net": false,
     "path": false,
     "stream": false,
@@ -19,31 +19,30 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^11.2.14",
-    "@angular/common": "^11.2.14",
-    "@angular/compiler": "^11.2.14",
-    "@angular/core": "^11.2.14",
-    "@angular/forms": "^11.2.14",
-    "@angular/platform-browser": "^11.2.14",
-    "@angular/platform-browser-dynamic": "^11.2.14",
-    "@angular/router": "^11.2.14",
+    "@angular/animations": "^15.0.4",
+    "@angular/common": "^15.0.4",
+    "@angular/compiler": "^15.0.4",
+    "@angular/core": "^15.0.4",
+    "@angular/forms": "^15.0.4",
+    "@angular/platform-browser": "^15.0.4",
+    "@angular/platform-browser-dynamic": "^15.0.4",
+    "@angular/router": "^15.0.4",
     "@microsoft/signalr": "^6.0.8",
     "@popperjs/core": "^2.11.0",
     "bootstrap": "^5.1.3",
     "chart.js": "^2.9.4",
     "jquery": "^3.6.0",
     "ng2-charts": "^2.4.3",
-    "ngx-toastr": "^11.3.3",
     "npm": "^8.19.1",
     "popper": "^1.0.1",
     "rxjs": "~6.6.0",
     "tslib": "^2.3.1",
-    "zone.js": "~0.11.3"
+    "zone.js": "~0.11.4"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^12.2.14",
-    "@angular/cli": "^11.2.17",
-    "@angular/compiler-cli": "^11.2.14",
+    "@angular-devkit/build-angular": "^15.0.4",
+    "@angular/cli": "^15.0.4",
+    "@angular/compiler-cli": "^15.0.4",
     "@types/jasmine": "^3.6.11",
     "@types/node": "^12.20.39",
     "codelyzer": "^0.0.28",
@@ -57,6 +56,6 @@
     "protractor": "~7.0.0",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",
-    "typescript": "^4.1.5"
+    "typescript": "^4.6.4"
   }
 }

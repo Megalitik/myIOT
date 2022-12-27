@@ -4,7 +4,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http'
 import { ChartsModule } from 'ng2-charts';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ToastrModule } from 'ngx-toastr';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -17,8 +16,6 @@ import { ControllersComponent } from './userPanel/controllers/controllers.compon
 import { appRoutes } from 'src/routes';
 import { LineChartComponent } from './charts/line-chart/line-chart.component';
 import { BarChartComponent } from './charts/bar-chart/bar-chart.component';
-import { LoginComponent } from './accountManagement/login/login.component';
-import { SignUpComponent } from './accountManagement/sign-up/sign-up.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserComponent } from './accountManagement/user/user.component';
 import { UserService } from './shared/user.service';
@@ -37,8 +34,6 @@ import { TemperatureSensorComponent } from './userPanel/sensor-features/temperat
     ControllersComponent,
     LineChartComponent,
     BarChartComponent,
-    LoginComponent,
-    SignUpComponent,
     UserComponent,
     HumiditySensorComponent,
     TemperatureSensorComponent
@@ -51,10 +46,7 @@ import { TemperatureSensorComponent } from './userPanel/sensor-features/temperat
     ReactiveFormsModule,
     HttpClientModule,
     ChartsModule,
-    BrowserAnimationsModule,
-    ToastrModule.forRoot({
-      progressBar: true
-    })
+    BrowserAnimationsModule
   ],
   providers: [
     UserService

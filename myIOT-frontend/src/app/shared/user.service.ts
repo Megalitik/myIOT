@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class UserService {
 
-  constructor(private fb:FormBuilder, private http:HttpClient) { }
+  constructor(private fb:UntypedFormBuilder, private http:HttpClient) { }
 
   readonly BaseURI = 'http://localhost:5000/api';
 
@@ -22,7 +22,7 @@ export class UserService {
     
   });
 
-  comparePasswords(fb:FormGroup){
+  comparePasswords(fb:UntypedFormGroup){
     let confirmPasswordCtrl = fb.get('ConfirmPassword');
 
     if(confirmPasswordCtrl?.errors == null || 'passwordMismatch' in confirmPasswordCtrl.errors){

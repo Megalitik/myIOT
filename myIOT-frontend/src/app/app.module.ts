@@ -21,6 +21,9 @@ import { UserComponent } from './accountManagement/user/user.component';
 import { UserService } from './shared/user.service';
 import { HumiditySensorComponent } from './userPanel/sensor-features/humidity-sensor/humidity-sensor.component';
 import { TemperatureSensorComponent } from './userPanel/sensor-features/temperature-sensor/temperature-sensor.component';
+import { LoginComponent } from './accountManagement/loginUser/login/login.component';
+import { RegisterUserComponent } from './accountManagement/register-user/register-user.component';
+import { ProfileUserComponent } from './accountManagement/profile-user/profile-user.component';
 
 
 @NgModule({
@@ -36,7 +39,10 @@ import { TemperatureSensorComponent } from './userPanel/sensor-features/temperat
     BarChartComponent,
     UserComponent,
     HumiditySensorComponent,
-    TemperatureSensorComponent
+    TemperatureSensorComponent,
+    LoginComponent,
+    RegisterUserComponent,
+    ProfileUserComponent
   ],
   imports: [
     BrowserModule,

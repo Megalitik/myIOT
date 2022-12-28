@@ -1,4 +1,4 @@
-<div class="section-container">
+<div *ngIf="isUserAuthenticated()" class="section-container">
     <div class="cards">
         <div class="card-deck">
             <div class="card mb-3 shadow card-theme">
@@ -30,4 +30,7 @@
             </tr>
         </tbody>
     </table>
+</div>
+<div *ngIf="!isUserAuthenticated()">
+    <h1>Accesso Negado</h1>
 </div>

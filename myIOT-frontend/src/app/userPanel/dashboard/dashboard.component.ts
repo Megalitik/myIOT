@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { JwtHelperService } from '@auth0/angular-jwt';
 import { Device } from '../../shared/device';
 
 @Component({
@@ -8,7 +10,23 @@ import { Device } from '../../shared/device';
 })
 export class DashboardComponent implements OnInit {
 
-  constructor() { }
+  constructor(private jwtHelper: JwtHelperService, private router: Router) { }
+
+  isUserAuthenticated() 
+  {
+    const token = localStorage.getItem("jwt");
+
+    if (token && !this.jwtHelper.isTokenExpired(token)) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+  public logOut = () => {
+    localStorage.removeItem("jwt");
+    this.router.navigate(["login"]);
+  }
 
   devices: Device[] = [
 { DeviceID: 1, Name: 'Teste', DeviceType: 

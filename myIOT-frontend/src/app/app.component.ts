@@ -6,6 +6,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'myIOT-frontend';
+  title = 'myIOT - Projeto PAP';
   subtitle = 'Version 0.3a'
 }

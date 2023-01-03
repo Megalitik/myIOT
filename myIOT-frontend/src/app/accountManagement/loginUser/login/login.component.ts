@@ -40,6 +40,7 @@ export class LoginComponent {
     }, err => {
 
       this.invalidLogin = true;
+      this.toastr.success("Acesso recusado. \nErro: " + err.message);
     });
   }
 

@@ -1,1 +1,50 @@
-<p>register-user works!</p>
+<h2>Registar Utilizador</h2>
+<form [formGroup]="UserForm" (ngSubmit)="onFormSubmit()">
+    <div class="form-group">
+        <label for="UserName">Nome de Utilizador</label>
+        <input type="text" formControlName="UserName" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.UserName.errors }" />
+        <div *ngIf="submitted && f.UserName.errors" class="invalid-feedback">
+            <div *ngIf="f.UserName.errors.required">É necessário um Nome de Utilizador</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="Name">Nome Completo</label>
+        <input type="text" formControlName="Name" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.Name.errors }" />
+        <div *ngIf="submitted && f.Name.errors" class="invalid-feedback">
+            <div *ngIf="f.Name.errors.required">É necessário um nome</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="Email">Email</label>
+        <input type="text" formControlName="Email" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.Email.errors }" />
+        <div *ngIf="submitted && f.Email.errors" class="invalid-feedback">
+            <div *ngIf="f.Email.errors.required">É necessário um Email</div>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label for="Password">Palavra-Passe</label>
+        <input type="password" formControlName="Password" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.Password.errors }" />
+        <div *ngIf="submitted && f.Password.errors" class="invalid-feedback">
+            <div *ngIf="f.Password.errors.required">É necessário uma Palavra-Passe</div>
+            <div *ngIf="f.Password.errors.minlength">É necessário pelo menos 6 caractéres na Palavra-Passe</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="Confirm_password">Confirmar Palavra-Passe</label>
+        <input type="password" formControlName="Confirm_password" class="form-control" [ngClass]="f.Confirm_password.errors" />
+        <div *ngIf="submitted && f.Confirm_password.errors" class="invalid-feedback">
+            <div *ngIf="f.Confirm_password.errors.required">É necessário confirmar a Palavra-Passe</div>
+            <div *ngIf="f.Confirm_password.errors.confirmedValidator">As Palavra-Passes não estão iguais</div>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <button [disabled]="loading" class="btn btn-primary">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+            Registar
+        </button>
+        <a routerLink="/login" class="btn btn-link">Já tem uma conta de Utilizador?</a>
+    </div>
+</form>

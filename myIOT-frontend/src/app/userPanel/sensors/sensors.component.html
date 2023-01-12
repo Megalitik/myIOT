@@ -1,12 +1,80 @@
 <div class="section-container">
-    <div class="cards">
-        <div class="card-deck">
-            <div class="card mb-3 shadow card-theme">
-                <app-temperature-sensor></app-temperature-sensor>
-                <app-humidity-sensor></app-humidity-sensor>
+    <div class="row justify-content-between">
+        <div class="col-md-4">
+            <div class="single-report mb-xs-30">
+                <div class="s-report-inner pr--20 pt--30 mb-3">
+                    <div class="icon">
+                        <i class="fa-solid fa-temperature-half"></i>
+                    </div>
+                    <div class="s-report-title d-flex justify-content-between">
+                        <h4 class="header-title mb-0">Temperatura</h4>
+                        <p>24 H</p>
+                    </div>
+                    <div class="d-flex justify-content-between pb-2">
+                        <h2>{{ temperatura }} ºC</h2>
+                    </div>
+                </div>
+                <canvas baseChart 
+                    [datasets]="lineChartData" 
+                    [labels]="lineChartLabels" 
+                    [options]="lineChartOptions"
+                    [colors]="lineChartColors"
+                    [chartType]="lineChartType">
+                </canvas>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="single-report mb-xs-30">
+                <div class="s-report-inner pr--20 pt--30 mb-3">
+                    <div class="icon"><i class="fas fa-humidity"></i></div>
+                    <div class="s-report-title d-flex justify-content-between">
+                        <h4 class="header-title mb-0">Humidade</h4>
+                        <p>24 H</p>
+                    </div>
+                    <div class="d-flex justify-content-between pb-2">
+                        <h2>{{ temperatura }} %</h2>
+                    </div>
+                </div>
+                <canvas baseChart 
+                    [datasets]="lineChartData" 
+                    [labels]="lineChartLabels" 
+                    [options]="lineChartOptions"
+                    [colors]="lineChartColors"
+                    [chartType]="lineChartType">
+                </canvas>
             </div>
         </div>
     </div>
+    <div class="row mt-5">
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow card-theme">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="header-title mb-0">Nome do Dispositivo</h4>
+                        <select class="custome-select border-0 pr-3">
+                            <option selected>Últimas 24 Horas</option>
+                            <option value="0">01 Dezembro 2022</option>
+                        </select>
+                    </div>
+                    <canvas baseChart 
+                        [datasets]="lineChartData" 
+                        [labels]="lineChartLabels" 
+                        [options]="lineChartOptions"
+                        [colors]="lineChartColors"
+                        [chartType]="lineChartType">
+                    </canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-lg-7">
+            <div class="card h-full">
+                <div class="card-body shadow card-theme">
+                    <h4 class="header-title mb-0">Comandos/Filtro</h4>
+                    <p>Data Início</p>
+                    <p>Data Fim</p>
 
-
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

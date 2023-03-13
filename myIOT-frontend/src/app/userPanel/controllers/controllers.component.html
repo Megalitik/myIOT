@@ -1,23 +1,38 @@
-<div class="section-container">
-    <table class="table table-dark table-inverse table-hover">
-        <thead class="thead-dark">
-            <tr>
-                <th>Dispositivo</th>
-                <th>Comandos</th>
-                <th>Ação</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Device_name</td>
-                <TD ALIGN="center">
-                    <select>
-                        <option value="Command1">Comando</option>
-                    </select>
-                <td>
-                    <input type='button' value='OK' />
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+<div class="container-fluid">
+    <div class="row">
+      <div class="col-md-9">
+        <h2>Device {{ deviceId }} Detail</h2>
+        <div>
+          <h3>Temperature</h3>
+          <div>
+            <canvas baseChart
+                    [datasets]="temperatureData"
+                    [labels]="chartLabels"
+                    [options]="chartOptions"
+                    [chartType]="chartType"></canvas>
+          </div>
+        </div>
+        <div>
+            <div>
+                <h3>Humidity</h3>
+                <div>
+                  <canvas baseChart
+                          [datasets]="humidityData"
+                          [labels]="chartLabels"
+                          [options]="chartOptions"
+                          [chartType]="chartType"></canvas>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <h3>Commands</h3>
+              <div class="list-group">
+                <button *ngFor="let command of commands"
+                        type="button"
+                        class="list-group-item list-group-item-action"
+                        (click)="sendCommand(command)">{{ command }}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+          

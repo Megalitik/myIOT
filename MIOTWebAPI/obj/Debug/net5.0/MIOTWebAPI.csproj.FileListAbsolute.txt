@@ -116,7 +116,6 @@ C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\bin\Debug\net5.0\MIOTWebAPI.deps.json
 C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\bin\Debug\net5.0\MIOTWebAPI.runtimeconfig.json
 C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\bin\Debug\net5.0\MIOTWebAPI.runtimeconfig.dev.json
 C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\bin\Debug\net5.0\MIOTWebAPI.dll
-C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\bin\Debug\net5.0\ref\MIOTWebAPI.dll
 C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\bin\Debug\net5.0\MIOTWebAPI.pdb
 C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\bin\Debug\net5.0\Azure.Core.dll
 C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\bin\Debug\net5.0\Humanizer.dll
@@ -176,3 +175,9 @@ C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\obj\Debug\net5.0\scopedcss\bundle\MIOTWe
 C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\obj\Debug\net5.0\MIOTWebAPI.RazorTargetAssemblyInfo.cache
 C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\obj\Debug\net5.0\MIOTWebAPI.csproj.CopyComplete
 C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\obj\Debug\net5.0\MIOTWebAPI.genruntimeconfig.cache
+C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\obj\Debug\net5.0\staticwebassets\MIOTWebAPI.StaticWebAssets.Pack.cache
+C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\obj\Debug\net5.0\staticwebassets\msbuild.MIOTWebAPI.Microsoft.AspNetCore.StaticWebAssets.props
+C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\obj\Debug\net5.0\staticwebassets\msbuild.build.MIOTWebAPI.props
+C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\obj\Debug\net5.0\staticwebassets\msbuild.buildMultiTargeting.MIOTWebAPI.props
+C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\obj\Debug\net5.0\staticwebassets\msbuild.buildTransitive.MIOTWebAPI.props
+C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\obj\Debug\net5.0\refint\MIOTWebAPI.dll

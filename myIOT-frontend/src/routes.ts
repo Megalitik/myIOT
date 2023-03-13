@@ -12,5 +12,5 @@ export const appRoutes: Routes = [
     { path: 'sensors', component: SensorsComponent },
     { path: 'controllers', component: ControllersComponent },
 
-    { path: '', redirectTo: '/dashboard', pathMatch: 'full', canActivate:[AuthGuard] }
+    { path: '', redirectTo: '/dashboard', pathMatch: 'full' }
 ];

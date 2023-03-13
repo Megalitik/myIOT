@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from "@angular/router";
-import { NgForm } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import * as configurl from '../../../_config/config.json';
 
@@ -15,44 +15,73 @@ import * as configurl from '../../../_config/config.json';
 export class LoginComponent {
 
   invalidLogin?: boolean;
+  username: string = "";
+  password: string = "";
+  loginForm!: FormGroup;
   url = configurl.apiServer.url + '/api/';
 
   constructor(private router: Router, private http: HttpClient, private jwtHelper: JwtHelperService,
-    private toastr: ToastrService) { }
+    private toastr: ToastrService, private formBuilder: FormBuilder) { }
+
+    ngOnInit(): void {
+      this.loginForm = this.formBuilder.group({
+        username: ['', Validators.required],
+        password: ['', Validators.required]
+      });
+    }
 
 
-  public login = (form: NgForm) => {
-    const credentials = JSON.stringify(form.value);
+  login(username: string, password: string) {
+    if (!username || !password) {
+      this.toastr.error('Username and password are required', 'Validation Error');
+      return;
+    }
 
-    this.http.post(this.url + "login", credentials, {
-      headers: new HttpHeaders(
-        {
-          "Content-Type": "application/json"
-        }
-      )
-    }).subscribe(response => {
+    const loginUrl = this.url + '/AppUser/LoginUser';
+    const credentials = {
+      username: username,
+      password: password
+    };
 
-      const token = (<any>response).token;
-      localStorage.setItem("jwt", token);
-      this.invalidLogin = false;
-      this.toastr.success("Acesso Garantido com sucesso");
-      this.router.navigate(["/dashboard"]);
-    }, err => {
+    this.http.post(loginUrl, credentials).subscribe((data: any) => {
 
-      this.invalidLogin = true;
-      this.toastr.success("Acesso recusado. \nErro: " + err.message);
+      console.log(data);
+      // Store the JWT token in the local storage
+      localStorage.setItem('token', data['token']);
+      this.toastr.success('Acesso feito com Sucesso', 'Successo');
+    }, error => {
+      console.error(error);
+      this.toastr.error(error.error.message, 'Erro');
+    });
+
+  }
+
+  register(fullname: string, email: string, password: string, confirmPassword: string) {
+    if (!fullname || !email || !password || !confirmPassword) {
+      this.toastr.error('Falta campos a preencher', 'Erro de Validação');
+      return;
+    }
+  
+    if (password !== confirmPassword) {
+      this.toastr.error('Palavras-passe não estão iguais', 'Erro de Validação');
+      return;
+    }
+  
+    const registerUrl = this.url + '/AppUser/UserRegister';
+    const newUser = {
+      fullname: fullname,
+      email: email,
+      password: password
+    };
+  
+    this.http.post(registerUrl, newUser).subscribe(data => {
+      console.log(data);
+      this.toastr.success('Registo feito com sucesso', 'Successo');
+    }, error => {
+      console.error(error);
+      this.toastr.error(error.error.message, 'Erro');
     });
   }
+  
 
-  isUserAuthenticated() 
-  {
-    const token = localStorage.getItem("jwt");
-
-    if (token && !this.jwtHelper.isTokenExpired(token)) {
-      return true;
-    }
-    else {
-      return false;
-    }
-  }
 }

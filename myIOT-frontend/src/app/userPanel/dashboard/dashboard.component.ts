@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Device } from '../../shared/device';
+
+import { apiServer } from '../../_config/config.json';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,7 +13,36 @@ import { Device } from '../../shared/device';
 })
 export class DashboardComponent implements OnInit {
 
-  constructor(private jwtHelper: JwtHelperService, private router: Router) { }
+  url = apiServer.url + '/api/';
+  devices: any[] = [];
+  errorMessage: string = "";
+
+  constructor(private http: HttpClient, 
+    private jwtHelper: JwtHelperService, private router: Router) { }
+
+  ngOnInit() {
+    this.http.get<any[]>((this.url + 'GetUserDevices')).subscribe(
+      data => {
+        this.devices = data;
+        if (this.devices.length === 0) {
+          this.errorMessage = 'Não há dispositivos';
+        }
+      },
+      (error: HttpErrorResponse) => {
+        if (error.error instanceof ErrorEvent) {
+          //Erro no lado do cliente
+          this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
+        } else {
+          // Erro no Servidor ou API
+          this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
+        }
+      }
+    );
+  }
+
+  navigateToDevice(deviceId: number) {
+    this.router.navigate(['/device', deviceId]);
+  }
 
   isUserAuthenticated() 
   {
@@ -28,7 +60,7 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(["login"]);
   }
 
-  devices: Device[] = [
+  devicestest: Device[] = [
 { DeviceID: 1, Name: 'Teste', DeviceType: 
   { ID: 1, Name: 'TipoTeste'}, DeviceState: true
 },
@@ -43,7 +75,5 @@ export class DashboardComponent implements OnInit {
 }
   ];
 
-  ngOnInit(): void {
-  }
 
 }

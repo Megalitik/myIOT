@@ -14,12 +14,8 @@
                         <h2>{{ temperatura }} ºC</h2>
                     </div>
                 </div>
-                <canvas baseChart 
-                    [datasets]="lineChartData" 
-                    [labels]="lineChartLabels" 
-                    [options]="lineChartOptions"
-                    [colors]="lineChartColors"
-                    [chartType]="lineChartType">
+                <canvas baseChart [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
+                    [colors]="lineChartColors" [chartType]="lineChartType">
                 </canvas>
             </div>
         </div>
@@ -35,12 +31,8 @@
                         <h2>{{ temperatura }} %</h2>
                     </div>
                 </div>
-                <canvas baseChart 
-                    [datasets]="lineChartData" 
-                    [labels]="lineChartLabels" 
-                    [options]="lineChartOptions"
-                    [colors]="lineChartColors"
-                    [chartType]="lineChartType">
+                <canvas baseChart [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
+                    [colors]="lineChartColors" [chartType]="lineChartType">
                 </canvas>
             </div>
         </div>
@@ -56,15 +48,16 @@
                             <option value="0">01 Dezembro 2022</option>
                         </select>
                     </div>
-                    <canvas baseChart 
-                        [datasets]="lineChartData" 
-                        [labels]="lineChartLabels" 
-                        [options]="lineChartOptions"
-                        [colors]="lineChartColors"
-                        [chartType]="lineChartType">
+                    <canvas baseChart [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
+                        [colors]="lineChartColors" [chartType]="lineChartType">
                     </canvas>
                 </div>
             </div>
+        </div>
+        <div class="col-xl-4 col-lg-7">
+            <h2>Device Data</h2>
+            <div>Temperature: {{ temperature }}</div>
+            <div>Humidity: {{ humidity }}</div>
         </div>
         <div class="col-xl-4 col-lg-7">
             <div class="card h-full">

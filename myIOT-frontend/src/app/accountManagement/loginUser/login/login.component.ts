@@ -5,7 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Router } from "@angular/router";
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
-import * as configurl from '../../../_config/config.json';
+import * as configurl from '../../../_config/environment';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +18,7 @@ export class LoginComponent {
   username: string = "";
   password: string = "";
   loginForm!: FormGroup;
-  url = configurl.apiServer.url + '/api/';
+  url = configurl.apiServer.APIUrl + '/api/';
 
   constructor(private router: Router, private http: HttpClient, private jwtHelper: JwtHelperService,
     private toastr: ToastrService, private formBuilder: FormBuilder) { }
@@ -33,7 +33,7 @@ export class LoginComponent {
 
   login(username: string, password: string) {
     if (!username || !password) {
-      this.toastr.error('Username and password are required', 'Validation Error');
+      this.toastr.error('Utilizador e/ou Password é necessário', 'Validation Error');
       return;
     }
 

@@ -12,6 +12,7 @@ export class SensorsComponent implements OnInit {
 
   deviceForm!: FormGroup;
   temperatura = '23'
+  humidade = '0'
   public lineChartColors: any[] = [
     {
       borderColor: 'black',

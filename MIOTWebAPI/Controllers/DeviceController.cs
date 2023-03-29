@@ -54,7 +54,6 @@ namespace MIOTWebAPI.Controllers
         //POST: /api/Device/RegisterNewDeviceAsync
         private async Task<string> DeleteDeviceAsync(string newDeviceId)
         {
-            Device device;
             
             registryManager = RegistryManager.CreateFromConnectionString(connectionString);
 

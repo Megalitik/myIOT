@@ -7,7 +7,7 @@ import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
 import { Label } from 'ng2-charts';
 
 
-import { apiServer } from '../../_config/config.json';
+import { apiServer } from '../../_config/environment';
 
 @Component({
   selector: 'app-controllers',
@@ -16,7 +16,7 @@ import { apiServer } from '../../_config/config.json';
 })
 export class ControllersComponent implements OnInit {
 
-  private apiUrl =  apiServer.url + '/api/devices';
+  private apiUrl =  apiServer.APIUrl + '/api/devices';
   public deviceId: string = "";
   private pollingInterval = 5000; // in milliseconds
   private failedRequests = 0;

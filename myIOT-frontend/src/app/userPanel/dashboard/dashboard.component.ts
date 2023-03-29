@@ -4,7 +4,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Device } from '../../shared/device';
 
-import { apiServer } from '../../_config/config.json';
+import { apiServer } from '../../_config/environment';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,7 +13,7 @@ import { apiServer } from '../../_config/config.json';
 })
 export class DashboardComponent implements OnInit {
 
-  url = apiServer.url + '/api/';
+  url = apiServer.APIUrl + '/api/';
   devices: any[] = [];
   errorMessage: string = "";
 

@@ -4,7 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Router } from "@angular/router";
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
-import * as configurl from '../../_config/config.json';
+import * as configurl from '../../_config/environment';
 
 @Component({
   selector: 'app-register-user',
@@ -12,7 +12,7 @@ import * as configurl from '../../_config/config.json';
   styleUrls: ['./register-user.component.css']
 })
 export class RegisterUserComponent {
-  url = configurl.apiServer.url + '/api/';
+  url = configurl.apiServer.APIUrl + '/api/';
 
   data = false;
   submitted = false;

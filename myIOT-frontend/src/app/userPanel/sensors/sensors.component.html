@@ -1,6 +1,13 @@
 <div class="section-container">
     <div class="row justify-content-between">
         <div class="col-md-4">
+            <select [(ngModel)]="selectedDeviceId" (change)="onDeviceSelection()">
+                <option *ngFor="let device of userDevices" [value]="device.deviceId">
+                    {{ device.deviceName }}
+                </option>
+            </select>
+        </div>
+        <div class="col-md-4">
             <div class="single-report mb-xs-30">
                 <div class="s-report-inner pr--20 pt--30 mb-3">
                     <div class="icon">
@@ -55,9 +62,12 @@
             </div>
         </div>
         <div class="col-xl-4 col-lg-7">
-            <h2>Device Data</h2>
-            <div>Temperature: {{ temperatura }}</div>
-            <div>Humidity: {{ humidade }}</div>
+            <h1>Real-time Device Messages</h1>
+            <ul>
+                <li *ngFor="let message of deviceMessages">
+                    {{ message }}
+                </li>
+            </ul>
         </div>
         <div class="col-xl-4 col-lg-7">
             <div class="card h-full">

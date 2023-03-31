@@ -40,9 +40,11 @@ namespace MIOTWebAPI
             //Inject AppSettings
             services.Configure<ApplicationSettings>(Configuration.GetSection("JWTConfig"));
 
-            services.AddDbContext<AuthenticationContext>(opt => {
-                opt.UseSqlServer(Configuration.GetConnectionString("SQLConnection"));});
-            
+            services.AddDbContext<AuthenticationContext>(opt =>
+            {
+                opt.UseSqlServer(Configuration.GetConnectionString("SQLConnection"));
+            });
+
             services.AddDefaultIdentity<AppUser>()
                 .AddEntityFrameworkStores<AuthenticationContext>();
 
@@ -59,12 +61,12 @@ namespace MIOTWebAPI
                     builder =>
                     {
                         builder
-                        .AllowAnyOrigin() 
+                        .AllowAnyOrigin()
                         .AllowAnyMethod()
                         .AllowAnyHeader();
                     });
             });
-            
+
             var key = Encoding.UTF8.GetBytes(Configuration["ApplicationSettings:Key"].ToString());
             var issuer = Encoding.UTF8.GetBytes(Configuration["ApplicationSettings:Issuer"].ToString());
             var audience = Encoding.UTF8.GetBytes(Configuration["ApplicationSettings:Audience"].ToString());
@@ -77,15 +79,17 @@ namespace MIOTWebAPI
             {
                 x.RequireHttpsMetadata = false;
                 x.SaveToken = false;
-                x.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters 
+                x.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     ClockSkew = TimeSpan.Zero
-                }; 
+                };
             });
+
+            services.AddSignalR();
 
         }
 
@@ -105,11 +109,17 @@ namespace MIOTWebAPI
 
             app.UseRouting();
 
-            app.UseAuthentication();        
+            app.UseAuthentication();
+
+            app.UseHttpsRedirection();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<DeviceMessageHub>("/device-message-hub");
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller}/{action}/{id?}");
             });
         }
     }

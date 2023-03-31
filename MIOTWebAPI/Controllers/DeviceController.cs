@@ -11,20 +11,25 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Azure.Devices;
 using Microsoft.Azure.Devices.Common.Exceptions;
 using System.Threading;
+using Microsoft.Data.SqlClient;
+using System.Collections.Generic;
+using System.Text.Json;
 
 namespace MIOTWebAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class DeviceController : ControllerBase
     {
         static ServiceClient serviceClient;
         static RegistryManager registryManager;
         public string connectionString { get; set; }
+        public string sqlconnectionString { get; set; }
 
-        public DeviceController (IConfiguration _configuration)
+        public DeviceController(IConfiguration _configuration)
         {
             connectionString = _configuration.GetConnectionString("IoTHubConnection");
+            sqlconnectionString = _configuration.GetConnectionString("SQLConnection");
         }
 
 
@@ -33,12 +38,20 @@ namespace MIOTWebAPI.Controllers
         private async Task<string> RegisterNewDeviceAsync(string newDeviceId)
         {
             Device device;
-            
+
             registryManager = RegistryManager.CreateFromConnectionString(connectionString);
 
             try
             {
                 device = await registryManager.AddDeviceAsync(new Device(newDeviceId));
+
+                using (var connection = new SqlConnection(sqlconnectionString))
+                {
+                    await connection.OpenAsync();
+
+                    var command = new SqlCommand("INSERT INTO Devices", connection);
+                    var reader = await command.ExecuteReaderAsync();
+                }
 
             }
             catch (DeviceAlreadyExistsException)
@@ -50,11 +63,39 @@ namespace MIOTWebAPI.Controllers
 
         }
 
+        [HttpGet("GetDevices")]
+        //POST: /api/Device/GetDevices
+        public async Task<ActionResult<IEnumerable<Device>>> GetDevices(string userId)
+        {
+            using (var connection = new SqlConnection(sqlconnectionString))
+            {
+                await connection.OpenAsync();
+
+                var command = new SqlCommand("SELECT deviceId, deviceName FROM Devices where deviceUserId like '%" + userId + "%'", connection);
+                var reader = await command.ExecuteReaderAsync();
+
+                var devices = new List<DeviceModel>();
+                while (reader.Read())
+                {
+                    devices.Add(new DeviceModel
+                    {
+                        DeviceId = reader.GetString(0),
+                        DeviceName = reader.GetString(1)
+                    });
+                }
+
+                var json = JsonSerializer.Serialize(devices);
+
+                return Ok(devices);
+            }
+        }
+
+
         [HttpPost("DeleteDeviceAsync")]
         //POST: /api/Device/RegisterNewDeviceAsync
         private async Task<string> DeleteDeviceAsync(string newDeviceId)
         {
-            
+
             registryManager = RegistryManager.CreateFromConnectionString(connectionString);
 
             try
@@ -91,8 +132,8 @@ namespace MIOTWebAPI.Controllers
             while (true)
             {
                 var feedbackBatch = await feedbackReceiver.ReceiveAsync(CancellationToken.None);
-                
-                if (feedbackBatch == null) 
+
+                if (feedbackBatch == null)
                     continue;
 
                 await feedbackReceiver.CompleteAsync(feedbackBatch, CancellationToken.None);

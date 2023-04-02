@@ -17,6 +17,10 @@ using System.Text.Json;
 using Microsoft.Azure.Devices.Client;
 using MIOTWebAPI.Context;
 using Microsoft.EntityFrameworkCore;
+using MIOTWebAPI.Tools;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
 
 namespace MIOTWebAPI.Controllers
 {
@@ -25,10 +29,12 @@ namespace MIOTWebAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly AppDbContext _appContext;
+        public IConfiguration Configuration { get; }
 
-        public UserController(AppDbContext appContext)
+        public UserController(AppDbContext appContext, IConfiguration configuration)
         {
             _appContext = appContext;
+            Configuration = configuration;
         }
 
 
@@ -51,9 +57,19 @@ namespace MIOTWebAPI.Controllers
                     {
                         return NotFound(new { Message = "Utilizador não foi encontrado" });
                     }
-                }
 
-                return Ok(new { Message = "Acesso Autorizado" });
+                    if (PasswordHasher.VerifyPassword(userObject.Password, user.Password))
+                    {
+                        return BadRequest(new { Message = "A Palavra-Passe está incorreta" });
+                    }
+
+                    user.Token = CreateJwtToken(user);
+
+                    return Ok(new {
+                    Token = user.Token,
+                    Message = "Acesso Autorizado" 
+                    });
+                }
             }
             catch (Exception ex)
             {
@@ -72,6 +88,20 @@ namespace MIOTWebAPI.Controllers
                     return BadRequest();
                 }
 
+                if (await VerifyUsernameExistsAsync(userObject.UserName))
+                {
+                    return BadRequest(new { Message = "Já foi criada uma conta com este Nome de Utilizador" });
+                }
+
+                if (await VerifyEmailExistsAsync(userObject.Email))
+                {
+                    return BadRequest(new { Message = "Já foi criada uma conta com este Email" });
+                }
+
+                userObject.Password = PasswordHasher.HashPassword(userObject.Password);
+                userObject.Role = "User";
+                userObject.Token = "";
+
                 await _appContext.Users.AddAsync(userObject);
                 await _appContext.SaveChangesAsync();
 
@@ -81,6 +111,47 @@ namespace MIOTWebAPI.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<User>> GetAllUsers()
+        {
+            return Ok(await _appContext.Users.ToListAsync());
+        }
+
+        private async Task<bool> VerifyUsernameExistsAsync(string username)
+        {
+            return await _appContext.Users.AnyAsync(user => user.UserName == username);
+        }
+
+        private async Task<bool> VerifyEmailExistsAsync(string email)
+        {
+            return await _appContext.Users.AnyAsync(user => user.Email == email);
+        }
+
+        private string CreateJwtToken(User user)
+        {
+            var jwtTokenHandler = new JwtSecurityTokenHandler();
+            var jwtKey = Encoding.ASCII.GetBytes(Configuration["ApplicationSettings:Key"].ToString());
+
+            var identity = new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.Role, user.Role),
+                new Claim(ClaimTypes.Name, $"{user.UserName}")
+            });
+
+            var credentials = new SigningCredentials(new SymmetricSecurityKey(jwtKey), SecurityAlgorithms.HmacSha256);
+
+            var tokenDesc = new SecurityTokenDescriptor
+            {
+                Subject = identity,
+                Expires = DateTime.Now.AddDays(3),
+                SigningCredentials = credentials
+            };
+
+            var token = jwtTokenHandler.CreateToken(tokenDesc);
+
+            return jwtTokenHandler.WriteToken(token);
         }
 
     }

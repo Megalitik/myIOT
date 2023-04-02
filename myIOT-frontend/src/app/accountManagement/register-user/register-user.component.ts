@@ -31,10 +31,10 @@ export class RegisterUserComponent {
     this.UserForm = this.formbulider.group({
       UserName: ['', [Validators.required]],
       Password: ['', [Validators.required, Validators.minLength(6)]],
-      Confirm_password: ['', [Validators.required]],
+      ConfirmPassword: ['', [Validators.required]],
       Email: ['', [Validators.required, Validators.email]]
     }, { 
-      validator: this.ConfirmedValidator('password', 'confirm_password')
+      validator: this.ConfirmedValidator('Password', 'ConfirmPassword')
     });
   }
 
@@ -63,7 +63,7 @@ export class RegisterUserComponent {
 
   register() {
     if (!this.UserForm.valid) {
-      this.toastr.error('Utilizador e/ou Password é necessário', 'Validation Error');
+      this.toastr.error('Falta preencher campos obrigatórios', 'Validation Error');
       return;
     }
 

@@ -74,14 +74,13 @@ namespace MIOTWebAPI
             }).AddJwtBearer(x =>
             {
                 x.RequireHttpsMetadata = false;
-                x.SaveToken = false;
+                x.SaveToken = true;
                 x.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters 
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ClockSkew = TimeSpan.Zero
+                    ValidateAudience = false
                 }; 
             });
 
@@ -103,7 +102,9 @@ namespace MIOTWebAPI
 
             app.UseRouting();
 
-            app.UseAuthentication();        
+            app.UseAuthentication();
+
+            app.UseAuthorization();        
 
             app.UseEndpoints(endpoints =>
             {

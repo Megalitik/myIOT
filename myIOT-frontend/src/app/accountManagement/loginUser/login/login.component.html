@@ -27,7 +27,7 @@
                     <div class="form-inline fr mt-4">
                         <a id="forgotPwd" class="font-weight-bold">Esqueceste a Palavra-Passe?</a>
                     </div>
-                    <button [disabled]="loginForm.invalid" type="submit"
+                    <button (click)="login()" [disabled]="loginForm.invalid" type="submit"
                         class="btn btn-primary btn-block mt-4 w-100">Entrar</button>
                     <div class="text-center pt-4 text-muted">
                         Não tens uma conta? <a id="noAccount" routerLink="/register">Cria uma conta aqui</a>

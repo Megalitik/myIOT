@@ -5,3 +5,5 @@
 
 <a class="nav-link float-left" routerLink="/login">Entrar</a>
 <a class="nav-link float-left" routerLink="/register">Criar conta</a>
+
+<button [hidden]="isUserSignedIn()" (click)="onLogout()" class="btn btn-danger">Sair</button>

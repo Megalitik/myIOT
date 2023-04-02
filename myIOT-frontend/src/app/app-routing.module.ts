@@ -3,12 +3,15 @@ import { RouterModule, Routes } from '@angular/router';
 import { UserComponent } from './accountManagement/user/user.component';
 import { ControllersComponent } from './userPanel/controllers/controllers.component';
 import { DashboardComponent } from './userPanel/dashboard/dashboard.component';
+import { AuthGuard } from './auth/auth.guard';
+import { LoginComponent } from './accountManagement/loginUser/login/login.component';
 
 const routes: Routes = [
   { path:'user', component:UserComponent },
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+  { path:'login', component:LoginComponent },
   { path: 'dashboard', component: DashboardComponent },
-  { path: 'controllers/:deviceId', component: ControllersComponent }
+  { path: 'controllers', component: ControllersComponent, canActivate:[AuthGuard] }
 ];
 
 @NgModule({

@@ -51,6 +51,7 @@ export class LoginComponent {
           this.toastr.success('Utilizador com Acesso Garantido', 'Successo');
           console.log(res.message);
           this.loginForm.reset();
+          this.auth.storeJwtToken(res.Token);
           this.router.navigate(["/dashboard"]);
         },
         error:(err)=>{

@@ -42,7 +42,7 @@
                         </div>
                     </div>
 
-                    <button [disabled]="UserForm.invalid" type="submit"
+                    <button (click)="register()" [disabled]="UserForm.invalid" type="submit"
                         class="btn btn-primary btn-block mt-4 w-100">Criar Conta</button>
                     <div class="text-center pt-4 text-muted">
                         Já tens uma conta? <a id="hasAccount" routerLink="/login">Entra aqui</a>

@@ -14,6 +14,7 @@ using System.Threading;
 using Microsoft.Data.SqlClient;
 using System.Collections.Generic;
 using System.Text.Json;
+using Microsoft.Azure.Devices.Client;
 
 namespace MIOTWebAPI.Controllers
 {
@@ -63,6 +64,50 @@ namespace MIOTWebAPI.Controllers
 
         }
 
+        [HttpGet("GetDevicesRegistryManager")]
+        public async void GetDevicesRegistryManager()
+        {
+            try
+            {
+                var registryManager = RegistryManager.CreateFromConnectionString(connectionString);
+                var query = registryManager.CreateQuery("SELECT * FROM devices", 100);
+                while (query.HasMoreResults)
+                {
+                    var page = await query.GetNextAsTwinAsync();  // exits here
+                    foreach (var twin in page)
+                    {
+                        // do work on twin object
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        [HttpGet("LastDeviceMessage")]
+        public async Task<string> GetLastMessageAsync(string deviceId)
+        {
+            var registryManager = RegistryManager.CreateFromConnectionString(connectionString);
+            var twin = await registryManager.GetTwinAsync(deviceId);
+            var deviceClient = DeviceClient.CreateFromConnectionString(connectionString, deviceId);
+            var message = await deviceClient.ReceiveAsync();
+            return message.GetBytes().ToString();
+        }
+
+        [HttpPost("SendMessage")]
+        public async Task<IActionResult> SendMessageAsync(string message, string deviceId)
+        {
+            var deviceClient = DeviceClient.CreateFromConnectionString(connectionString, deviceId);
+            var messageBytes = Encoding.UTF8.GetBytes(message);
+            var iotMessage = new Microsoft.Azure.Devices.Client.Message(messageBytes);
+            await deviceClient.SendEventAsync(iotMessage);
+            return Ok();
+        }
+
         [HttpGet("GetDevices")]
         //POST: /api/Device/GetDevices
         public async Task<ActionResult<IEnumerable<Device>>> GetDevices(string userId)
@@ -92,15 +137,15 @@ namespace MIOTWebAPI.Controllers
 
 
         [HttpPost("DeleteDeviceAsync")]
-        //POST: /api/Device/RegisterNewDeviceAsync
-        private async Task<string> DeleteDeviceAsync(string newDeviceId)
+        //POST: /api/Device/DeleteDeviceAsync
+        private async Task<string> DeleteDeviceAsync(string deviceId)
         {
 
             registryManager = RegistryManager.CreateFromConnectionString(connectionString);
 
             try
             {
-                await registryManager.RemoveDeviceAsync(new Device(newDeviceId));
+                await registryManager.RemoveDeviceAsync(new Device(deviceId));
 
             }
             catch (Exception ex)
@@ -108,23 +153,23 @@ namespace MIOTWebAPI.Controllers
                 return ex.Message;
             }
 
-            return "Device Deleted: " + newDeviceId;
+            return "Dispositivo Apagado: " + deviceId;
         }
 
 
         [HttpPost("SendCloudToDeviceMessageAsync")]
         //POST: /api/Device/SendCloudToDeviceMessageAsync
-        private async Task SendCloudToDeviceMessageAsync(string targetDevice, string message)
+        public async Task SendCloudToDeviceMessageAsync(string targetDevice, string message)
         {
             serviceClient = ServiceClient.CreateFromConnectionString(connectionString);
 
-            var commandMessage = new Message(Encoding.ASCII.GetBytes((message)));
+            var commandMessage = new Microsoft.Azure.Devices.Message(Encoding.ASCII.GetBytes((message)));
             await serviceClient.SendAsync(targetDevice, commandMessage);
         }
 
         [HttpGet("ReceiveFeedbackAsync")]
         //GET: /api/Device/ReceiveFeedbackAsync
-        private async void ReceiveFeedbackAsync()
+        public async void ReceiveFeedbackAsync()
         {
             serviceClient = ServiceClient.CreateFromConnectionString(connectionString);
             var feedbackReceiver = serviceClient.GetFeedbackReceiver();

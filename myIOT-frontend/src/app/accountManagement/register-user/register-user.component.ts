@@ -5,6 +5,7 @@ import { Router } from "@angular/router";
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import * as configurl from '../../_config/environment';
+import { AuthService } from '../../_services/auth/auth.service';
 
 @Component({
   selector: 'app-register-user',
@@ -12,19 +13,23 @@ import * as configurl from '../../_config/environment';
   styleUrls: ['./register-user.component.css']
 })
 export class RegisterUserComponent {
-  url = configurl.apiServer.APIUrl + '/api/';
+  url = configurl.apiServer.APIUrl;
 
   data = false;
   submitted = false;
   loading = false;
   UserForm: FormGroup = new FormGroup({});
 
-  constructor(private formbulider: FormBuilder, private router: Router, private http: HttpClient, private toastr: ToastrService) { }
+  eyeIcon: string = "fa-eye-slash";
+  showPwd: boolean = false;
+  type: string = "password";
+
+  constructor(private formbulider: FormBuilder, private auth : AuthService, 
+    private router: Router, private http: HttpClient, private toastr: ToastrService) { }
 
   ngOnInit() {
     this.UserForm = this.formbulider.group({
       UserName: ['', [Validators.required]],
-      Name: ['', [Validators.required]],
       Password: ['', [Validators.required, Validators.minLength(6)]],
       Confirm_password: ['', [Validators.required]],
       Email: ['', [Validators.required, Validators.email]]
@@ -56,6 +61,38 @@ export class RegisterUserComponent {
     this.RegisterUser(user);
   }
 
+  register() {
+    if (!this.UserForm.valid) {
+      this.toastr.error('Utilizador e/ou Password é necessário', 'Validation Error');
+      return;
+    }
+
+    console.log(this.UserForm.value);
+
+    this.auth.SignUp(this.UserForm.value).subscribe(
+      {
+        next:(res)=>{
+          this.toastr.success('Utilizador Registrado com Sucesso', 'Successo');
+          console.log(res.message);
+          this.UserForm.reset();
+          this.router.navigate(["/dashboard"]);
+        },
+        error:(err)=>{
+          this.toastr.error('Erro ao Registar um novo Utilizador: ' + err?.error.message, 'Acesso Falhou');
+          console.log(err?.error.message);
+          return;
+        }
+      }
+    )
+  }
+
+  
+  ShowOrHidePassword() {
+    this.showPwd = !this.showPwd;
+    this.showPwd ? this.eyeIcon = "fa-eye" : this.eyeIcon = "fa-eye-slash";
+    this.showPwd ? this.type = "text" : this.type = "password";
+  }
+
   RegisterUser(register: FormBuilder) {
     const userdata = JSON.stringify(register);
 
@@ -74,7 +111,7 @@ export class RegisterUserComponent {
         this.router.navigate(["/login"]);
       }, err => {
         this.loading = false;
-        this.toastr.success("Falha ao registar um novo utilizador. \nErro: " + err.message);
+        this.toastr.error("Falha ao registar um novo utilizador. \nErro: " + err.message);
       });
   }
   

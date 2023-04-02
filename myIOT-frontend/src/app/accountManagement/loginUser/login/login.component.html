@@ -1,5 +1,39 @@
-<form (ngSubmit)="login(username, password)">
-    <input type="text" [(ngModel)]="username" name="username">
-    <input type="password" [(ngModel)]="password" name="password">
-    <button type="submit">Login</button>
-</form>
+<div class="row">
+    <div class="offset-md-2 col-lg-5 col-md-7 offset-lg-4 offset-md-3">
+        <div class="panel border">
+            <div class="panel-heading">
+                <h3 class="pt-3 font-weight-bold">Entrar</h3>
+            </div>
+
+            <div class="panel-body p-3">
+                <form [formGroup]="loginForm">
+                    <div class="form-group pt-3">
+                        <div class="input-field">
+                            <span class="fa fa-user fa-color p-2"></span>
+                            <input class="form-control" formControlName="username" type="text" placeholder="Nome de Utilizador">
+                        </div>
+                    </div>
+                    <small *ngIf="loginForm.controls['username'].dirty && loginForm.hasError('required', 'username')"
+                        class="text-danger">É necessário introduzir o Nome de Utilizador</small>
+                    <div class="form-group pt-3">
+                        <div class="input-field">
+                            <span class="fa fa-lock p-2 fa-color"></span>
+                            <input class="form-control" formControlName="password" [type]="type" placeholder="Palavra-Passe">
+                            <span (click)="ShowOrHidePassword()" class="fa fa-color {{eyeIcon}}"></span>
+                        </div>
+                    </div>
+                    <small *ngIf="loginForm.controls['password'].dirty && loginForm.hasError('required', 'password')"
+                        class="text-danger">É necessário introduzir a Palavra-Passe</small>
+                    <div class="form-inline fr mt-4">
+                        <a id="forgotPwd" class="font-weight-bold">Esqueceste a Palavra-Passe?</a>
+                    </div>
+                    <button [disabled]="loginForm.invalid" type="submit"
+                        class="btn btn-primary btn-block mt-4 w-100">Entrar</button>
+                    <div class="text-center pt-4 text-muted">
+                        Não tens uma conta? <a id="noAccount" routerLink="/register">Cria uma conta aqui</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

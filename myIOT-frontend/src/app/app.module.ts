@@ -24,6 +24,7 @@ import { TemperatureSensorComponent } from './userPanel/sensor-features/temperat
 import { LoginComponent } from './accountManagement/loginUser/login/login.component';
 import { RegisterUserComponent } from './accountManagement/register-user/register-user.component';
 import { ProfileUserComponent } from './accountManagement/profile-user/profile-user.component';
+import { ToastrModule } from 'ngx-toastr';
 
 
 @NgModule({
@@ -52,7 +53,8 @@ import { ProfileUserComponent } from './accountManagement/profile-user/profile-u
     ReactiveFormsModule,
     HttpClientModule,
     ChartsModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    ToastrModule.forRoot()
   ],
   providers: [
     UserService

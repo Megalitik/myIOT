@@ -40,6 +40,10 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "dependencies": {
+            "Azure.Messaging.EventHubs": {
+              "target": "Package",
+              "version": "[5.8.1, )"
+            },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
               "version": "[5.0.12, )"
@@ -58,7 +62,19 @@
             },
             "Microsoft.Azure.Devices": {
               "target": "Package",
-              "version": "[1.38.1, )"
+              "version": "[1.38.2, )"
+            },
+            "Microsoft.Azure.Devices.Client": {
+              "target": "Package",
+              "version": "[1.41.3, )"
+            },
+            "Microsoft.Azure.EventHubs": {
+              "target": "Package",
+              "version": "[4.3.2, )"
+            },
+            "Microsoft.Azure.ServiceBus.EventProcessorHost": {
+              "target": "Package",
+              "version": "[5.0.1, )"
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
@@ -87,6 +103,10 @@
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[5.6.3, )"
+            },
+            "System.Net.Http": {
+              "target": "Package",
+              "version": "[4.3.4, )"
             }
           },
           "imports": [

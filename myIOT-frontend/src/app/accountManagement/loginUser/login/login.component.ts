@@ -6,6 +6,7 @@ import { Router } from "@angular/router";
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import * as configurl from '../../../_config/environment';
+import { AuthService } from '../../../_services/auth/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -18,9 +19,14 @@ export class LoginComponent {
   username: string = "";
   password: string = "";
   loginForm!: FormGroup;
-  url = configurl.apiServer.APIUrl + '/api/';
 
-  constructor(private router: Router, private http: HttpClient, private jwtHelper: JwtHelperService,
+  eyeIcon: string = "fa-eye-slash";
+  showPwd: boolean = false;
+  type: string = "password";
+
+  url = configurl.apiServer.APIUrl;
+
+  constructor(private router: Router, private auth: AuthService, private http: HttpClient,
     private toastr: ToastrService, private formBuilder: FormBuilder) { }
 
     ngOnInit(): void {
@@ -31,56 +37,35 @@ export class LoginComponent {
     }
 
 
-  login(username: string, password: string) {
-    if (!username || !password) {
+  login() {
+    if (!this.loginForm.valid) {
       this.toastr.error('Utilizador e/ou Password é necessário', 'Validation Error');
       return;
     }
 
-    const loginUrl = this.url + '/AppUser/LoginUser';
-    const credentials = {
-      username: username,
-      password: password
-    };
+    console.log(this.loginForm.value);
 
-    this.http.post(loginUrl, credentials).subscribe((data: any) => {
-
-      console.log(data);
-      // Store the JWT token in the local storage
-      localStorage.setItem('token', data['token']);
-      this.toastr.success('Acesso feito com Sucesso', 'Successo');
-    }, error => {
-      console.error(error);
-      this.toastr.error(error.error.message, 'Erro');
-    });
-
+    this.auth.Login(this.loginForm.value).subscribe(
+      {
+        next:(res)=>{
+          this.toastr.success('Utilizador com Acesso Garantido', 'Successo');
+          console.log(res.message);
+          this.loginForm.reset();
+          this.router.navigate(["/dashboard"]);
+        },
+        error:(err)=>{
+          this.toastr.error('Erro ao Entrar: ' + err?.error.message, 'Acesso Falhou');
+          console.log(err?.error.message);
+          return;
+        }
+      }
+    )
   }
 
-  register(fullname: string, email: string, password: string, confirmPassword: string) {
-    if (!fullname || !email || !password || !confirmPassword) {
-      this.toastr.error('Falta campos a preencher', 'Erro de Validação');
-      return;
-    }
-  
-    if (password !== confirmPassword) {
-      this.toastr.error('Palavras-passe não estão iguais', 'Erro de Validação');
-      return;
-    }
-  
-    const registerUrl = this.url + '/AppUser/UserRegister';
-    const newUser = {
-      fullname: fullname,
-      email: email,
-      password: password
-    };
-  
-    this.http.post(registerUrl, newUser).subscribe(data => {
-      console.log(data);
-      this.toastr.success('Registo feito com sucesso', 'Successo');
-    }, error => {
-      console.error(error);
-      this.toastr.error(error.error.message, 'Erro');
-    });
+  ShowOrHidePassword() {
+    this.showPwd = !this.showPwd;
+    this.showPwd ? this.eyeIcon = "fa-eye" : this.eyeIcon = "fa-eye-slash";
+    this.showPwd ? this.type = "text" : this.type = "password";
   }
   
 

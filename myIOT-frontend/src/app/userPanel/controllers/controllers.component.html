@@ -1,5 +1,12 @@
 <div class="container-fluid">
     <div class="row">
+      <div class="col-md-4">
+        <select [(ngModel)]="selectedDeviceId" (change)="onDeviceSelection()">
+            <option *ngFor="let device of userDevices" [value]="device.deviceId">
+                {{ device.deviceName }}
+            </option>
+        </select>
+    </div>
       <div class="col-md-9">
         <h2>Device {{ deviceId }} Detail</h2>
         <div>

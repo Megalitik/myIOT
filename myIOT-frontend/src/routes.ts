@@ -4,13 +4,16 @@ import { SettingsComponent } from './app/userPanel/settings/settings.component';
 import { DashboardComponent } from './app/userPanel/dashboard/dashboard.component';
 import { SensorsComponent } from './app/userPanel/sensors/sensors.component';
 import { ControllersComponent } from './app/userPanel/controllers/controllers.component';
-import { AuthGuard } from './app/auth/auth.guard';
+import { LoginComponent } from './app/accountManagement/loginUser/login/login.component';
+import { RegisterUserComponent } from './app/accountManagement/register-user/register-user.component';
 
 export const appRoutes: Routes = [
     { path: 'settings', component: SettingsComponent },
     { path: 'dashboard', component: DashboardComponent },
     { path: 'sensors', component: SensorsComponent },
     { path: 'controllers', component: ControllersComponent },
+    { path: 'login', component: LoginComponent },
+    { path: 'register', component: RegisterUserComponent },
 
     { path: '', redirectTo: '/dashboard', pathMatch: 'full' }
 ];

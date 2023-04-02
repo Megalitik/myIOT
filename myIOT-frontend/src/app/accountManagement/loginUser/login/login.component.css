@@ -62,7 +62,7 @@ img {
     position: relative;
 }
 
-#forgotPwd {
+#forgotPwdModal {
     min-width: 100px;
     margin-left: auto;
     text-decoration: none;

@@ -25,7 +25,7 @@
                     <small *ngIf="loginForm.controls['password'].dirty && loginForm.hasError('required', 'password')"
                         class="text-danger">É necessário introduzir a Palavra-Passe</small>
                     <div class="form-inline fr mt-4">
-                        <a id="forgotPwd" class="font-weight-bold">Esqueceste a Palavra-Passe?</a>
+                        <a id="forgotPwd" data-bs-toggle="modal" data-bs-target="#forgotPwdModal" class="font-weight-bold">Esqueceste a Palavra-Passe?</a>
                     </div>
                     <button (click)="login()" [disabled]="loginForm.invalid" type="submit"
                         class="btn btn-primary btn-block mt-4 w-100">Entrar</button>
@@ -33,6 +33,36 @@
                         Não tens uma conta? <a id="noAccount" routerLink="/register">Cria uma conta aqui</a>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="forgotPwdModal" tabindex="-1" aria-labelledby="forgotPwdModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p class="modal-title" id="forgotPwdModalLabel"> <span style="font-size: 25px; color: #000; font-weight: 700;">Esqueceste a Palavra-Passe?</span>
+                    <br />
+                    <small style="color: #000;">Por favor, indique abaixo o Email para repor a sua Palavra-Passe</small>
+                </p>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group pt-3">
+                    <div class="input-field">
+                        <span class="fa fa-envelope p-2"></span> 
+                        <input [(ngModel)]="resetPwdEmail" (ngModelChange)="ValidateEmail($event)" type="text" placeholder="Email">
+                    </div>
+                </div>
+                <small *ngIf="!resetPwdEmail" class="text-danger">É necessário um Email</small>
+                <small *ngIf="!isValidEmail && ValidateEmail" class="text-danger">É necessário um Email válido</small>
+            </div>
+            <div class="modal-footer">
+                <button id="resetPwdCloseBtn" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" (click)="RecoverPassword()">Recuperar</button>
             </div>
         </div>
     </div>

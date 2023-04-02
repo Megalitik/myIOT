@@ -197,3 +197,9 @@ C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\bin\Debug\net5.0\Microsoft.IdentityModel
 C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\bin\Debug\net5.0\Microsoft.IdentityModel.Clients.ActiveDirectory.dll
 C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\bin\Debug\net5.0\Microsoft.ServiceBus.dll
 C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\bin\Debug\net5.0\Microsoft.WindowsAzure.Storage.dll
+C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\bin\Debug\net5.0\MailKit.dll
+C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\bin\Debug\net5.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\bin\Debug\net5.0\MimeKit.dll
+C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\bin\Debug\net5.0\NETCore.MailKit.dll
+C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\bin\Debug\net5.0\BouncyCastle.Crypto.dll
+C:\Users\i0851\Desktop\myIOT\MIOTWebAPI\bin\Debug\net5.0\System.Runtime.CompilerServices.Unsafe.dll

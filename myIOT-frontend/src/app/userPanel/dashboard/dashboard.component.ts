@@ -5,6 +5,9 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { Device } from '../../shared/device';
 
 import { apiServer } from '../../_config/environment';
+import { ApiService } from '../../_services/api/api.service';
+import { UserStoreService } from 'src/app/_services/userstore/user-store.service';
+import { AuthService } from 'src/app/_services/auth/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,12 +18,24 @@ export class DashboardComponent implements OnInit {
 
   url = apiServer.APIUrl + '/api/';
   devices: any[] = [];
+  users: any[] = [];
   errorMessage: string = "";
+  username: string = "";
 
-  constructor(private http: HttpClient, 
-    private jwtHelper: JwtHelperService, private router: Router) { }
+  constructor(private http: HttpClient, private api : ApiService, private userStore : UserStoreService,
+    private jwtHelper: JwtHelperService, private auth : AuthService, private router: Router) { }
 
   ngOnInit() {
+    this.api.getAllUsers().subscribe(users => {
+      this.users = users;
+    })
+
+    this.userStore.getUserNameFromUserStore().subscribe(userName => {
+      let usernameFromToken = this.auth.getUsernameFromJwtToken();
+
+      this.username = userName || usernameFromToken;
+    });
+
     this.http.get<any[]>((this.url + 'GetUserDevices')).subscribe(
       data => {
         this.devices = data;

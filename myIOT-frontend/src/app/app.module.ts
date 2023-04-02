@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http'
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http'
 import { ChartsModule } from 'ng2-charts';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -25,6 +25,7 @@ import { LoginComponent } from './accountManagement/loginUser/login/login.compon
 import { RegisterUserComponent } from './accountManagement/register-user/register-user.component';
 import { ProfileUserComponent } from './accountManagement/profile-user/profile-user.component';
 import { ToastrModule } from 'ngx-toastr';
+import { TokenInterceptor } from './_services/interceptor/token.interceptor';
 
 
 @NgModule({
@@ -57,7 +58,12 @@ import { ToastrModule } from 'ngx-toastr';
     ToastrModule.forRoot()
   ],
   providers: [
-    UserService
+    UserService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })

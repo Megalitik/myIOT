@@ -40,6 +40,23 @@
             </tr>
         </tbody>
     </table>
+
+    <table class="table table-dark table-inverse table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Tipo</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let user of users">
+                <td>{{ user.UserName }}</td>
+                <td>{{ user.Email }}</td>
+            </tr>
+        </tbody>
+    </table>
 </div>
 <div *ngIf="!isUserAuthenticated()">
     <h1>Accesso Negado</h1>

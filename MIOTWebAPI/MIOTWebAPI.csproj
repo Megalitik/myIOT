@@ -27,6 +27,7 @@
     <PackageReference Include="Microsoft.Azure.Devices" Version="1.38.2" />
     <PackageReference Include="Azure.Messaging.EventHubs" Version="5.8.1" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="NETCore.MailKit" Version="2.1.0" />
   </ItemGroup>
 
 </Project>

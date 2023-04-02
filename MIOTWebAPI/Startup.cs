@@ -23,6 +23,7 @@ using Microsoft.IdentityModel.Tokens;
 using Models;
 using MIOTWebAPI.Models;
 using MIOTWebAPI.Context;
+using MIOTWebAPI.UtilityService;
 
 namespace MIOTWebAPI
 {
@@ -44,6 +45,7 @@ namespace MIOTWebAPI
             services.AddDbContext<AppDbContext>(opt => {
                 opt.UseSqlServer(Configuration.GetConnectionString("SQLConnection"));});
 
+            services.AddScoped<IEmailService, EmailService>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -80,7 +82,8 @@ namespace MIOTWebAPI
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = false,
-                    ValidateAudience = false
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
                 }; 
             });
 

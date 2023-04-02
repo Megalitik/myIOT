@@ -21,6 +21,9 @@ using MIOTWebAPI.Tools;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
+using MIOTWebAPI.UtilityService;
+using MIOTWebAPI.Models.DTO;
 
 namespace MIOTWebAPI.Controllers
 {
@@ -31,10 +34,13 @@ namespace MIOTWebAPI.Controllers
         private readonly AppDbContext _appContext;
         public IConfiguration Configuration { get; }
 
-        public UserController(AppDbContext appContext, IConfiguration configuration)
+        private readonly IEmailService _emailService;
+
+        public UserController(AppDbContext appContext, IConfiguration configuration, IEmailService emailService)
         {
             _appContext = appContext;
             Configuration = configuration;
+            _emailService = emailService;
         }
 
 
@@ -65,9 +71,10 @@ namespace MIOTWebAPI.Controllers
 
                     user.Token = CreateJwtToken(user);
 
-                    return Ok(new {
-                    Token = user.Token,
-                    Message = "Acesso Autorizado" 
+                    return Ok(new
+                    {
+                        Token = user.Token,
+                        Message = "Acesso Autorizado"
                     });
                 }
             }
@@ -113,10 +120,84 @@ namespace MIOTWebAPI.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<User>> GetAllUsers()
         {
             return Ok(await _appContext.Users.ToListAsync());
+        }
+
+        [HttpPost("send-reset-email/{email}")]
+        public async Task<ActionResult> SendEmail(string email)
+        {
+            var user = await _appContext.Users.FirstOrDefaultAsync(x => x.Email == email);
+
+            if (user == null)
+            {
+                return NotFound(new
+                {
+                    Message = "O email introduzido não existe",
+                    StatusCode = 404
+                });
+            }
+
+            string token = Guid.NewGuid().ToString();
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(token);
+            var emailToken = Convert.ToBase64String(plainTextBytes);
+
+            user.ResetPasswordToken = emailToken;
+            user.ResetPasswordExpirity = DateTime.Now.AddDays(1);
+
+            string from = Configuration["EmailSettings:From"];
+            var emailModel = new EmailModel(email, "MyIOT - Repor Password", EmailBody.EmailBodyHtml(email, emailToken));
+
+            _emailService.SendEmail(emailModel);
+            _appContext.Entry(user).State = EntityState.Modified;
+            await _appContext.SaveChangesAsync();
+
+            return Ok( new {
+                StatusCode = 200,
+                Message = "Successo ao enviar o email"
+            });
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDto resetPasswordDto)
+        {
+            var newToken = resetPasswordDto.EmailToken.Replace(" ", "+");
+            var user = await _appContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == resetPasswordDto.Email);
+
+            if (user == null)
+            {
+                return NotFound(new
+                {
+                    Message = "O utilizador não existe",
+                    StatusCode = 404
+                });
+            }
+
+            var token = user.ResetPasswordToken;
+            DateTime? emailTokenExpirity = user.ResetPasswordExpirity;
+
+            if (token != resetPasswordDto.EmailToken || emailTokenExpirity == null || emailTokenExpirity < DateTime.Now)
+            {
+                return BadRequest(new
+                {
+                    Message = "Link de reposição da Palavra-Passe inválido",
+                    StatusCode = 400
+                });
+            }
+
+            user.Password = PasswordHasher.HashPassword(resetPasswordDto.NewPassword);
+            _appContext.Entry(user).State = EntityState.Modified;
+
+            await _appContext.SaveChangesAsync();
+
+            return Ok(new
+                {
+                    Message = "Reposição da Palavra-Passe feita com sucesso",
+                    StatusCode = 200
+                });
         }
 
         private async Task<bool> VerifyUsernameExistsAsync(string username)
@@ -153,6 +234,8 @@ namespace MIOTWebAPI.Controllers
 
             return jwtTokenHandler.WriteToken(token);
         }
+
+
 
     }
 }

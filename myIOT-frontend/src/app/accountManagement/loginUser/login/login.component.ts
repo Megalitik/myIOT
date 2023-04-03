@@ -71,8 +71,9 @@ export class LoginComponent {
           this.router.navigate(["/dashboard"]);
         },
         error: (err) =>{
-          this.toastr.error('Erro ao Entrar: ' + err, 'Acesso Falhou');
           console.log(err);
+          this.toastr.error('Erro ao Entrar', 'Acesso Falhou');
+          
           return;
         }
       }

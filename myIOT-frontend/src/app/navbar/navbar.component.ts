@@ -19,13 +19,23 @@ export class NavbarComponent implements OnInit {
     this.auth.Logout();
   }
 
-  isUserSignedIn()
+  hideLogoutButton()
   {
 
     if(this.auth.isUserLoggedIn() == true)
       return false;
       else {
         return true;
+      }
+  }
+
+  isUserSignedIn()
+  {
+
+    if(this.auth.isUserLoggedIn() == true)
+      return true;
+      else {
+        return false;
       }
   }
 

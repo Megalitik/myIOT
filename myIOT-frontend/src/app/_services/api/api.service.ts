@@ -8,11 +8,16 @@ import { HttpClient } from '@angular/common/http';
 })
 export class ApiService {
 
-  private baseUrl: string = configurl.apiServer.APIUrl + 'User/';
+  private baseUserUrl: string = configurl.apiServer.APIUrl + 'User/';
+  private baseDeviceUrl: string = configurl.apiServer.APIUrl + 'Device/';
 
   constructor(private http : HttpClient) { }
 
   getAllUsers() {
-    return this.http.get<any>(this.baseUrl);
+    return this.http.get<any>(this.baseUserUrl);
+  }
+
+  sendCommandMessage(deviceId: string, commandId: string) {
+    return this.http.post<any>(`${this.baseDeviceUrl}SendCloudToDeviceMessageAsync?targetDevice=${deviceId}&message=${commandId}`, {});
   }
 }

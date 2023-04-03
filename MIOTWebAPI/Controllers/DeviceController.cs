@@ -64,40 +64,6 @@ namespace MIOTWebAPI.Controllers
 
         }
 
-        [HttpGet("GetDevicesRegistryManager")]
-        public async void GetDevicesRegistryManager()
-        {
-            try
-            {
-                var registryManager = RegistryManager.CreateFromConnectionString(connectionString);
-                var query = registryManager.CreateQuery("SELECT * FROM devices", 100);
-                while (query.HasMoreResults)
-                {
-                    var page = await query.GetNextAsTwinAsync();  // exits here
-                    foreach (var twin in page)
-                    {
-                        // do work on twin object
-                    }
-                }
-
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
-
-        [HttpGet("LastDeviceMessage")]
-        public async Task<string> GetLastMessageAsync(string deviceId)
-        {
-            var registryManager = RegistryManager.CreateFromConnectionString(connectionString);
-            var twin = await registryManager.GetTwinAsync(deviceId);
-            var deviceClient = DeviceClient.CreateFromConnectionString(connectionString, deviceId);
-            var message = await deviceClient.ReceiveAsync();
-            return message.GetBytes().ToString();
-        }
-
         [HttpPost("SendMessage")]
         public async Task<IActionResult> SendMessageAsync(string message, string deviceId)
         {
@@ -134,6 +100,7 @@ namespace MIOTWebAPI.Controllers
                 return Ok(devices);
             }
         }
+
 
 
         [HttpPost("DeleteDeviceAsync")]

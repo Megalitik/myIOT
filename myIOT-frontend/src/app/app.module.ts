@@ -26,6 +26,7 @@ import { RegisterUserComponent } from './accountManagement/register-user/registe
 import { ProfileUserComponent } from './accountManagement/profile-user/profile-user.component';
 import { ToastrModule } from 'ngx-toastr';
 import { TokenInterceptor } from './_services/interceptor/token.interceptor';
+import { ResetComponent } from './accountManagement/reset/reset.component';
 
 
 @NgModule({
@@ -44,7 +45,8 @@ import { TokenInterceptor } from './_services/interceptor/token.interceptor';
     TemperatureSensorComponent,
     LoginComponent,
     RegisterUserComponent,
-    ProfileUserComponent
+    ProfileUserComponent,
+    ResetComponent
   ],
   imports: [
     BrowserModule,

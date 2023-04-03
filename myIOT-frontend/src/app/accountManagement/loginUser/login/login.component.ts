@@ -56,21 +56,21 @@ export class LoginComponent {
 
     this.auth.Login(this.loginForm.value).subscribe(
       {
-        next:(res)=>{
+        next: (res) =>{
           this.toastr.success('Utilizador com Acesso Garantido', 'Successo');
           console.log(res);
           this.loginForm.reset();
-          this.auth.storeJwtToken(res.Token); 
+          this.auth.storeJwtToken(res.token); 
 
 
           const tokenPayload = this.auth.decodedJwtToken();
           console.log(tokenPayload);
-          this.userStore.setUserNameForUserStore(tokenPayload.userName);
+          this.userStore.setUserNameForUserStore(tokenPayload.unique_name);
           this.userStore.setRoleForUserStore(tokenPayload.role);
 
           this.router.navigate(["/dashboard"]);
         },
-        error:(err)=>{
+        error: (err) =>{
           this.toastr.error('Erro ao Entrar: ' + err, 'Acesso Falhou');
           console.log(err);
           return;

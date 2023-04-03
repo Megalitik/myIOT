@@ -60,7 +60,6 @@ import { ResetComponent } from './accountManagement/reset/reset.component';
     ToastrModule.forRoot()
   ],
   providers: [
-    UserService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,

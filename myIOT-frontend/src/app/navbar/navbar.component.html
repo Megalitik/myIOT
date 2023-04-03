@@ -3,7 +3,7 @@
     <span class="logo logo-right">IOT</span>
 </a>
 
-<a class="nav-link float-left" routerLink="/login">Entrar</a>
-<a class="nav-link float-left" routerLink="/register">Criar conta</a>
+<a [hidden]="isUserSignedIn()" class="nav-link float-left" routerLink="/login">Entrar</a>
+<a [hidden]="isUserSignedIn()" class="nav-link float-left" routerLink="/register">Criar conta</a>
 
 <button [hidden]="isUserSignedIn()" (click)="onLogout()" class="btn btn-danger">Sair</button>

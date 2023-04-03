@@ -21,9 +21,10 @@ export class DashboardComponent implements OnInit {
   users: any[] = [];
   errorMessage: string = "";
   username: string = "";
+  role: string = "";
 
   constructor(private http: HttpClient, private api : ApiService, private userStore : UserStoreService,
-    private jwtHelper: JwtHelperService, private auth : AuthService, private router: Router) { }
+    private auth : AuthService, private router: Router) { }
 
   ngOnInit() {
     this.api.getAllUsers().subscribe(users => {
@@ -36,43 +37,37 @@ export class DashboardComponent implements OnInit {
       this.username = userName || usernameFromToken;
     });
 
-    this.http.get<any[]>((this.url + 'GetUserDevices')).subscribe(
-      data => {
-        this.devices = data;
-        if (this.devices.length === 0) {
-          this.errorMessage = 'Não há dispositivos';
-        }
-      },
-      (error: HttpErrorResponse) => {
-        if (error.error instanceof ErrorEvent) {
-          //Erro no lado do cliente
-          this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
-        } else {
-          // Erro no Servidor ou API
-          this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
-        }
-      }
-    );
+    // this.http.get<any[]>((this.url + 'GetUserDevices')).subscribe(
+    //   data => {
+    //     this.devices = data;
+    //     if (this.devices.length === 0) {
+    //       this.errorMessage = 'Não há dispositivos';
+    //     }
+    //   },
+    //   (error: HttpErrorResponse) => {
+    //     if (error.error instanceof ErrorEvent) {
+    //       //Erro no lado do cliente
+    //       this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
+    //     } else {
+    //       // Erro no Servidor ou API
+    //       this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
+    //     }
+    //   }
+    // );
   }
 
   navigateToDevice(deviceId: number) {
     this.router.navigate(['/device', deviceId]);
   }
 
-  isUserAuthenticated() 
+  isUserAuthenticated()
   {
-    const token = localStorage.getItem("jwt");
 
-    if (token && !this.jwtHelper.isTokenExpired(token)) {
+    if(this.auth.isUserLoggedIn() == true)
       return true;
-    }
-    else {
-      return false;
-    }
-  }
-  public logOut = () => {
-    localStorage.removeItem("jwt");
-    this.router.navigate(["login"]);
+      else {
+        return false;
+      }
   }
 
   devicestest: Device[] = [

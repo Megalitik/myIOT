@@ -38,7 +38,7 @@ export class AuthService {
   }
 
   getJwtToken() {
-    localStorage.getItem('token')
+    return localStorage.getItem('token')
   }
 
   getRoleFromJwtToken() {
@@ -58,6 +58,7 @@ export class AuthService {
   decodedJwtToken() {
     const jwtHelper = new JwtHelperService();
     const jwtToken = this.getJwtToken()!;
+    console.log(jwtHelper.decodeToken(jwtToken));
 
     return jwtHelper.decodeToken(jwtToken);
   }

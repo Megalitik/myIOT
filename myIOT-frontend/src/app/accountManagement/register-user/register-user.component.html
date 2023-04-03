@@ -8,39 +8,39 @@
             <div class="panel-body p-3">
                 <form [formGroup]="UserForm">
                     <div class="form-group pt-3">
-                        <div class="input-field">
+                        <div class="input-field"
+                            [class.error]="UserForm.controls['UserName'].dirty && UserForm.hasError('required','UserName')">
                             <span class="fa fa-user fa-color p-2"></span>
-                            <input class="form-control" formControlName="username" type="text"
+                            <input class="form-control" formControlName="UserName" type="text"
                                 placeholder="Nome de Utilizador">
                         </div>
                     </div>
-                    <small *ngIf="UserForm.controls['email'].dirty && UserForm.hasError('required', 'email')"
+                    <small *ngIf="UserForm.controls['UserName'].dirty && UserForm.hasError('required','UserName')"
                         class="text-danger">É necessário introduzir um Nome de Utilizador</small>
+
+
                     <div class="form-group pt-3">
-                        <div class="input-field">
+                        <div class="input-field"
+                        [class.error]="UserForm.controls['Email'].dirty && UserForm.hasError('required','Email')">
                             <span class="fa fa-envelope p-2 fa-color"></span>
-                            <input class="form-control" formControlName="email" type="email" placeholder="Email">
+                            <input class="form-control" formControlName="Email" type="email" placeholder="Email">
                         </div>
                     </div>
-                    <small *ngIf="UserForm.controls['username'].dirty && UserForm.hasError('required', 'username')"
+                    <small *ngIf="UserForm.controls['Email'].dirty && UserForm.hasError('required', 'Email')"
                         class="text-danger">É necessário introduzir um Email</small>
+
+
                     <div class="form-group pt-3">
                         <div class="input-field">
                             <span class="fa fa-lock p-2 fa-color"></span>
-                            <input class="form-control" formControlName="password" [type]="type"
+                            <input class="form-control" formControlName="Password" [type]="type"
                                 placeholder="Palavra-Passe">
                             <span (click)="ShowOrHidePassword()" class="fa fa-color {{eyeIcon}}"></span>
                         </div>
                     </div>
-                    <small *ngIf="UserForm.controls['password'].dirty && UserForm.hasError('required', 'password')"
+                    <small *ngIf="UserForm.controls['Password'].dirty && UserForm.hasError('required', 'Password')"
                         class="text-danger">É necessário introduzir uma Palavra-Passe</small>
-                    <div class="form-group pt-3">
-                        <div class="input-field">
-                            <span class="fa fa-lock p-2 fa-color"></span>
-                            <input class="form-control" formControlName="confirmPassword" type="password"
-                                placeholder="Confirmar Palavra-Passe">
-                        </div>
-                    </div>
+
 
                     <button (click)="register()" [disabled]="UserForm.invalid" type="submit"
                         class="btn btn-primary btn-block mt-4 w-100">Criar Conta</button>

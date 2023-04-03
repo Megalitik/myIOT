@@ -58,7 +58,7 @@ export class LoginComponent {
       {
         next:(res)=>{
           this.toastr.success('Utilizador com Acesso Garantido', 'Successo');
-          console.log(res.message);
+          console.log(res);
           this.loginForm.reset();
           this.auth.storeJwtToken(res.Token); 
 
@@ -71,8 +71,8 @@ export class LoginComponent {
           this.router.navigate(["/dashboard"]);
         },
         error:(err)=>{
-          this.toastr.error('Erro ao Entrar: ' + err?.error.message, 'Acesso Falhou');
-          console.log(err?.error.message);
+          this.toastr.error('Erro ao Entrar: ' + err, 'Acesso Falhou');
+          console.log(err);
           return;
         }
       }

@@ -57,14 +57,14 @@ namespace MIOTWebAPI.Controllers
                 else
                 {
                     var user = await _appContext.Users
-                        .FirstOrDefaultAsync(u => u.UserName == userObject.UserName && u.Password == userObject.Password);
+                        .FirstOrDefaultAsync(u => u.UserName == userObject.UserName);
 
                     if (user == null)
                     {
                         return NotFound(new { Message = "Utilizador não foi encontrado" });
                     }
 
-                    if (PasswordHasher.VerifyPassword(userObject.Password, user.Password))
+                    if (PasswordHasher.VerifyPassword(userObject.Password, user.Password) == false)
                     {
                         return BadRequest(new { Message = "A Palavra-Passe está incorreta" });
                     }
@@ -85,7 +85,7 @@ namespace MIOTWebAPI.Controllers
         }
 
         [HttpPost("Register")]
-        //POST: /api/User/Login
+        //POST: /api/User/Register
         public async Task<IActionResult> Register([FromBody] User userObject)
         {
             try

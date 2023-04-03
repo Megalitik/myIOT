@@ -30,11 +30,8 @@ export class RegisterUserComponent {
   ngOnInit() {
     this.UserForm = this.formbulider.group({
       UserName: ['', [Validators.required]],
-      Password: ['', [Validators.required, Validators.minLength(6)]],
-      ConfirmPassword: ['', [Validators.required]],
+      Password: ['', [Validators.required]],
       Email: ['', [Validators.required, Validators.email]]
-    }, { 
-      validator: this.ConfirmedValidator('Password', 'ConfirmPassword')
     });
   }
 
@@ -75,10 +72,10 @@ export class RegisterUserComponent {
           this.toastr.success('Utilizador Registrado com Sucesso', 'Successo');
           console.log(res.message);
           this.UserForm.reset();
-          this.router.navigate(["/dashboard"]);
+          this.router.navigate(["/login"]);
         },
         error:(err)=>{
-          this.toastr.error('Erro ao Registar um novo Utilizador: ' + err?.error.message, 'Acesso Falhou');
+          this.toastr.error('Erro ao Registar um novo Utilizador ', 'Acesso Falhou');
           console.log(err?.error.message);
           return;
         }

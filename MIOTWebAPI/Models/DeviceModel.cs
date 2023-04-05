@@ -4,9 +4,8 @@ namespace MIOTWebAPI.Models
 {
     public class DeviceModel
     {
-        public string DeviceId { get; set; }
+        public int DeviceId { get; set; }
         public string DeviceName { get; set; }
-        public bool IsConnected { get; set; }
-        public DateTime? LastActivityTime { get; set; }
+        public int UserId { get; set; }
     }
 }

@@ -1,62 +1,19 @@
 <div *ngIf="isUserAuthenticated()" class="section-container">
-    <div class="cards">
-        <div class="card-deck">
-            <div class="card mb-3 shadow card-theme">
-                <div class="card-header card-header-theme">
-                    <h1>Dashboard</h1>
-                    <h2>{{ iotHubTest }}</h2>
-                </div>
-                <div class="card-body">
-                    <app-bar-chart></app-bar-chart>
-                </div>
-            </div>
-        </div>
-    </div>
+    <h1>Dashboard</h1>
 
     <div class="row">
-        <div class="col-md-4" *ngFor="let device of devices">
-          <div class="card" (click)="navigateToDevice(device.DeviceId)">
-            <div class="card-body">
-              <h5 class="card-title">{{ device.DeviceId }}</h5>
-            </div>
-          </div>
+        <button type="button" class="btn btn-primary btn-sm w-25 p-3">Adicionar um novo dispositivo</button>
+        <button type="button" class="btn btn-danger btn-sm w-25 p-3">Apagar um dispositivo</button>
+    </div>
+    <div class="card-deck servers">
+        <div *ngFor="let userdevice of devicestest">
+            <app-user-devices [userDevice]="userdevice"></app-user-devices>
         </div>
-      </div>
-
-    <table class="table table-dark table-inverse table-hover">
-        <thead class="thead-dark">
-            <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>Tipo</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let device of devicestest">
-                <td>{{ device.DeviceID }}</td>
-                <td>{{ device.Name }}</td>
-                <td>{{ device.DeviceType.Name }}</td>
-                <td>{{ device.DeviceState }}</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <table class="table table-dark table-inverse table-hover">
-        <thead class="thead-dark">
-            <tr>
-                <th>ID</th>
-                <th>Email</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let user of users">
-                <td>{{ user.UserName }}</td>
-                <td>{{ user.Email }}</td>
-            </tr>
-        </tbody>
-    </table>
+    </div>
 </div>
+
+
+
 <div *ngIf="!isUserAuthenticated()">
     <h1>Accesso Negado</h1>
 </div>

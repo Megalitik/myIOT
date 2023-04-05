@@ -17,6 +17,14 @@ export class ApiService {
     return this.http.get<any>(this.baseUserUrl);
   }
 
+  getAllUserDevices(username: string) {
+    return this.http.get<any>(`${this.baseUserUrl}GetAllUserDevices?username=${username}`);
+  }
+
+  RegisterNewDeviceAsync(deviceId: string) {
+    return this.http.post<any>(`${this.baseDeviceUrl}RegisterNewDeviceAsync?newDeviceId=${deviceId}`, {});
+  }
+
   sendCommandMessage(deviceId: string, commandId: string) {
     return this.http.post<any>(`${this.baseDeviceUrl}SendCloudToDeviceMessageAsync?targetDevice=${deviceId}&message=${commandId}`, {});
   }

@@ -23,7 +23,7 @@ export class DashboardComponent implements OnInit {
   errorMessage: string = "";
   username: string = "";
   role: string = "";
-  iotHubTest: string = "";
+  selectedItemId: number | undefined;
 
   constructor(private http: HttpClient, private api: ApiService, private userStore: UserStoreService,
     private auth: AuthService, private router: Router) { }
@@ -36,9 +36,13 @@ export class DashboardComponent implements OnInit {
       })
 
 
-      this.api.sendCommandMessage("SimulatedSensorTest", "command1").subscribe(deviceMessage => {
-        this.iotHubTest = deviceMessage;
-      })
+      // this.api.sendCommandMessage("SimulatedSensorTest", "command1").subscribe(deviceMessage => {
+        
+      // })
+
+      // this.api.RegisterNewDeviceAsync("SimulatedSensorTest1").subscribe(deviceMessage => {
+        
+      // })
 
       this.userStore.getUserNameFromUserStore().subscribe(userName => {
         let usernameFromToken = this.auth.getUsernameFromJwtToken();
@@ -73,8 +77,8 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  navigateToDevice(deviceId: number) {
-    this.router.navigate(['/device', deviceId]);
+  onClick() {
+    console.log('Selected item ID:', this.selectedItemId);
   }
 
   isUserAuthenticated() {
@@ -86,23 +90,23 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  searchValue: string = '';
+
+  selectedOption: any;
+
+  onOptionSelect(option: any) {
+    this.selectedOption = option;
+  }
+
+  onSubmit() {
+    console.log(this.selectedOption);
+  }
+
   devicestest: Device[] = [
-    {
-      DeviceID: 1, Name: 'Teste', DeviceType:
-        { ID: 1, Name: 'TipoTeste' }, DeviceState: true
-    },
-    {
-      DeviceID: 2, Name: 'Teste', DeviceType:
-        { ID: 1, Name: 'TipoTeste' }, DeviceState: false
-    },
-    {
-      DeviceID: 3, Name: 'Teste', DeviceType:
-        { ID: 3, Name: 'TipoTeste3' }, DeviceState: false
-    },
-    {
-      DeviceID: 4, Name: 'Teste', DeviceType:
-        { ID: 4, Name: 'TipoTeste4' }, DeviceState: true
-    }
+    { DeviceID: 1, Name: 'Teste1' },
+    { DeviceID: 2, Name: 'Teste2' },
+    { DeviceID: 3, Name: 'Teste3'},
+    { DeviceID: 4, Name: 'Teste4'}
   ];
 
 

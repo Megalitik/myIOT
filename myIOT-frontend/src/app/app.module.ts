@@ -11,22 +11,19 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { SettingsComponent } from './userPanel/settings/settings.component';
 import { DashboardComponent } from './userPanel/dashboard/dashboard.component';
-import { SensorsComponent } from './userPanel/sensors/sensors.component';
 import { ControllersComponent } from './userPanel/controllers/controllers.component';
 import { appRoutes } from 'src/routes';
-import { LineChartComponent } from './charts/line-chart/line-chart.component';
-import { BarChartComponent } from './charts/bar-chart/bar-chart.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserComponent } from './accountManagement/user/user.component';
 import { UserService } from './shared/user.service';
-import { HumiditySensorComponent } from './userPanel/sensor-features/humidity-sensor/humidity-sensor.component';
-import { TemperatureSensorComponent } from './userPanel/sensor-features/temperature-sensor/temperature-sensor.component';
 import { LoginComponent } from './accountManagement/loginUser/login/login.component';
 import { RegisterUserComponent } from './accountManagement/register-user/register-user.component';
 import { ProfileUserComponent } from './accountManagement/profile-user/profile-user.component';
 import { ToastrModule } from 'ngx-toastr';
 import { TokenInterceptor } from './_services/interceptor/token.interceptor';
 import { ResetComponent } from './accountManagement/reset/reset.component';
+import { FilterPipe } from './_services/helper/filter.pipe';
+import { UserDevicesComponent } from './userPanel/user-devices/user-devices.component';
 
 
 @NgModule({
@@ -36,17 +33,14 @@ import { ResetComponent } from './accountManagement/reset/reset.component';
     SidebarComponent,
     SettingsComponent,
     DashboardComponent,
-    SensorsComponent,
     ControllersComponent,
-    LineChartComponent,
-    BarChartComponent,
     UserComponent,
-    HumiditySensorComponent,
-    TemperatureSensorComponent,
     LoginComponent,
     RegisterUserComponent,
     ProfileUserComponent,
-    ResetComponent
+    ResetComponent,
+    FilterPipe,
+    UserDevicesComponent
   ],
   imports: [
     BrowserModule,

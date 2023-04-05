@@ -36,7 +36,7 @@ namespace MIOTWebAPI.Controllers
 
         [HttpPost("RegisterNewDeviceAsync")]
         //POST: /api/Device/RegisterNewDeviceAsync
-        private async Task<string> RegisterNewDeviceAsync(string newDeviceId)
+        public async Task RegisterNewDeviceAsync(string newDeviceId)
         {
             Device device;
 
@@ -60,18 +60,6 @@ namespace MIOTWebAPI.Controllers
                 device = await registryManager.GetDeviceAsync(newDeviceId);
             }
 
-            return device.Authentication.SymmetricKey.PrimaryKey;
-
-        }
-
-        [HttpPost("SendMessage")]
-        public async Task<IActionResult> SendMessageAsync(string message, string deviceId)
-        {
-            var deviceClient = DeviceClient.CreateFromConnectionString(connectionString, deviceId);
-            var messageBytes = Encoding.UTF8.GetBytes(message);
-            var iotMessage = new Microsoft.Azure.Devices.Client.Message(messageBytes);
-            await deviceClient.SendEventAsync(iotMessage);
-            return Ok();
         }
 
         [HttpGet("GetDevices")]
@@ -82,7 +70,7 @@ namespace MIOTWebAPI.Controllers
             {
                 await connection.OpenAsync();
 
-                var command = new SqlCommand("SELECT deviceId, deviceName FROM Devices where deviceUserId like '%" + userId + "%'", connection);
+                var command = new SqlCommand("SELECT deviceId, deviceName FROM Devices where UserId like '%" + userId + "%'", connection);
                 var reader = await command.ExecuteReaderAsync();
 
                 var devices = new List<DeviceModel>();
@@ -90,7 +78,7 @@ namespace MIOTWebAPI.Controllers
                 {
                     devices.Add(new DeviceModel
                     {
-                        DeviceId = reader.GetString(0),
+                        DeviceId = Convert.ToInt32(reader.GetString(0)),
                         DeviceName = reader.GetString(1)
                     });
                 }
@@ -133,25 +121,5 @@ namespace MIOTWebAPI.Controllers
             var commandMessage = new Microsoft.Azure.Devices.Message(Encoding.ASCII.GetBytes((message)));
             await serviceClient.SendAsync(targetDevice, commandMessage);
         }
-
-        [HttpGet("ReceiveFeedbackAsync")]
-        //GET: /api/Device/ReceiveFeedbackAsync
-        public async void ReceiveFeedbackAsync()
-        {
-            serviceClient = ServiceClient.CreateFromConnectionString(connectionString);
-            var feedbackReceiver = serviceClient.GetFeedbackReceiver();
-
-            while (true)
-            {
-                var feedbackBatch = await feedbackReceiver.ReceiveAsync(CancellationToken.None);
-
-                if (feedbackBatch == null)
-                    continue;
-
-                await feedbackReceiver.CompleteAsync(feedbackBatch, CancellationToken.None);
-            }
-        }
-
-
     }
 }

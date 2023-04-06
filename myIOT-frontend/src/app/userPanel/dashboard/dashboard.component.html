@@ -2,8 +2,9 @@
     <h1>Dashboard</h1>
 
     <div class="row top-buffer">
-        <button type="button" class="btn btn-primary btn-sm w-25 ml-1">Adicionar um novo dispositivo</button>
-        <button type="button" class="btn btn-danger btn-sm w-25">Apagar um dispositivo</button>
+        <button type="button" data-bs-toggle="modal" data-bs-target="#addDeviceModal" class="btn btn-primary btn-sm w-25 ml-1">Adicionar um novo dispositivo</button>
+        <button type="button" data-bs-toggle="modal" data-bs-target="#deleteDeviceModal" class="btn btn-danger btn-sm w-25">Apagar um dispositivo</button>
+    
     </div>
     <div class="card-deck servers">
         <div *ngFor="let userdevice of devicestest">
@@ -17,15 +18,14 @@
         <div class="modal-content">
             <div class="modal-header">
                 <p class="modal-title" id="addDeviceModalLabel"> <span
-                        style="font-size: 25px; color: #000; font-weight: 700;">Esqueceste a Palavra-Passe?</span>
+                        style="font-size: 25px; color: #000; font-weight: 700;">Adicionar um novo dispositivo</span>
                     <br />
-                    <small style="color: #000;">Por favor, indique abaixo o Email para repor a sua Palavra-Passe</small>
+                    <small style="color: #000;">Por favor, adicione um novo dispositivo abaixo</small>
                 </p>
 
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form [formGroup]="addDeviceForm">
                     <div class="form-group pt-3">
                         <div class="input-field">
                             <span class="fa fa-user fa-color p-2"></span>
@@ -33,7 +33,6 @@
                                 placeholder="Nome do Dispositivo">
                         </div>
                     </div>
-                </form>
             </div>
             <div class="modal-footer">
                 <button id="addDeviceCloseBtn" type="button" class="btn btn-secondary"
@@ -58,17 +57,16 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form [formGroup]="addDeviceForm">
-                    <div class="form-group pt-3">
-                        <label for="my-dropdown">Seleciona um dispositivo:</label>
-                        <select class="form-control" id="my-dropdown" [(ngModel)]="selectedDeleteDevice">
-                            <option *ngFor="let deleteDevice of devicestest" [value]="deleteDevice.Id">{{ deleteDevice.Name }}</option>
-                        </select>
-                    </div>
-                    <!-- <small *ngIf="!resetPwdEmail" class="text-danger">É necessário um dispositivo</small>
+                <div class="form-group pt-3">
+                    <label for="my-dropdown">Seleciona um dispositivo:</label>
+                    <select class="form-control" id="my-dropdown" [(ngModel)]="selectedDeleteDevice">
+                        <option *ngFor="let deleteDevice of devicestest" [value]="deleteDevice.Id">{{ deleteDevice.Name
+                            }}</option>
+                    </select>
+                </div>
+                <!-- <small *ngIf="!resetPwdEmail" class="text-danger">É necessário um dispositivo</small>
                     <small *ngIf="!isValidEmail && ValidateEmail" class="text-danger">É necessário um dispositivo
                         válido</small> -->
-                </form>
             </div>
             <div class="modal-footer">
                 <button id="deleteDeviceCloseBtn" type="button" class="btn btn-secondary"

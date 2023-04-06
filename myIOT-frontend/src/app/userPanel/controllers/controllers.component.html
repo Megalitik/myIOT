@@ -1,6 +1,15 @@
 <div class="container-fluid">
-  <select class="form-select form-select-lg mb-3 h-25 p-3" [(ngModel)] = "selectedCommand">   
-    <option *ngFor="let command of userDevices" [ngValue]="command">{{command.Name}}</option>
- </select>
- <button type="button" class="btn btn-primary" (click)="sendCommand()">Enviar</button>
+  <h3 class="header">Coamndos</h3>
+  <div class="row">
+    <div class="btn-group" role="group" aria-label="Comandos">
+      <button type="button" class="btn btn-primary" (click)="sendCommand()">Adicionar Comando</button>
+      <button type="button" class="btn btn-primary btn-danger" (click)="sendCommand()">Apagar Comando</button>
+    </div>
+  </div>
+  <div class="row">
+    <select class="form-select form-select-lg mb-3 h-25 p-3" [(ngModel)]="selectedCommand">
+      <option *ngFor="let command of userDevices" [ngValue]="command">{{command.Name}}</option>
+    </select>
+    <button type="button" class="btn btn-primary" (click)="sendCommand()">Enviar</button>
+  </div>
 </div>

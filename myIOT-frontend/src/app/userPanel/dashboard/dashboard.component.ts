@@ -25,7 +25,7 @@ export class DashboardComponent implements OnInit {
   errorMessage: string = "";
   username: string = "";
   role: string = "";
-  selectedDeleteDevice: number;
+  selectedDeleteDevice: string;
 
   addDeviceForm: FormGroup;
   deviceUserId: string;
@@ -48,9 +48,9 @@ export class DashboardComponent implements OnInit {
         
       // })
 
-      // this.api.RegisterNewDeviceAsync("SimulatedSensorTest1").subscribe(deviceMessage => {
+      this.api.RegisterNewDeviceAsync("SimulatedSensorTest1", this.deviceUserId).subscribe(deviceMessage => {
         
-      // })
+      })
 
       this.userStore.getUserNameFromUserStore().subscribe(userName => {
         let usernameFromToken = this.auth.getUsernameFromJwtToken();
@@ -65,23 +65,27 @@ export class DashboardComponent implements OnInit {
         console.log(this.role);
       });
 
-      // this.http.get<any[]>((this.url + 'GetUserDevices')).subscribe(
-      //   data => {
-      //     this.devices = data;
-      //     if (this.devices.length === 0) {
-      //       this.errorMessage = 'Não há dispositivos';
-      //     }
-      //   },
-      //   (error: HttpErrorResponse) => {
-      //     if (error.error instanceof ErrorEvent) {
-      //       //Erro no lado do cliente
-      //       this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
-      //     } else {
-      //       // Erro no Servidor ou API
-      //       this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
-      //     }
-      //   }
-      // );
+      this.api.getAllUserDevices(this.deviceUserId).subscribe(devices => {
+        this.devices = devices;
+      });
+
+      this.http.get<Device[]>((this.url + 'GetUserDevices')).subscribe(
+        data => {
+          this.devices = data;
+          if (this.devices.length === 0) {
+            this.errorMessage = 'Não há dispositivos';
+          }
+        },
+        (error: HttpErrorResponse) => {
+          if (error.error instanceof ErrorEvent) {
+            //Erro no lado do cliente
+            this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
+          } else {
+            // Erro no Servidor ou API
+            this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
+          }
+        }
+      );
     }
   }
 
@@ -113,7 +117,7 @@ export class DashboardComponent implements OnInit {
   }
 
   deleteDevice() {
-    this.api.DeleteDeviceAsync(this.selectedDeleteDevice).subscribe(data => {
+    this.api.DeleteDeviceAsync(this.selectedDeleteDevice, this.deviceUserId).subscribe(data => {
       this.toastr.success("O dispositivo foi apagado com sucesso", "Dispositivo Apagado");
     })
   }

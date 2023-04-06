@@ -26,14 +26,18 @@ export class ApiService {
   }
 
   RegisterNewDeviceAsync(deviceName: string, userID: string) {
-    return this.http.post<any>(`${this.baseDeviceUrl}RegisterNewDeviceAsync?newDeviceId=${deviceName}&userID=${userID}`, {});
+    return this.http.post<any>(`${this.baseDeviceUrl}RegisterNewDeviceAsync?deviceName=${deviceName}&userID=${userID}`, {});
   }
 
-  DeleteDeviceAsync(deviceId: number) {
-    return this.http.post<any>(`${this.baseDeviceUrl}RegisterNewDeviceAsync?newDeviceId=${deviceId}`, {});
+  DeleteDeviceAsync(deviceId: string, userId: string) {
+    return this.http.post<any>(`${this.baseDeviceUrl}DeleteDeviceAsync?deviceId=${deviceId}&deviceId=${deviceId}`, {});
   }
 
   sendCommandMessage(deviceId: string, commandId: string) {
     return this.http.post<any>(`${this.baseDeviceUrl}SendCloudToDeviceMessageAsync?targetDevice=${deviceId}&message=${commandId}`, {});
+  }
+
+  deleteCommandMessage(deviceId: string, commandId: string) {
+    return this.http.post<any>(`${this.baseDeviceUrl}DeleteDeviceCommand?targetDevice=${deviceId}&command=${commandId}`, {});
   }
 }

@@ -1,9 +1,9 @@
 <div class="card mb-3 shadow block-status">
     <div class="card-header name">
-        <h3 class="card-title"></h3>
+        <h3 class="card-title">{{userDevice.Name}}</h3>
     </div>
     <div class="card-body">
-        {{userDevice.Name}}
+        {{ getDeviceConnectionState(userDevice.Name) }}
     </div>
 
     <button (click)="redirectToDevicePage(userDevice.Name)" class="btn btn-default action">Usar</button>

@@ -62,7 +62,7 @@
                     <div class="form-group pt-3">
                         <label for="my-dropdown">Seleciona um dispositivo:</label>
                         <select class="form-control" id="my-dropdown" [(ngModel)]="selectedDeleteDevice">
-                            <option *ngFor="let deleteDevice of devicestest" [value]="deleteDevice.DeviceID">{{ deleteDevice.Name }}</option>
+                            <option *ngFor="let deleteDevice of devicestest" [value]="deleteDevice.Id">{{ deleteDevice.Name }}</option>
                         </select>
                     </div>
                     <!-- <small *ngIf="!resetPwdEmail" class="text-danger">É necessário um dispositivo</small>

@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { Device } from '../../shared/device';
 
 import { apiServer } from '../../_config/environment';
 import { ApiService } from '../../_services/api/api.service';
@@ -11,6 +10,7 @@ import { AuthService } from 'src/app/_services/auth/auth.service';
 import { DeviceCommand } from 'src/app/Models/DeviceCommand';
 import { ToastrService } from 'ngx-toastr';
 import { FormGroup } from '@angular/forms';
+import { Device } from 'src/app/Models/Device';
 
 @Component({
   selector: 'app-dashboard',
@@ -123,10 +123,10 @@ export class DashboardComponent implements OnInit {
   }
 
   devicestest: Device[] = [
-    { DeviceID: 1, Name: 'Teste1' },
-    { DeviceID: 2, Name: 'Teste2' },
-    { DeviceID: 3, Name: 'Teste3'},
-    { DeviceID: 4, Name: 'Teste4'}
+    { Id: 1, Name: 'Teste1' },
+    { Id: 2, Name: 'Teste2' },
+    { Id: 3, Name: 'Teste3'},
+    { Id: 4, Name: 'Teste4'}
   ];
 
 

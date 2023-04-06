@@ -172,8 +172,14 @@ namespace MIOTWebAPI.Controllers
         {
             serviceClient = ServiceClient.CreateFromConnectionString(connectionString);
 
+            try {
             var commandMessage = new Microsoft.Azure.Devices.Message(Encoding.ASCII.GetBytes((message)));
             await serviceClient.SendAsync(targetDevice, commandMessage);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
             return Ok("Comando foi enviado");
         }

@@ -12,10 +12,10 @@ import { ApiService } from 'src/app/_services/api/api.service';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/_services/auth/auth.service';
 
-interface Device {
-  deviceId: string;
-  deviceName: string;
-  deviceUserId: string;
+interface DeviceCommand {
+  Id: string;
+  Name: string;
+  command: string;
 }
 
 @Component({
@@ -28,9 +28,9 @@ export class ControllersComponent implements OnInit {
   private apiUrl =  apiServer.APIUrl + '/api/devices';
   public deviceId: string = "";
   deviceMessages: string[] = [];
-  selectedCommand = null;
+  selectedCommand: DeviceCommand;
   selectedDeviceId: string = '';
-  userDevices: Device[] = [];
+  // userDevices: DeviceCommand[] = [];
 
   commands: string[] = ['command1', 'command2', 'command3'];
 
@@ -47,7 +47,7 @@ export class ControllersComponent implements OnInit {
     console.log(this.deviceName);
     const tokenPayload = this.auth.decodedJwtToken();
 
-    this.userDeviceCommandsList(tokenPayload.nameid);
+    // this.userDeviceCommandsList(tokenPayload.nameid);
   }
 
   ngOnDestroy(): void {
@@ -57,19 +57,26 @@ export class ControllersComponent implements OnInit {
   }
 
   userDeviceCommandsList(userId: string) {
-    return this.http.get<Device[]>(`https://localhost:5001/api/Device/GetDevices/?deviceName=${this.deviceName}&userId=${userId}`).subscribe(devices => {
+    return this.http.get<DeviceCommand[]>(`https://localhost:5001/api/Device/GetDevices/?deviceName=${this.deviceName}&userId=${userId}`).subscribe(devices => {
       console.log(devices);
       this.userDevices = devices;
     });
   }
 
-  sendCommand(device: string, command: string) {
+  sendCommand() {
     // API POST request todo
-    this.api.sendCommandMessage(device, command).subscribe(deviceMessage => {
-      console.log('Sending command: ' + command);
+    this.api.sendCommandMessage(this.selectedCommand.Name, this.selectedCommand.Name).subscribe(deviceMessage => {
+      console.log('Sending command: ' + this.selectedCommand.Name);
       this.toastr.success("O comando foi enviado", "Comando enviado");
     });
   }
+
+  userDevices: DeviceCommand[] = [
+    { Id: "1", Name: 'Teste1', command:"command1" },
+    { Id: "2", Name: 'Teste1', command:"command1" },
+    { Id: "3", Name: 'Teste1', command:"command1" },
+    { Id: "4", Name: 'Teste1', command:"command1" },
+  ];
 
 
 }

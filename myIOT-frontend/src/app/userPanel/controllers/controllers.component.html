@@ -1,5 +1,6 @@
 <div class="container-fluid">
-  <select [(ngModel)] = "selectedCommand">   
-    <option *ngFor="let command of userDevices" [ngValue]="command">{{command.deviceName}}</option>
+  <select class="form-select form-select-lg mb-3 h-25 p-3" [(ngModel)] = "selectedCommand">   
+    <option *ngFor="let command of userDevices" [ngValue]="command">{{command.Name}}</option>
  </select>
+ <button type="button" class="btn btn-primary" (click)="sendCommand()">Enviar</button>
 </div>

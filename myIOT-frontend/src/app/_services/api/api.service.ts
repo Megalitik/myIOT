@@ -21,6 +21,10 @@ export class ApiService {
     return this.http.get<any>(`${this.baseUserUrl}GetDevices?username=${username}`);
   }
 
+  getDeviceConnectionState(deviceId: string) {
+    return this.http.get<any>(`${this.baseDeviceUrl}GetDeviceConnectionStateAsync?deviceId=${deviceId}`);
+  }
+
   RegisterNewDeviceAsync(deviceName: string, userID: string) {
     return this.http.post<any>(`${this.baseDeviceUrl}RegisterNewDeviceAsync?newDeviceId=${deviceName}&userID=${userID}`, {});
   }

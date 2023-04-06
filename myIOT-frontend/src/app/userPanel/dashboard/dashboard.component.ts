@@ -26,6 +26,7 @@ export class DashboardComponent implements OnInit {
   username: string = "";
   role: string = "";
   selectedDeleteDevice: string;
+  newDeviceName: string = "";
 
   addDeviceForm: FormGroup;
   deviceUserId: string;
@@ -111,7 +112,10 @@ export class DashboardComponent implements OnInit {
   }
 
   AddDevice() {
-    this.api.RegisterNewDeviceAsync(this.addDeviceForm.value, this.deviceUserId).subscribe(data => {
+    console.log(this.newDeviceName);
+    console.log(this.deviceUserId);
+
+    this.api.RegisterNewDeviceAsync(this.newDeviceName, this.deviceUserId).subscribe(data => {
       this.toastr.success("O dispositivo foi adicionado com sucesso", "Dispositivo Adicionado");
     })
   }

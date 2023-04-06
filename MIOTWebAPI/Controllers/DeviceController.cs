@@ -48,7 +48,6 @@ namespace MIOTWebAPI.Controllers
             {
                 if (await registryManager.GetDeviceAsync(deviceName) == null)
                 {
-                    device = await registryManager.AddDeviceAsync(new Device(deviceName));
 
                     using (var connection = new SqlConnection(sqlconnectionString))
                     {
@@ -57,30 +56,28 @@ namespace MIOTWebAPI.Controllers
                         string sql = "INSERT INTO [dbo].[Devices] ([deviceName],[deviceUserId]) VALUES (@name, @userId)";
                         using (SqlCommand cmd = new SqlCommand(sql, connection))
                         {
-                            cmd.Parameters.Add("@name", SqlDbType.Int).Value = deviceName;
-                            cmd.Parameters.Add("@userId", SqlDbType.VarChar, 50).Value = userId;
+                            cmd.Parameters.Add("@name", SqlDbType.VarChar, 500).Value = deviceName;
+                            cmd.Parameters.Add("@userId", SqlDbType.VarChar, 500).Value = userId;
 
                             cmd.CommandType = CommandType.Text;
                             cmd.ExecuteNonQuery();
                         }
-
-                        device = await registryManager.AddDeviceAsync(new Device(deviceName));
                     }
 
                     using (var connection = new SqlConnection(sqlconnectionString))
                     {
                         await connection.OpenAsync();
 
-                        var command = new SqlCommand("SELECT deviceId  FROM Devices where deviceName like '%" + deviceName + "%' AND deviceUserId like '%" + userId + "%');", connection);
+                        var command = new SqlCommand("SELECT deviceId  FROM Devices where deviceName like '%" + deviceName + "%' AND deviceUserId like '%" + userId + "%';", connection);
                         var reader = await command.ExecuteReaderAsync();
 
                         while (reader.Read())
                         {
-                            device = await registryManager.AddDeviceAsync(new Device(reader.GetString(0)));
+                            device = await registryManager.AddDeviceAsync(new Device(reader.GetInt32(0).ToString()));
                         }
                     }
 
-                    return device.Authentication.SymmetricKey.PrimaryKey;
+                    return "O dispositivo foi criado";
                 }
 
                 return "O dispositivo já existe";

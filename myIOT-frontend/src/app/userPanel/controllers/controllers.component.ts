@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Subject, interval, Subscription, timer } from 'rxjs';
@@ -8,12 +8,14 @@ import { Label } from 'ng2-charts';
 
 
 import { apiServer } from '../../_config/environment';
+import { ApiService } from 'src/app/_services/api/api.service';
+import { ToastrService } from 'ngx-toastr';
+import { AuthService } from 'src/app/_services/auth/auth.service';
 
 interface Device {
   deviceId: string;
   deviceName: string;
-  LastActivityTime: any;
-  IsConnected: any;
+  deviceUserId: string;
 }
 
 @Component({
@@ -25,100 +27,48 @@ export class ControllersComponent implements OnInit {
 
   private apiUrl =  apiServer.APIUrl + '/api/devices';
   public deviceId: string = "";
-  private pollingInterval = 5000; // in milliseconds
-  private failedRequests = 0;
   deviceMessages: string[] = [];
+  selectedCommand = null;
   selectedDeviceId: string = '';
   userDevices: Device[] = [];
 
-  temperatureData!: ChartDataSets[];
-  humidityData!: ChartDataSets[];
-  chartLabels!: Label[];
-  chartOptions: ChartOptions = {
-    responsive: true,
-    scales: {
-      xAxes: [{
-        ticks: {
-          autoSkip: true,
-          maxTicksLimit: 10
-        }
-      }]
-    }
-  };
-  chartType: ChartType = 'line';
   commands: string[] = ['command1', 'command2', 'command3'];
 
   private destroy$ = new Subject<void>();
   private pollingSubscription!: Subscription;
 
-  constructor(private route: ActivatedRoute, private http: HttpClient) { }
+  @Input() deviceName: string;
+
+  constructor(private route: ActivatedRoute, private api: ApiService,
+    private toastr : ToastrService, private auth: AuthService, private http: HttpClient) { }
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    this.deviceId = id !== null ? id : "";
-    this.startPolling();
 
-    this.userDeviceList();
+    console.log(this.deviceName);
+    const tokenPayload = this.auth.decodedJwtToken();
+
+    this.userDeviceCommandsList(tokenPayload.nameid);
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  
   }
 
-  private startPolling(): void {
-    this.pollingSubscription = interval(this.pollingInterval)
-      .pipe(
-        takeUntil(this.destroy$)
-      )
-      .subscribe(() => {
-        this.http.get<any>(`${this.apiUrl}/${this.deviceId}/temperatureAndHumidityData`)
-          .subscribe(
-            data => {
-              this.temperatureData.push(data.temperature);
-              this.humidityData.push(data.humidity);
-              const timestamp = new Date(data.timestamp).toLocaleTimeString();
-              this.chartLabels.push(timestamp);
-              this.failedRequests = 0;
-            },
-            error => {
-              this.failedRequests++;
-              if (this.failedRequests === 3) {
-                console.error('Não foi possível obter dados do Servidor');
-                this.pollingSubscription.unsubscribe();
-              }
-            }
-          );
-      });
-  }
-
-  userDeviceList() {
-    return this.http.get<Device[]>('https://localhost:5001/api/Device/GetDevices/?userId=admin').subscribe(devices => {
+  userDeviceCommandsList(userId: string) {
+    return this.http.get<Device[]>(`https://localhost:5001/api/Device/GetDevices/?deviceName=${this.deviceName}&userId=${userId}`).subscribe(devices => {
+      console.log(devices);
       this.userDevices = devices;
     });
   }
 
-  onDeviceSelection() {
-    if (this.selectedDeviceId != '') {
-      console.log('Selected device ID:', this.selectedDeviceId);
-      const url = apiServer.APIUrl + `/api/DeviceMessage/GetDeviceMessages/?deviceId=${this.selectedDeviceId}`;
-      this.http.get<string[]>(url);
-
-      this.http.get<string[]>(url).subscribe((messages) => {
-        this.deviceMessages = messages;
-      });
-
-      timer(0, 5000).subscribe(() => {
-        this.http.get<string[]>(url).subscribe((messages) => {
-          this.deviceMessages = messages;
-        });
-      });
-    }
-  }
-
-  sendCommand(command: string) {
+  sendCommand(device: string, command: string) {
     // API POST request todo
-    console.log('Sending command: ' + command);
+    this.api.sendCommandMessage(device, command).subscribe(deviceMessage => {
+      console.log('Sending command: ' + command);
+      this.toastr.success("O comando foi enviado", "Comando enviado");
+    });
   }
 
 

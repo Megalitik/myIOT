@@ -18,10 +18,14 @@ export class ApiService {
   }
 
   getAllUserDevices(username: string) {
-    return this.http.get<any>(`${this.baseUserUrl}GetAllUserDevices?username=${username}`);
+    return this.http.get<any>(`${this.baseUserUrl}GetDevices?username=${username}`);
   }
 
-  RegisterNewDeviceAsync(deviceId: string) {
+  RegisterNewDeviceAsync(deviceName: string, userID: string) {
+    return this.http.post<any>(`${this.baseDeviceUrl}RegisterNewDeviceAsync?newDeviceId=${deviceName}&userID=${userID}`, {});
+  }
+
+  DeleteDeviceAsync(deviceId: number) {
     return this.http.post<any>(`${this.baseDeviceUrl}RegisterNewDeviceAsync?newDeviceId=${deviceId}`, {});
   }
 

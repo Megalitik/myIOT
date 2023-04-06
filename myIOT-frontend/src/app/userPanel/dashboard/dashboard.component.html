@@ -1,13 +1,80 @@
 <div *ngIf="isUserAuthenticated()" class="section-container">
     <h1>Dashboard</h1>
 
-    <div class="row">
-        <button type="button" class="btn btn-primary btn-sm w-25 p-3">Adicionar um novo dispositivo</button>
-        <button type="button" class="btn btn-danger btn-sm w-25 p-3">Apagar um dispositivo</button>
+    <div class="row top-buffer">
+        <button type="button" class="btn btn-primary btn-sm w-25 ml-1">Adicionar um novo dispositivo</button>
+        <button type="button" class="btn btn-danger btn-sm w-25">Apagar um dispositivo</button>
     </div>
     <div class="card-deck servers">
         <div *ngFor="let userdevice of devicestest">
             <app-user-devices [userDevice]="userdevice"></app-user-devices>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addDeviceModal" tabindex="-1" aria-labelledby="addDeviceModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p class="modal-title" id="addDeviceModalLabel"> <span
+                        style="font-size: 25px; color: #000; font-weight: 700;">Esqueceste a Palavra-Passe?</span>
+                    <br />
+                    <small style="color: #000;">Por favor, indique abaixo o Email para repor a sua Palavra-Passe</small>
+                </p>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="addDeviceForm">
+                    <div class="form-group pt-3">
+                        <div class="input-field">
+                            <span class="fa fa-user fa-color p-2"></span>
+                            <input class="form-control" formControlName="deviceName" type="text"
+                                placeholder="Nome do Dispositivo">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="addDeviceCloseBtn" type="button" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" (click)="AddDevice()">Adicionar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteDeviceModal" tabindex="-1" aria-labelledby="deleteDeviceModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p class="modal-title" id="deleteDeviceModalLabel"> <span
+                        style="font-size: 25px; color: #000; font-weight: 700;">Apagar dispositivo</span>
+                    <br />
+                    <small style="color: #000;">Por favor, indique abaixo o seu dispositivo que quer apagar</small>
+                </p>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="addDeviceForm">
+                    <div class="form-group pt-3">
+                        <label for="my-dropdown">Seleciona um dispositivo:</label>
+                        <select class="form-control" id="my-dropdown" [(ngModel)]="selectedDeleteDevice">
+                            <option *ngFor="let deleteDevice of devicestest" [value]="deleteDevice.DeviceID">{{ deleteDevice.Name }}</option>
+                        </select>
+                    </div>
+                    <!-- <small *ngIf="!resetPwdEmail" class="text-danger">É necessário um dispositivo</small>
+                    <small *ngIf="!isValidEmail && ValidateEmail" class="text-danger">É necessário um dispositivo
+                        válido</small> -->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="deleteDeviceCloseBtn" type="button" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" (click)="deleteDevice()">Eliminar</button>
+            </div>
         </div>
     </div>
 </div>

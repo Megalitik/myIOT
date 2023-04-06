@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Device } from '../../shared/device';
+import { Route, Router } from '@angular/router';
 
 
 @Component({
@@ -9,12 +10,17 @@ import { Device } from '../../shared/device';
 })
 export class UserDevicesComponent implements OnInit {
 
-  constructor () {  }
+  constructor (private route : Router) {  }
 
   @Input() userDevice: Device; 
 
   ngOnInit(): void {
     
+  }
+
+  redirectToDevicePage (deviceName: string) {
+    console.log(deviceName)
+    this.route.navigate(['/controllers/'], {queryParams: {deviceName: deviceName}});
   }
 
 }

@@ -9,6 +9,8 @@ import { ApiService } from '../../_services/api/api.service';
 import { UserStoreService } from 'src/app/_services/userstore/user-store.service';
 import { AuthService } from 'src/app/_services/auth/auth.service';
 import { DeviceCommand } from 'src/app/Models/DeviceCommand';
+import { ToastrService } from 'ngx-toastr';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-dashboard',
@@ -23,10 +25,14 @@ export class DashboardComponent implements OnInit {
   errorMessage: string = "";
   username: string = "";
   role: string = "";
-  selectedItemId: number | undefined;
+  selectedDeleteDevice: number;
+
+  addDeviceForm: FormGroup;
+  deviceUserId: string;
+
 
   constructor(private http: HttpClient, private api: ApiService, private userStore: UserStoreService,
-    private auth: AuthService, private router: Router) { }
+    private auth: AuthService, private toastr: ToastrService, private router: Router) { }
 
   ngOnInit() {
 
@@ -35,6 +41,8 @@ export class DashboardComponent implements OnInit {
         this.users = users;
       })
 
+      const tokenPayload = this.auth.decodedJwtToken();
+      this.deviceUserId = tokenPayload.nameid;
 
       // this.api.sendCommandMessage("SimulatedSensorTest", "command1").subscribe(deviceMessage => {
         
@@ -78,7 +86,7 @@ export class DashboardComponent implements OnInit {
   }
 
   onClick() {
-    console.log('Selected item ID:', this.selectedItemId);
+    console.log('Selected item ID:', this.selectedDeleteDevice);
   }
 
   isUserAuthenticated() {
@@ -96,6 +104,18 @@ export class DashboardComponent implements OnInit {
 
   onOptionSelect(option: any) {
     this.selectedOption = option;
+  }
+
+  AddDevice() {
+    this.api.RegisterNewDeviceAsync(this.addDeviceForm.value, this.deviceUserId).subscribe(data => {
+      this.toastr.success("O dispositivo foi adicionado com sucesso", "Dispositivo Adicionado");
+    })
+  }
+
+  deleteDevice() {
+    this.api.DeleteDeviceAsync(this.selectedDeleteDevice).subscribe(data => {
+      this.toastr.success("O dispositivo foi apagado com sucesso", "Dispositivo Apagado");
+    })
   }
 
   onSubmit() {

@@ -15,6 +15,7 @@ using Microsoft.Data.SqlClient;
 using System.Collections.Generic;
 using System.Text.Json;
 using Microsoft.Azure.Devices.Client;
+using System.Data;
 
 namespace MIOTWebAPI.Controllers
 {
@@ -34,9 +35,10 @@ namespace MIOTWebAPI.Controllers
         }
 
 
+
         [HttpPost("RegisterNewDeviceAsync")]
         //POST: /api/Device/RegisterNewDeviceAsync
-        public async Task RegisterNewDeviceAsync(string newDeviceId)
+        public async Task<string> RegisterNewDeviceAsync(string deviceName, string userId)
         {
             Device device;
 
@@ -44,33 +46,68 @@ namespace MIOTWebAPI.Controllers
 
             try
             {
-                device = await registryManager.AddDeviceAsync(new Device(newDeviceId));
+                device = await registryManager.AddDeviceAsync(new Device(deviceName));
 
                 using (var connection = new SqlConnection(sqlconnectionString))
                 {
                     await connection.OpenAsync();
 
-                    var command = new SqlCommand("INSERT INTO Devices", connection);
-                    var reader = await command.ExecuteReaderAsync();
+                    string sql = "INSERT INTO [dbo].[Devices] ([deviceName],[deviceUserId]) VALUES (@name, @userId)";
+                    using (SqlCommand cmd = new SqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.Add("@name", SqlDbType.Int).Value = deviceName;
+                        cmd.Parameters.Add("@userId", SqlDbType.VarChar, 50).Value = userId;
+
+                        cmd.CommandType = CommandType.Text;
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    device = await registryManager.AddDeviceAsync(new Device(deviceName));
                 }
 
+                using (var connection = new SqlConnection(sqlconnectionString))
+                {
+                    await connection.OpenAsync();
+
+                    var command = new SqlCommand("SELECT deviceId  FROM Devices where deviceName like '%" + deviceName + "%' AND deviceUserId like '%" + userId + "%');", connection);
+                    var reader = await command.ExecuteReaderAsync();
+
+                    while (reader.Read())
+                    {
+                        device = await registryManager.AddDeviceAsync(new Device(reader.GetString(0)));
+                    }
+                }
+
+                return device.Authentication.SymmetricKey.PrimaryKey;
             }
             catch (DeviceAlreadyExistsException)
             {
-                device = await registryManager.GetDeviceAsync(newDeviceId);
+                device = await registryManager.GetDeviceAsync(deviceName);
+                return "O dispositivo já existe";
             }
+        }
 
+        [HttpGet("GetDeviceConnectionStateAsync")]
+        public async Task<string> GetDeviceConnectionStateAsync(string deviceId)
+        {
+            var registryManager = RegistryManager.CreateFromConnectionString(connectionString);
+            var device = await registryManager.GetDeviceAsync(deviceId);
+
+            if (device == null)
+                return "Dispositivo não encontrado";
+
+            return device.ConnectionState.ToString();
         }
 
         [HttpGet("GetDevices")]
         //POST: /api/Device/GetDevices
-        public async Task<ActionResult<IEnumerable<Device>>> GetDevices(string userId)
+        public async Task<ActionResult<IEnumerable<DeviceModel>>> GetDevices(string userId)
         {
             using (var connection = new SqlConnection(sqlconnectionString))
             {
                 await connection.OpenAsync();
 
-                var command = new SqlCommand("SELECT deviceId, deviceName FROM Devices where UserId like '%" + userId + "%'", connection);
+                var command = new SqlCommand("SELECT deviceId, deviceName, deviceUserId FROM Devices where UserId like (SELECT Id FROM users where UserName like '%" + userId + "%');", connection);
                 var reader = await command.ExecuteReaderAsync();
 
                 var devices = new List<DeviceModel>();
@@ -79,7 +116,8 @@ namespace MIOTWebAPI.Controllers
                     devices.Add(new DeviceModel
                     {
                         DeviceId = Convert.ToInt32(reader.GetString(0)),
-                        DeviceName = reader.GetString(1)
+                        DeviceName = reader.GetString(1),
+                        UserId = Convert.ToInt32(reader.GetString(2))
                     });
                 }
 
@@ -91,35 +129,53 @@ namespace MIOTWebAPI.Controllers
 
 
 
+
         [HttpPost("DeleteDeviceAsync")]
         //POST: /api/Device/DeleteDeviceAsync
-        private async Task<string> DeleteDeviceAsync(string deviceId)
+        private async Task<ActionResult> DeleteDeviceAsync(string deviceId, string userId)
         {
 
             registryManager = RegistryManager.CreateFromConnectionString(connectionString);
 
             try
             {
+                using (var connection = new SqlConnection(sqlconnectionString))
+                {
+                    await connection.OpenAsync();
+
+                    string sql = "DELETE FROM [dbo].[Devices] WHERE deviceId=@name, deviceUserId=@userId";
+                    using (SqlCommand cmd = new SqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.Add("@Id", SqlDbType.VarChar, 200).Value = deviceId;
+                        cmd.Parameters.Add("@userId", SqlDbType.VarChar, 50).Value = userId;
+
+                        cmd.CommandType = CommandType.Text;
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
                 await registryManager.RemoveDeviceAsync(new Device(deviceId));
 
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                return BadRequest(ex.Message);
             }
 
-            return "Dispositivo Apagado: " + deviceId;
+            return Ok("Comando foi enviado");
         }
 
 
         [HttpPost("SendCloudToDeviceMessageAsync")]
         //POST: /api/Device/SendCloudToDeviceMessageAsync
-        public async Task SendCloudToDeviceMessageAsync(string targetDevice, string message)
+        public async Task<ActionResult> SendCloudToDeviceMessageAsync(string targetDevice, string message)
         {
             serviceClient = ServiceClient.CreateFromConnectionString(connectionString);
 
             var commandMessage = new Microsoft.Azure.Devices.Message(Encoding.ASCII.GetBytes((message)));
             await serviceClient.SendAsync(targetDevice, commandMessage);
+
+            return Ok("Comando foi enviado");
         }
     }
 }

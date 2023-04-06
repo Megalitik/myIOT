@@ -1,45 +1,5 @@
 <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-4">
-        <select [(ngModel)]="selectedDeviceId" (change)="onDeviceSelection()">
-            <option *ngFor="let device of userDevices" [value]="device.deviceId">
-                {{ device.deviceName }}
-            </option>
-        </select>
-    </div>
-      <div class="col-md-9">
-        <h2>Device {{ deviceId }} Detail</h2>
-        <div>
-          <h3>Temperature</h3>
-          <div>
-            <canvas baseChart
-                    [datasets]="temperatureData"
-                    [labels]="chartLabels"
-                    [options]="chartOptions"
-                    [chartType]="chartType"></canvas>
-          </div>
-        </div>
-        <div>
-            <div>
-                <h3>Humidity</h3>
-                <div>
-                  <canvas baseChart
-                          [datasets]="humidityData"
-                          [labels]="chartLabels"
-                          [options]="chartOptions"
-                          [chartType]="chartType"></canvas>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-3">
-              <h3>Commands</h3>
-              <div class="list-group">
-                <button *ngFor="let command of commands"
-                        type="button"
-                        class="list-group-item list-group-item-action"
-                        (click)="sendCommand(command)">{{ command }}</button>
-              </div>
-            </div>
-          </div>
-        </div>
-          
+  <select [(ngModel)] = "selectedCommand">   
+    <option *ngFor="let command of userDevices" [ngValue]="command">{{command.deviceName}}</option>
+ </select>
+</div>

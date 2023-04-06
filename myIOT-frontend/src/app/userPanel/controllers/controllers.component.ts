@@ -30,6 +30,8 @@ export class ControllersComponent implements OnInit {
   deviceMessages: string[] = [];
   selectedCommand: DeviceCommand;
   selectedDeviceId: string = '';
+  selectedDeleteDeviceCommand: string = '';
+  newDeviceCommandName: string = '';
   // userDevices: DeviceCommand[] = [];
 
   commands: string[] = ['command1', 'command2', 'command3'];
@@ -70,6 +72,10 @@ export class ControllersComponent implements OnInit {
       this.toastr.success("O comando foi enviado", "Comando enviado");
     });
   }
+
+  addDeviceCommand() {}
+
+  deleteDeviceCommand() {}
 
   userDevices: DeviceCommand[] = [
     { Id: "1", Name: 'Teste1', command:"command1" },

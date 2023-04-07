@@ -37,7 +37,9 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
 
     const tokenPayload = this.auth.decodedJwtToken();
-      this.deviceUserId = tokenPayload.nameid;
+    
+    this.deviceUserId = tokenPayload.nameid;
+    console.log('UserID: ' + this.deviceUserId);
 
     if (this.isUserAuthenticated()) {
       this.api.getAllUsers().subscribe(users => {
@@ -118,12 +120,15 @@ export class DashboardComponent implements OnInit {
 
     this.api.RegisterNewDeviceAsync(this.newDeviceName, this.deviceUserId).subscribe(data => {
       this.toastr.success("O dispositivo foi adicionado com sucesso", "Dispositivo Adicionado");
+      window.location.reload();
     })
   }
 
   deleteDevice() {
     this.api.DeleteDeviceAsync(this.selectedDeleteDevice, this.deviceUserId).subscribe(data => {
+      console.log(data);
       this.toastr.success("O dispositivo foi apagado com sucesso", "Dispositivo Apagado");
+      window.location.reload();
     })
   }
 
@@ -132,10 +137,10 @@ export class DashboardComponent implements OnInit {
   }
 
   devicestest: Device[] = [
-    { deviceId: 1, deviceName: 'Teste1', userId: '1' },
-    { deviceId: 2, deviceName: 'Teste2', userId: '1' },
-    { deviceId: 3, deviceName: 'Teste3', userId: '1' },
-    { deviceId: 4, deviceName: 'Teste4', userId: '1' },
+    { deviceId: '1', deviceName: 'Teste1', userId: '1' },
+    { deviceId: '2', deviceName: 'Teste2', userId: '1' },
+    { deviceId: '3', deviceName: 'Teste3', userId: '1' },
+    { deviceId: '4', deviceName: 'Teste4', userId: '1' },
   ];
 
 

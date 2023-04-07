@@ -11,6 +11,7 @@ import { apiServer } from '../../_config/environment';
 import { ApiService } from 'src/app/_services/api/api.service';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/_services/auth/auth.service';
+import { Device } from 'src/app/Models/Device';
 
 interface DeviceCommand {
   Id: string;
@@ -27,13 +28,15 @@ interface DeviceCommand {
 export class ControllersComponent implements OnInit {
 
   private apiUrl =  apiServer.APIUrl + '/api/devices';
-  public deviceId: string = "";
+
   deviceMessages: string[] = [];
   DeviceCommands: DeviceCommand[]
   selectedCommand: DeviceCommand;
-  selectedDeviceId: string = '';
+  currentDeviceId: string = '';
   selectedDeleteDeviceCommand: string = '';
   newDeviceCommandName: string = '';
+
+  testDevice: Device;
 
   newDeviceCommandCommand: string = '';
   // userDevices: DeviceCommand[] = [];
@@ -43,23 +46,28 @@ export class ControllersComponent implements OnInit {
   private destroy$ = new Subject<void>();
   private pollingSubscription!: Subscription;
 
-  @Input() deviceName: string;
+  @Input() currentDeviceID: string;
 
   constructor(private route: ActivatedRoute, private api: ApiService,
     private toastr : ToastrService, private auth: AuthService, private http: HttpClient) { }
 
   ngOnInit(): void {
 
-    console.log(this.deviceName);
+    this.route.queryParams
+      .subscribe(params => {
+        console.log(params); 
+        this.currentDeviceId = params.currentDeviceID;
+      }
+    );
+
     const tokenPayload = this.auth.decodedJwtToken();
 
-    this.userDeviceCommandsList(this.deviceId);
+    this.userDeviceCommandsList(this.currentDeviceId);
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  
+
+  isUserAllowed() {
+
   }
 
   userDeviceCommandsList(deviceId: string) {
@@ -79,7 +87,7 @@ export class ControllersComponent implements OnInit {
   }
 
   addDeviceCommand() {
-    this.api.addNewDeviceCommand(this.deviceId, this.newDeviceCommandName, this.newDeviceCommandCommand).subscribe(deviceMessage => {
+    this.api.addNewDeviceCommand(this.currentDeviceId, this.newDeviceCommandName, this.newDeviceCommandCommand).subscribe(deviceMessage => {
       console.log('Adding command: ' + deviceMessage);
       this.toastr.success("O comando foi enviado", "Comando enviado");
     });

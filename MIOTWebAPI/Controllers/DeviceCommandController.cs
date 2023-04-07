@@ -96,7 +96,7 @@ namespace MIOTWebAPI.Controllers
 
         [HttpPost("AddDeviceCommandAsync")]
         //POST: /api/Device/AddDeviceCommandAsync
-        private async Task<ActionResult> AddDeviceCommandAsync(string deviceId, string command)
+        public async Task<ActionResult> AddDeviceCommandAsync(string deviceId, string commandName, string command)
         {
 
             registryManager = RegistryManager.CreateFromConnectionString(connectionString);
@@ -107,10 +107,11 @@ namespace MIOTWebAPI.Controllers
                 {
                     await connection.OpenAsync();
 
-                    string sql = "INSERT INTO [dbo].[DeviceCommand] ([deviceId], [command]) VALUES (@Id, @Command)";
+                    string sql = "INSERT INTO [dbo].[DeviceCommand] ([deviceId], [Name], [Command]) VALUES (@Id, @Name, @Command)";
                     using (SqlCommand cmd = new SqlCommand(sql, connection))
                     {
                         cmd.Parameters.Add("@Id", SqlDbType.Int).Value = deviceId;
+                        cmd.Parameters.Add("@Name", SqlDbType.VarChar, 500).Value = commandName;
                         cmd.Parameters.Add("@Command", SqlDbType.VarChar, 500).Value = command;
 
                         cmd.CommandType = CommandType.Text;
@@ -129,7 +130,7 @@ namespace MIOTWebAPI.Controllers
 
         [HttpPost("DeleteDeviceCommandAsync")]
         //POST: /api/Device/DeleteDeviceCommandAsync
-        private async Task<ActionResult> DeleteDeviceCommandAsync(string deviceCommandId)
+        public async Task<ActionResult> DeleteDeviceCommandAsync(string deviceCommandId)
         {
 
             registryManager = RegistryManager.CreateFromConnectionString(connectionString);

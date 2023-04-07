@@ -31,7 +31,7 @@ export class ApiService {
   }
 
   DeleteDeviceAsync(deviceId: string, userId: string) {
-    return this.http.post<any>(`${this.baseDeviceUrl}DeleteDeviceAsync?deviceId=${deviceId}&deviceId=${deviceId}`, {});
+    return this.http.post<string>(`${this.baseDeviceUrl}DeleteDeviceAsync?deviceId=${deviceId}&userId=${userId}`, {});
   }
 
   sendCommandMessage(deviceId: string, commandId: string) {
@@ -43,7 +43,7 @@ export class ApiService {
   }
 
   addNewDeviceCommand(deviceId: string, commandName: string, command: string) {
-    return this.http.post<any>(`${this.baseDeviceUrl}AddDeviceCommandAsync?deviceId=${deviceId}&commandName=${commandName}&command=${command}`, {});
+    return this.http.post<any>(`${this.baseDeviceCommandUrl}AddDeviceCommandAsync?deviceId=${deviceId}&commandName=${commandName}&command=${command}`, {});
   }
 
   deleteCommandMessage(deviceId: string, commandId: string) {

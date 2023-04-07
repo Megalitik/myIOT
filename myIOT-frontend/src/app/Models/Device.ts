@@ -1,5 +1,5 @@
 export class Device {
-    deviceId: any;
+    deviceId: string;
     deviceName: string;
     userId: string;
   }

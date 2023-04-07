@@ -145,7 +145,7 @@ namespace MIOTWebAPI.Controllers
 
         [HttpPost("DeleteDeviceAsync")]
         //POST: /api/Device/DeleteDeviceAsync
-        private async Task<ActionResult> DeleteDeviceAsync(string deviceId, string userId)
+        public async Task<string> DeleteDeviceAsync(string deviceId, string userId)
         {
 
             registryManager = RegistryManager.CreateFromConnectionString(connectionString);
@@ -156,26 +156,26 @@ namespace MIOTWebAPI.Controllers
                 {
                     await connection.OpenAsync();
 
-                    string sql = "DELETE FROM [dbo].[Devices] WHERE deviceId=@name, deviceUserId=@userId";
+                    string sql = "DELETE FROM [dbo].[Devices] WHERE deviceId="+ deviceId +" AND deviceUserId="+ userId;
                     using (SqlCommand cmd = new SqlCommand(sql, connection))
                     {
-                        cmd.Parameters.Add("@Id", SqlDbType.VarChar, 200).Value = deviceId;
-                        cmd.Parameters.Add("@userId", SqlDbType.VarChar, 50).Value = userId;
-
                         cmd.CommandType = CommandType.Text;
                         cmd.ExecuteNonQuery();
                     }
                 }
 
-                await registryManager.RemoveDeviceAsync(new Device(deviceId));
+                Device deviceToBeDeleted = await registryManager.GetDeviceAsync(deviceId);
+
+                if (deviceToBeDeleted != null)
+                    await registryManager.RemoveDeviceAsync(deviceToBeDeleted);
 
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return ex.Message;
             }
 
-            return Ok("Comando foi enviado");
+            return "O dispositivo foi apagador com sucesso";
         }
 
 

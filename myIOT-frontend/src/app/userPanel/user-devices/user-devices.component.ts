@@ -12,7 +12,7 @@ import { Device } from 'src/app/Models/Device';
 })
 export class UserDevicesComponent implements OnInit {
 
-  constructor (private route : Router, private api : ApiService, private toastr: ToastrService,) {  }
+  constructor (private route : Router, private api : ApiService, private toastr: ToastrService) {  }
 
   @Input() userDevice: Device; 
 
@@ -20,13 +20,13 @@ export class UserDevicesComponent implements OnInit {
     
   }
 
-  redirectToDevicePage (deviceName: string) {
-    console.log(deviceName)
-    this.route.navigate(['/controllers/'], {queryParams: {deviceName: deviceName}});
+  redirectToDevicePage (device: Device) {
+    console.log('redirectToDevicePage DeviceID: ' + device.deviceId)
+    this.route.navigate(['/controllers/'], {queryParams: {currentDeviceID: device.deviceId}});
   }
 
-  getDeviceConnectionState(deviceId : string) {
-    this.api.getDeviceConnectionState(deviceId).subscribe(data => {
+  getDeviceConnectionState(id : string) {
+    this.api.getDeviceConnectionState(id).subscribe(data => {
       return data;
     })
   }

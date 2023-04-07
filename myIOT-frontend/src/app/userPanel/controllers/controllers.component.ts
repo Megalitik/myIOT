@@ -96,7 +96,12 @@ export class ControllersComponent implements OnInit {
     });
   }
 
-  deleteDeviceCommand() {}
+  deleteDeviceCommand() {
+    this.api.deleteCommandMessage(this.currentDeviceId, this.selectedDeleteDeviceCommand).subscribe(deviceMessage => {
+      
+      this.toastr.success("O comando foi apagado", "Comando apagado");
+    });
+  }
 
   // userDevices: DeviceCommand[] = [
   //   { Id: "1", deviceId: '2', Name: 'Teste1', command:"command1" },

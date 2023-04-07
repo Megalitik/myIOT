@@ -47,6 +47,6 @@ export class ApiService {
   }
 
   deleteCommandMessage(deviceId: string, commandId: string) {
-    return this.http.post<any>(`${this.baseDeviceCommandUrl}DeleteDeviceCommand?targetDevice=${deviceId}&command=${commandId}`, {});
+    return this.http.post<any>(`${this.baseDeviceCommandUrl}DeleteDeviceCommandAsync?deviceId=${deviceId}&deviceCommandId=${commandId}`, {});
   }
 }

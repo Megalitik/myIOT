@@ -68,7 +68,7 @@
               <div class="form-group pt-3">
                   <label for="my-dropdown">Seleciona um comando:</label>
                   <select class="form-control" id="my-dropdown" [(ngModel)]="selectedDeleteDeviceCommand">
-                      <option *ngFor="let deleteDevice of DeviceCommands" [value]="deleteDevice.Id">{{ deleteDevice.Name
+                      <option *ngFor="let deleteDevice of DeviceCommands" [value]="deleteDevice.id">{{ deleteDevice.name
                           }}</option>
                   </select>
               </div>

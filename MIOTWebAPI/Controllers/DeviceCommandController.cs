@@ -145,7 +145,7 @@ namespace MIOTWebAPI.Controllers
 
         [HttpPost("DeleteDeviceCommandAsync")]
         //POST: /api/Device/DeleteDeviceCommandAsync
-        public async Task<ActionResult> DeleteDeviceCommandAsync(string deviceCommandId)
+        public async Task<ActionResult> DeleteDeviceCommandAsync(string deviceId, string deviceCommandId)
         {
 
             registryManager = RegistryManager.CreateFromConnectionString(connectionString);
@@ -156,7 +156,7 @@ namespace MIOTWebAPI.Controllers
                 {
                     await connection.OpenAsync();
 
-                    string sql = "DELETE FROM [dbo].[DeviceCommand] WHERE Id = " + deviceCommandId;
+                    string sql = "DELETE FROM [dbo].[DeviceCommand] WHERE Id = " + deviceCommandId +" AND deviceId = " + deviceId;
                     using (SqlCommand cmd = new SqlCommand(sql, connection))
                     {
 

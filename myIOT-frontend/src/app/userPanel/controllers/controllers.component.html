@@ -8,7 +8,7 @@
   </div>
   <div class="row">
     <select class="form-select form-select-lg mb-3 h-25 p-3" [(ngModel)]="selectedCommand">
-      <option *ngFor="let command of DeviceCommands" [ngValue]="command">{{command.Name}}</option>
+      <option *ngFor="let command of DeviceCommands" [ngValue]="command">{{ command.name }}</option>
     </select>
     <button type="button" class="btn btn-primary" (click)="sendCommand()">Enviar</button>
   </div>

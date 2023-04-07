@@ -17,7 +17,7 @@ interface DeviceCommand {
   Id: string;
   deviceId: string;
   Name: string;
-  command: string;
+  Command: string;
 }
 
 @Component({
@@ -30,8 +30,8 @@ export class ControllersComponent implements OnInit {
   private apiUrl =  apiServer.APIUrl + '/api/devices';
 
   deviceMessages: string[] = [];
-  DeviceCommands: DeviceCommand[]
-  selectedCommand: DeviceCommand;
+  DeviceCommands: any[] = [];
+  selectedCommand: any;
   currentDeviceId: string = '';
   selectedDeleteDeviceCommand: string = '';
   newDeviceCommandName: string = '';
@@ -72,15 +72,18 @@ export class ControllersComponent implements OnInit {
 
   userDeviceCommandsList(deviceId: string) {
     this.api.getDeviceCommands(deviceId).subscribe(commands => {
-      console.log('Sending command: ' + this.selectedCommand.Name);
+      
+      console.log('Command List: ' + commands);
+      console.log(commands);
       this.DeviceCommands = commands
-      this.toastr.success("O comando foi enviado", "Comando enviado");
+      // this.toastr.success("O comando foi enviado", "Comando enviado");
     });
   }
 
   sendCommand() {
+    console.log(this.selectedCommand);
     // API POST request todo
-    this.api.sendCommandMessage(this.selectedCommand.Name, this.selectedCommand.Name).subscribe(deviceMessage => {
+    this.api.sendCommandMessage(this.selectedCommand.deviceId, this.selectedCommand.id).subscribe(deviceMessage => {
       console.log('Sending command: ' + this.selectedCommand.Name);
       this.toastr.success("O comando foi enviado", "Comando enviado");
     });

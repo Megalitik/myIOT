@@ -50,10 +50,10 @@ namespace MIOTWebAPI.Controllers
                     var command = new SqlCommand("SELECT [Id], [deviceId], [Name], [Command] FROM [dbo].[DeviceCommand] where deviceId = " + deviceId + ";", connection);
                     var reader = await command.ExecuteReaderAsync();
 
-                    var devices = new List<DeviceCommandModel>();
+                    var deviceCommands = new List<DeviceCommandModel>();
                     while (reader.Read())
                     {
-                        devices.Add(new DeviceCommandModel
+                        deviceCommands.Add(new DeviceCommandModel
                         {
                             Id = reader.GetInt32(0),
                             deviceId = reader.GetInt32(1),
@@ -62,9 +62,9 @@ namespace MIOTWebAPI.Controllers
                         });
                     }
 
-                    var json = JsonSerializer.Serialize(devices);
+                    var json = JsonSerializer.Serialize(deviceCommands);
 
-                    return devices;
+                    return deviceCommands;
                 }
             }
             catch (Exception ex)
@@ -75,12 +75,27 @@ namespace MIOTWebAPI.Controllers
 
         [HttpPost("SendCloudToDeviceMessageAsync")]
         //POST: /api/Device/SendCloudToDeviceMessageAsync
-        public async Task<ActionResult> SendCloudToDeviceMessageAsync(string targetDevice, string message)
+        public async Task<ActionResult> SendCloudToDeviceMessageAsync(string targetDevice, string commandId)
         {
             serviceClient = ServiceClient.CreateFromConnectionString(connectionString);
+            string message = "";
 
             try
             {
+                using (var connection = new SqlConnection(sqlconnectionString))
+                {
+                    await connection.OpenAsync();
+
+                    var command = new SqlCommand("SELECT [Command] FROM [dbo].[DeviceCommand] where Id = " + commandId + ";", connection);
+                    var reader = await command.ExecuteReaderAsync();
+                    
+                    while (reader.Read())
+                    {
+
+                        message = reader.GetString(0);
+                    }
+                }
+
                 var commandMessage = new Microsoft.Azure.Devices.Message(Encoding.ASCII.GetBytes((message)));
                 await serviceClient.SendAsync(targetDevice, commandMessage);
             }
@@ -125,7 +140,7 @@ namespace MIOTWebAPI.Controllers
                 return BadRequest(ex.Message);
             }
 
-            return Ok("Comando foi apagado");
+            return Ok("Comando foi adicionado");
         }
 
         [HttpPost("DeleteDeviceCommandAsync")]
@@ -141,10 +156,9 @@ namespace MIOTWebAPI.Controllers
                 {
                     await connection.OpenAsync();
 
-                    string sql = "DELETE FROM [dbo].[DeviceCommand] WHERE Id=@Id";
+                    string sql = "DELETE FROM [dbo].[DeviceCommand] WHERE Id = " + deviceCommandId;
                     using (SqlCommand cmd = new SqlCommand(sql, connection))
                     {
-                        cmd.Parameters.Add("@Id", SqlDbType.Int).Value = deviceCommandId;
 
                         cmd.CommandType = CommandType.Text;
                         cmd.ExecuteNonQuery();

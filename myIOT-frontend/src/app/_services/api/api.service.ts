@@ -35,11 +35,11 @@ export class ApiService {
   }
 
   sendCommandMessage(deviceId: string, commandId: string) {
-    return this.http.post<any>(`${this.baseDeviceUrl}SendCloudToDeviceMessageAsync?targetDevice=${deviceId}&message=${commandId}`, {});
+    return this.http.post<any>(`${this.baseDeviceCommandUrl}SendCloudToDeviceMessageAsync?targetDevice=${deviceId}&commandId=${commandId}`, {});
   }
 
   getDeviceCommands(deviceId: string) {
-    return this.http.get<any>(`${this.baseDeviceUrl}GetDeviceCommands?deviceId=${deviceId}`);
+    return this.http.get<any>(`${this.baseDeviceCommandUrl}GetDeviceCommands?deviceId=${deviceId}`);
   }
 
   addNewDeviceCommand(deviceId: string, commandName: string, command: string) {
@@ -47,6 +47,6 @@ export class ApiService {
   }
 
   deleteCommandMessage(deviceId: string, commandId: string) {
-    return this.http.post<any>(`${this.baseDeviceUrl}DeleteDeviceCommand?targetDevice=${deviceId}&command=${commandId}`, {});
+    return this.http.post<any>(`${this.baseDeviceCommandUrl}DeleteDeviceCommand?targetDevice=${deviceId}&command=${commandId}`, {});
   }
 }

@@ -8,7 +8,7 @@
   </div>
   <div class="row">
     <select class="form-select form-select-lg mb-3 h-25 p-3" [(ngModel)]="selectedCommand">
-      <option *ngFor="let command of userDevices" [ngValue]="command">{{command.Name}}</option>
+      <option *ngFor="let command of DeviceCommands" [ngValue]="command">{{command.Name}}</option>
     </select>
     <button type="button" class="btn btn-primary" (click)="sendCommand()">Enviar</button>
   </div>
@@ -30,10 +30,17 @@
                   <div class="form-group pt-3">
                       <div class="input-field">
                           <span class="fa fa-user fa-color p-2"></span>
-                          <input class="form-control" formControlName="newDeviceCommandName" type="text"
-                              placeholder="Novo Comando">
+                          <input class="form-control" [(ngModel)]="newDeviceCommandName" type="text"
+                              placeholder="Nome do Novo Comando">
                       </div>
                   </div>
+                  <div class="form-group pt-3">
+                    <div class="input-field">
+                        <span class="fa fa-user fa-color p-2"></span>
+                        <input class="form-control" [(ngModel)]="newDeviceCommandCommand" type="text"
+                            placeholder="Novo Comando">
+                    </div>
+                </div>
           </div>
           <div class="modal-footer">
               <button id="addDeviceCommandCloseBtn" type="button" class="btn btn-secondary"
@@ -61,7 +68,7 @@
               <div class="form-group pt-3">
                   <label for="my-dropdown">Seleciona um comando:</label>
                   <select class="form-control" id="my-dropdown" [(ngModel)]="selectedDeleteDeviceCommand">
-                      <option *ngFor="let deleteDevice of userDevices" [value]="deleteDevice.Id">{{ deleteDevice.Name
+                      <option *ngFor="let deleteDevice of DeviceCommands" [value]="deleteDevice.Id">{{ deleteDevice.Name
                           }}</option>
                   </select>
               </div>

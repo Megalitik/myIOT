@@ -108,34 +108,40 @@ namespace MIOTWebAPI.Controllers
 
         [HttpGet("GetDevices")]
         //POST: /api/Device/GetDevices
-        public async Task<ActionResult<IEnumerable<DeviceModel>>> GetDevices(string userId)
+        public async Task<List<DeviceModel>> GetDevices(string userId)
         {
-            using (var connection = new SqlConnection(sqlconnectionString))
+            try
             {
-                await connection.OpenAsync();
-
-                var command = new SqlCommand("SELECT deviceId, deviceName, deviceUserId FROM Devices where UserId like (SELECT Id FROM users where UserName like '%" + userId + "%');", connection);
-                var reader = await command.ExecuteReaderAsync();
-
-                var devices = new List<DeviceModel>();
-                while (reader.Read())
+                using (var connection = new SqlConnection(sqlconnectionString))
                 {
-                    devices.Add(new DeviceModel
+                    await connection.OpenAsync();
+
+                    var command = new SqlCommand("SELECT deviceId, deviceName, deviceUserId FROM Devices where deviceUserId = " + userId + ";", connection);
+                    var reader = await command.ExecuteReaderAsync();
+
+                    var devices = new List<DeviceModel>();
+                    while (reader.Read())
                     {
-                        DeviceId = Convert.ToInt32(reader.GetString(0)),
-                        DeviceName = reader.GetString(1),
-                        UserId = Convert.ToInt32(reader.GetString(2))
-                    });
+                        devices.Add(new DeviceModel
+                        {
+                            DeviceId = reader.GetInt32(0),
+                            DeviceName = reader.GetString(1),
+                            UserId = reader.GetInt32(2)
+                        });
+                    }
+
+                    var json = JsonSerializer.Serialize(devices);
+
+                    return devices;
                 }
-
-                var json = JsonSerializer.Serialize(devices);
-
-                return Ok(devices);
+            }
+            catch (Exception ex)
+            {
+                return new List<DeviceModel>();
             }
         }
 
-
-
+       
 
         [HttpPost("DeleteDeviceAsync")]
         //POST: /api/Device/DeleteDeviceAsync

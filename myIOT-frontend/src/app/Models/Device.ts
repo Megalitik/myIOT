@@ -1,4 +1,5 @@
 export class Device {
-    Id: any;
-    Name: string;
+    deviceId: any;
+    deviceName: string;
+    userId: string;
   }

@@ -7,7 +7,7 @@
     
     </div>
     <div class="card-deck servers">
-        <div *ngFor="let userdevice of devicestest">
+        <div *ngFor="let userdevice of devices">
             <app-user-devices [userDevice]="userdevice"></app-user-devices>
         </div>
     </div>
@@ -60,7 +60,7 @@
                 <div class="form-group pt-3">
                     <label for="my-dropdown">Seleciona um dispositivo:</label>
                     <select class="form-control" id="my-dropdown" [(ngModel)]="selectedDeleteDevice">
-                        <option *ngFor="let deleteDevice of devicestest" [value]="deleteDevice.Id">{{ deleteDevice.Name
+                        <option *ngFor="let deleteDevice of devices" [value]="deleteDevice.deviceId">{{ deleteDevice.deviceName
                             }}</option>
                     </select>
                 </div>

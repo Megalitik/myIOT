@@ -10,6 +10,7 @@ export class ApiService {
 
   private baseUserUrl: string = configurl.apiServer.APIUrl + 'User/';
   private baseDeviceUrl: string = configurl.apiServer.APIUrl + 'Device/';
+  private baseDeviceCommandUrl: string = configurl.apiServer.APIUrl + 'DeviceCommand/';
 
   constructor(private http : HttpClient) { }
 
@@ -18,7 +19,7 @@ export class ApiService {
   }
 
   getAllUserDevices(username: string) {
-    return this.http.get<any>(`${this.baseUserUrl}GetDevices?username=${username}`);
+    return this.http.get<any>(`${this.baseDeviceUrl}GetDevices?userId=${username}`);
   }
 
   getDeviceConnectionState(deviceId: string) {
@@ -35,6 +36,14 @@ export class ApiService {
 
   sendCommandMessage(deviceId: string, commandId: string) {
     return this.http.post<any>(`${this.baseDeviceUrl}SendCloudToDeviceMessageAsync?targetDevice=${deviceId}&message=${commandId}`, {});
+  }
+
+  getDeviceCommands(deviceId: string) {
+    return this.http.get<any>(`${this.baseDeviceUrl}GetDeviceCommands?deviceId=${deviceId}`);
+  }
+
+  addNewDeviceCommand(deviceId: string, commandName: string, command: string) {
+    return this.http.post<any>(`${this.baseDeviceUrl}AddDeviceCommandAsync?deviceId=${deviceId}&commandName=${commandName}&command=${command}`, {});
   }
 
   deleteCommandMessage(deviceId: string, commandId: string) {

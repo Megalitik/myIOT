@@ -19,7 +19,6 @@ import { Device } from 'src/app/Models/Device';
 })
 export class DashboardComponent implements OnInit {
 
-  url = apiServer.APIUrl + '/api/';
   devices: any[] = [];
   users: any[] = [];
   errorMessage: string = "";
@@ -37,21 +36,39 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
 
+    const tokenPayload = this.auth.decodedJwtToken();
+      this.deviceUserId = tokenPayload.nameid;
+
     if (this.isUserAuthenticated()) {
       this.api.getAllUsers().subscribe(users => {
         this.users = users;
       })
 
-      const tokenPayload = this.auth.decodedJwtToken();
-      this.deviceUserId = tokenPayload.nameid;
+      this.api.getAllUserDevices(this.deviceUserId).subscribe(userDevices => {
+        this.devices = userDevices;
+        console.log(this.devices);
+
+        if (this.devices.length === 0) {
+          this.errorMessage = 'Não há dispositivos';
+        }
+      },
+      (error: HttpErrorResponse) => {
+        if (error.error instanceof ErrorEvent) {
+          //Erro no lado do cliente
+          this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
+        } else {
+          // Erro no Servidor ou API
+          this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
+        }
+      });
 
       // this.api.sendCommandMessage("SimulatedSensorTest", "command1").subscribe(deviceMessage => {
         
       // })
 
-      this.api.RegisterNewDeviceAsync("SimulatedSensorTest1", this.deviceUserId).subscribe(deviceMessage => {
+      // this.api.RegisterNewDeviceAsync("SimulatedSensorTest1", this.deviceUserId).subscribe(deviceMessage => {
         
-      })
+      // })
 
       this.userStore.getUserNameFromUserStore().subscribe(userName => {
         let usernameFromToken = this.auth.getUsernameFromJwtToken();
@@ -70,23 +87,7 @@ export class DashboardComponent implements OnInit {
         this.devices = devices;
       });
 
-      this.http.get<Device[]>((this.url + 'GetUserDevices')).subscribe(
-        data => {
-          this.devices = data;
-          if (this.devices.length === 0) {
-            this.errorMessage = 'Não há dispositivos';
-          }
-        },
-        (error: HttpErrorResponse) => {
-          if (error.error instanceof ErrorEvent) {
-            //Erro no lado do cliente
-            this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
-          } else {
-            // Erro no Servidor ou API
-            this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
-          }
-        }
-      );
+      
     }
   }
 
@@ -131,10 +132,10 @@ export class DashboardComponent implements OnInit {
   }
 
   devicestest: Device[] = [
-    { Id: 1, Name: 'Teste1' },
-    { Id: 2, Name: 'Teste2' },
-    { Id: 3, Name: 'Teste3'},
-    { Id: 4, Name: 'Teste4'}
+    { deviceId: 1, deviceName: 'Teste1', userId: '1' },
+    { deviceId: 2, deviceName: 'Teste2', userId: '1' },
+    { deviceId: 3, deviceName: 'Teste3', userId: '1' },
+    { deviceId: 4, deviceName: 'Teste4', userId: '1' },
   ];
 
 

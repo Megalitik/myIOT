@@ -1,10 +1,10 @@
 <div class="card mb-3 shadow block-status">
     <div class="card-header name">
-        <h3 class="card-title">{{userDevice.Name}}</h3>
+        <h3 class="card-title">{{userDevice.deviceName}}</h3>
     </div>
     <div class="card-body">
         <!-- {{ getDeviceConnectionState(userDevice.Name) }} -->
     </div>
 
-    <button (click)="redirectToDevicePage(userDevice.Name)" class="btn btn-default action">Usar</button>
+    <button (click)="redirectToDevicePage(userDevice.deviceName)" class="btn btn-default action">Usar</button>
 </div>

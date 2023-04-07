@@ -14,6 +14,7 @@ import { AuthService } from 'src/app/_services/auth/auth.service';
 
 interface DeviceCommand {
   Id: string;
+  deviceId: string;
   Name: string;
   command: string;
 }
@@ -28,10 +29,13 @@ export class ControllersComponent implements OnInit {
   private apiUrl =  apiServer.APIUrl + '/api/devices';
   public deviceId: string = "";
   deviceMessages: string[] = [];
+  DeviceCommands: DeviceCommand[]
   selectedCommand: DeviceCommand;
   selectedDeviceId: string = '';
   selectedDeleteDeviceCommand: string = '';
   newDeviceCommandName: string = '';
+
+  newDeviceCommandCommand: string = '';
   // userDevices: DeviceCommand[] = [];
 
   commands: string[] = ['command1', 'command2', 'command3'];
@@ -49,7 +53,7 @@ export class ControllersComponent implements OnInit {
     console.log(this.deviceName);
     const tokenPayload = this.auth.decodedJwtToken();
 
-    // this.userDeviceCommandsList(tokenPayload.nameid);
+    this.userDeviceCommandsList(this.deviceId);
   }
 
   ngOnDestroy(): void {
@@ -58,10 +62,11 @@ export class ControllersComponent implements OnInit {
   
   }
 
-  userDeviceCommandsList(userId: string) {
-    return this.http.get<DeviceCommand[]>(`https://localhost:5001/api/Device/GetDevices/?deviceName=${this.deviceName}&userId=${userId}`).subscribe(devices => {
-      console.log(devices);
-      this.userDevices = devices;
+  userDeviceCommandsList(deviceId: string) {
+    this.api.getDeviceCommands(deviceId).subscribe(commands => {
+      console.log('Sending command: ' + this.selectedCommand.Name);
+      this.DeviceCommands = commands
+      this.toastr.success("O comando foi enviado", "Comando enviado");
     });
   }
 
@@ -73,16 +78,21 @@ export class ControllersComponent implements OnInit {
     });
   }
 
-  addDeviceCommand() {}
+  addDeviceCommand() {
+    this.api.addNewDeviceCommand(this.deviceId, this.newDeviceCommandName, this.newDeviceCommandCommand).subscribe(deviceMessage => {
+      console.log('Adding command: ' + deviceMessage);
+      this.toastr.success("O comando foi enviado", "Comando enviado");
+    });
+  }
 
   deleteDeviceCommand() {}
 
-  userDevices: DeviceCommand[] = [
-    { Id: "1", Name: 'Teste1', command:"command1" },
-    { Id: "2", Name: 'Teste1', command:"command1" },
-    { Id: "3", Name: 'Teste1', command:"command1" },
-    { Id: "4", Name: 'Teste1', command:"command1" },
-  ];
+  // userDevices: DeviceCommand[] = [
+  //   { Id: "1", deviceId: '2', Name: 'Teste1', command:"command1" },
+  //   { Id: "2", deviceId: '2', Name: 'Teste2', command:"command1" },
+  //   { Id: "3", deviceId: '2', Name: 'Teste3', command:"command1" },
+  //   { Id: "4", deviceId: '2', Name: 'Teste4', command:"command1" },
+  // ];
 
 
 }

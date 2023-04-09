@@ -39,7 +39,7 @@ namespace MIOTWebAPI.Controllers
 
         [HttpGet("GetDeviceCommands")]
         //POST: /api/Device/GetDevices
-        public async Task<List<DeviceCommandModel>> GetDeviceCommands(string deviceId)
+        public async Task<IActionResult> GetDeviceCommands(string deviceId)
         {
             try
             {
@@ -64,12 +64,12 @@ namespace MIOTWebAPI.Controllers
 
                     var json = JsonSerializer.Serialize(deviceCommands);
 
-                    return deviceCommands;
+                    return Ok(deviceCommands);
                 }
             }
             catch (Exception ex)
             {
-                return new List<DeviceCommandModel>();
+                return StatusCode(500, ex.Message);
             }
         }
 

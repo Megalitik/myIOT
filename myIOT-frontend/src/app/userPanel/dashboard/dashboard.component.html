@@ -1,12 +1,12 @@
 <div *ngIf="isUserAuthenticated()" class="section-container">
     <h1>Dashboard</h1>
 
-    <div class="row top-buffer">
-        <button type="button" data-bs-toggle="modal" data-bs-target="#addDeviceModal" class="btn btn-primary btn-sm w-25 ml-1">Adicionar um novo dispositivo</button>
+    <div class="row mt-5">
+        <button type="button" data-bs-toggle="modal" data-bs-target="#addDeviceModal" class="btn btn-primary btn-sm w-25 mr-5">Adicionar um novo dispositivo</button>
         <button type="button" data-bs-toggle="modal" data-bs-target="#deleteDeviceModal" class="btn btn-danger btn-sm w-25">Apagar um dispositivo</button>
     
     </div>
-    <div class="card-deck servers">
+    <div class="card-deck servers mt-5">
         <div *ngFor="let userdevice of devices">
             <app-user-devices [userDevice]="userdevice"></app-user-devices>
         </div>

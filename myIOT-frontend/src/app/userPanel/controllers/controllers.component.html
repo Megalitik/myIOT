@@ -1,16 +1,16 @@
 <div class="container-fluid">
   <h3 class="header">Comandos</h3>
-  <div class="row">
+  <div class="row mt-5">
     <div class="btn-group" role="group" aria-label="Comandos">
-      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDeviceCommandModal">Adicionar Comando</button>
-      <button type="button" class="btn btn-primary btn-danger" data-bs-toggle="modal" data-bs-target="#deleteDeviceCommandModal">Apagar Comando</button>
+      <button type="button" class="btn btn-primary btn-sm w-25 mr-5" data-bs-toggle="modal" data-bs-target="#addDeviceCommandModal">Adicionar Comando</button>
+      <button type="button" class="btn btn-primary btn-danger btn-sm w-25" data-bs-toggle="modal" data-bs-target="#deleteDeviceCommandModal">Apagar Comando</button>
     </div>
   </div>
-  <div class="row">
-    <select class="form-select form-select-lg mb-3 h-25 p-3" [(ngModel)]="selectedCommand">
+  <div class="row mt-5">
+    <select class="form-select form-select-lg mb-3 h-25 p-3 w-25 mr-5" [(ngModel)]="selectedCommand">
       <option *ngFor="let command of DeviceCommands" [ngValue]="command">{{ command.name }}</option>
     </select>
-    <button type="button" class="btn btn-primary" (click)="sendCommand()">Enviar</button>
+    <button type="button" class="btn btn-primary w-25" (click)="sendCommand()">Enviar</button>
   </div>
 </div>
 

@@ -88,7 +88,6 @@ export class ControllersComponent implements OnInit {
     this.api.sendCommandMessage(this.selectedCommand.deviceId, this.selectedCommand.id).subscribe(deviceMessage => {
       console.log('Sending command: ' + this.selectedCommand.Name);
       this.toastr.success("O comando foi enviado", "Comando enviado");
-      window.location.reload();
     },
     (error) => {
       this.errorMessage = error.message;

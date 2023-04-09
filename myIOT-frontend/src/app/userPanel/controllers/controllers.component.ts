@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Subject, interval, Subscription, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
@@ -28,6 +28,8 @@ interface DeviceCommand {
 export class ControllersComponent implements OnInit {
 
   private apiUrl =  apiServer.APIUrl + '/api/devices';
+
+  errorMessage: string = "";
 
   deviceMessages: string[] = [];
   DeviceCommands: any[] = [];
@@ -93,6 +95,17 @@ export class ControllersComponent implements OnInit {
     this.api.addNewDeviceCommand(this.currentDeviceId, this.newDeviceCommandName, this.newDeviceCommandCommand).subscribe(deviceMessage => {
       console.log('Adding command: ' + deviceMessage);
       this.toastr.success("O comando foi enviado", "Comando enviado");
+    },
+    (error: HttpErrorResponse) => {
+      if (error.error instanceof ErrorEvent) {
+        //Erro no lado do cliente
+        this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
+        console.log(this.errorMessage);
+      } else {
+        // Erro no Servidor ou API
+        this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
+        console.log(this.errorMessage);
+      }
     });
   }
 
@@ -100,6 +113,17 @@ export class ControllersComponent implements OnInit {
     this.api.deleteCommandMessage(this.currentDeviceId, this.selectedDeleteDeviceCommand).subscribe(deviceMessage => {
       
       this.toastr.success("O comando foi apagado", "Comando apagado");
+    },
+    (error: HttpErrorResponse) => {
+      if (error.error instanceof ErrorEvent) {
+        //Erro no lado do cliente
+        this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
+        console.log(this.errorMessage);
+      } else {
+        // Erro no Servidor ou API
+        this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
+        console.log(this.errorMessage);
+      }
     });
   }
 

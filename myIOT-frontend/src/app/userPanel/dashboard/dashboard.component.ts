@@ -37,7 +37,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
 
     const tokenPayload = this.auth.decodedJwtToken();
-    
+
     this.deviceUserId = tokenPayload.nameid;
     console.log('UserID: ' + this.deviceUserId);
 
@@ -46,31 +46,24 @@ export class DashboardComponent implements OnInit {
         this.users = users;
       })
 
-      this.api.getAllUserDevices(this.deviceUserId).subscribe(userDevices => {
-        this.devices = userDevices;
-        console.log(this.devices);
+      this.api.getAllUserDevices(this.deviceUserId).subscribe(
+        {
+          next: (userDevices) => {
+            this.devices = userDevices;
+            console.log(this.devices);
 
-        if (this.devices.length === 0) {
-          this.errorMessage = 'Não há dispositivos';
+            if (this.devices.length === 0) {
+              this.errorMessage = 'Não há dispositivos';
+            }
+          },
+          error: (err) => {
+            console.log(err);
+            this.toastr.error('Erro ao Entrar', 'Acesso Falhou');
+
+            return;
+          }
         }
-      },
-      (error: HttpErrorResponse) => {
-        if (error.error instanceof ErrorEvent) {
-          //Erro no lado do cliente
-          this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
-        } else {
-          // Erro no Servidor ou API
-          this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
-        }
-      });
-
-      // this.api.sendCommandMessage("SimulatedSensorTest", "command1").subscribe(deviceMessage => {
-        
-      // })
-
-      // this.api.RegisterNewDeviceAsync("SimulatedSensorTest1", this.deviceUserId).subscribe(deviceMessage => {
-        
-      // })
+      );
 
       this.userStore.getUserNameFromUserStore().subscribe(userName => {
         let usernameFromToken = this.auth.getUsernameFromJwtToken();
@@ -89,7 +82,7 @@ export class DashboardComponent implements OnInit {
         this.devices = devices;
       });
 
-      
+
     }
   }
 
@@ -119,6 +112,7 @@ export class DashboardComponent implements OnInit {
     console.log(this.deviceUserId);
 
     this.api.RegisterNewDeviceAsync(this.newDeviceName, this.deviceUserId).subscribe(data => {
+      console.log(data);
       this.toastr.success("O dispositivo foi adicionado com sucesso", "Dispositivo Adicionado");
       window.location.reload();
     })
@@ -131,17 +125,5 @@ export class DashboardComponent implements OnInit {
       window.location.reload();
     })
   }
-
-  onSubmit() {
-    console.log(this.selectedOption);
-  }
-
-  devicestest: Device[] = [
-    { deviceId: '1', deviceName: 'Teste1', userId: '1' },
-    { deviceId: '2', deviceName: 'Teste2', userId: '1' },
-    { deviceId: '3', deviceName: 'Teste3', userId: '1' },
-    { deviceId: '4', deviceName: 'Teste4', userId: '1' },
-  ];
-
 
 }

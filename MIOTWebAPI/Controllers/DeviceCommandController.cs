@@ -88,7 +88,7 @@ namespace MIOTWebAPI.Controllers
 
                     var command = new SqlCommand("SELECT [Command] FROM [dbo].[DeviceCommand] where Id = " + commandId + ";", connection);
                     var reader = await command.ExecuteReaderAsync();
-                    
+
                     while (reader.Read())
                     {
 
@@ -101,10 +101,13 @@ namespace MIOTWebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(500, ex.Message);
             }
 
-            return Ok("Comando foi enviado");
+            return Ok(new
+            {
+                Message = "Comando foi enviado"
+            });
         }
 
 
@@ -137,10 +140,13 @@ namespace MIOTWebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(500, ex.Message);
             }
 
-            return Ok("Comando foi adicionado");
+            return Ok(new
+            {
+                Message = "Comando foi adicionado"
+            });
         }
 
         [HttpPost("DeleteDeviceCommandAsync")]
@@ -156,7 +162,7 @@ namespace MIOTWebAPI.Controllers
                 {
                     await connection.OpenAsync();
 
-                    string sql = "DELETE FROM [dbo].[DeviceCommand] WHERE Id = " + deviceCommandId +" AND deviceId = " + deviceId;
+                    string sql = "DELETE FROM [dbo].[DeviceCommand] WHERE Id = " + deviceCommandId + " AND deviceId = " + deviceId;
                     using (SqlCommand cmd = new SqlCommand(sql, connection))
                     {
 
@@ -168,10 +174,13 @@ namespace MIOTWebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(500, ex.Message);
             }
 
-            return Ok("Comando foi apagado");
+            return Ok(new
+            {
+                Message = "Comando foi apagado"
+            });
         }
     }
 }

@@ -38,7 +38,7 @@ namespace MIOTWebAPI.Controllers
 
         [HttpPost("RegisterNewDeviceAsync")]
         //POST: /api/Device/RegisterNewDeviceAsync
-        public async Task<string> RegisterNewDeviceAsync(string deviceName, string userId)
+        public async Task<IActionResult> RegisterNewDeviceAsync(string deviceName, string userId)
         {
             Device device;
 
@@ -77,38 +77,42 @@ namespace MIOTWebAPI.Controllers
                         }
                     }
 
-                    return "O dispositivo foi criado";
+                    return Ok(new
+                    {
+                        Message = "O dispositivo foi criado",
+                        StatusCode = 200
+                    });
                 }
 
-                return "O dispositivo já existe";
+                return StatusCode(500, "O dispositivo já existe");
 
             }
             catch (DeviceAlreadyExistsException)
             {
                 device = await registryManager.GetDeviceAsync(deviceName);
-                return "O dispositivo já existe";
+                return StatusCode(500, "O dispositivo já existe");
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                return StatusCode(500, ex.Message);
             }
         }
 
         [HttpGet("GetDeviceConnectionStateAsync")]
-        public async Task<string> GetDeviceConnectionStateAsync(string deviceId)
+        public async Task<IActionResult> GetDeviceConnectionStateAsync(string deviceId)
         {
             var registryManager = RegistryManager.CreateFromConnectionString(connectionString);
             var device = await registryManager.GetDeviceAsync(deviceId);
 
             if (device == null)
-                return "Dispositivo não encontrado";
+                return NotFound();
 
-            return device.ConnectionState.ToString();
+            return Ok(device.ConnectionState.ToString());
         }
 
         [HttpGet("GetDevices")]
         //POST: /api/Device/GetDevices
-        public async Task<List<DeviceModel>> GetDevices(string userId)
+        public async Task<IActionResult> GetDevices(string userId)
         {
             try
             {
@@ -132,20 +136,20 @@ namespace MIOTWebAPI.Controllers
 
                     var json = JsonSerializer.Serialize(devices);
 
-                    return devices;
+                    return Ok(devices);
                 }
             }
             catch (Exception ex)
             {
-                return new List<DeviceModel>();
+                return StatusCode(500, ex.Message);
             }
         }
 
-       
+
 
         [HttpPost("DeleteDeviceAsync")]
         //POST: /api/Device/DeleteDeviceAsync
-        public async Task<string> DeleteDeviceAsync(string deviceId, string userId)
+        public async Task<IActionResult> DeleteDeviceAsync(string deviceId, string userId)
         {
 
             registryManager = RegistryManager.CreateFromConnectionString(connectionString);
@@ -156,7 +160,7 @@ namespace MIOTWebAPI.Controllers
                 {
                     await connection.OpenAsync();
 
-                    string sql = "DELETE FROM [dbo].[Devices] WHERE deviceId="+ deviceId +" AND deviceUserId="+ userId;
+                    string sql = "DELETE FROM [dbo].[Devices] WHERE deviceId=" + deviceId + " AND deviceUserId=" + userId;
                     using (SqlCommand cmd = new SqlCommand(sql, connection))
                     {
                         cmd.CommandType = CommandType.Text;
@@ -172,10 +176,14 @@ namespace MIOTWebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                return StatusCode(500, ex.Message);
             }
 
-            return "O dispositivo foi apagador com sucesso";
+            return Ok(new
+            {
+                Message = "Dispositivo foi apagador com sucesso",
+                StatusCode = 200
+            });
         }
 
 
@@ -192,10 +200,14 @@ namespace MIOTWebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(500, ex.Message);
             }
 
-            return Ok("Comando foi enviado");
+            return Ok(new
+            {
+                Message = "Comando foi enviado",
+                StatusCode = 200
+            });
         }
     }
 }

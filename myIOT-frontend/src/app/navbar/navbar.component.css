@@ -15,3 +15,7 @@
     padding: 3px 8px 3px 3px;
     border-radius: 4px;
 }
+
+.navbar-nav {
+    margin-left: auto;
+}

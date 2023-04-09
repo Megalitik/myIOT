@@ -23,7 +23,11 @@ export class ApiService {
   }
 
   getDeviceConnectionState(deviceId: string) {
-    return this.http.get<any>(`${this.baseDeviceUrl}GetDeviceConnectionStateAsync?deviceId=${deviceId}`);
+    return this.http.get(`${this.baseDeviceUrl}GetDeviceConnectionStateAsync?deviceId=${deviceId}`, {responseType: 'text'});
+  }
+
+  getDeviceConnectionString(deviceId: string) {
+    return this.http.get(`${this.baseDeviceUrl}GetDeviceConnectionStringAsync?deviceId=${deviceId}`, {responseType: 'text'});
   }
 
   RegisterNewDeviceAsync(deviceName: string, userID: string) {

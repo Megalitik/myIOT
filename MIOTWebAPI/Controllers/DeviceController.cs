@@ -110,6 +110,20 @@ namespace MIOTWebAPI.Controllers
             return Ok(device.ConnectionState.ToString());
         }
 
+        [HttpGet("GetDeviceConnectionStringAsync")]
+        public async Task<IActionResult> GetDeviceConnectionStringAsync(string deviceId)
+        {
+            var registryManager = RegistryManager.CreateFromConnectionString(connectionString);
+            var device = await registryManager.GetDeviceAsync(deviceId);
+
+            if (device == null)
+                return NotFound();
+
+            string deviceConString = "HostName=MyIOT-PAP.azure-devices.net;DeviceId=" + deviceId + ";SharedAccessKey=" + device.Authentication.SymmetricKey.PrimaryKey;
+
+            return Ok(deviceConString);
+        }
+
         [HttpGet("GetDevices")]
         //POST: /api/Device/GetDevices
         public async Task<IActionResult> GetDevices(string userId)

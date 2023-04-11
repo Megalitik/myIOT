@@ -11,9 +11,8 @@ const routes: Routes = [
   { path:'user', component:UserComponent },
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path:'login', component:LoginComponent },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'controllers', component: ControllersComponent, canActivate:[AuthGuard] },
-  { path: 'reset', component: ResetComponent }
+  { path: 'dashboard', component: DashboardComponent, canActivate:[AuthGuard]  },
+  { path: 'controllers', component: ControllersComponent, canActivate:[AuthGuard] }
 ];
 
 @NgModule({

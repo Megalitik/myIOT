@@ -31,26 +31,33 @@ export class ControllersComponent implements OnInit {
 
   errorMessage: string = "";
 
-  deviceMessages: string[] = [];
   DeviceCommands: any[] = [];
   selectedCommand: any;
   currentDeviceId: string = '';
+
   currentDeviceConnectivityState: any = '';
   currentDeviceConnectionString: any = '';
+
   selectedDeleteDeviceCommand: string = '';
+
   newDeviceCommandName: string = '';
-
-  testDevice: Device;
-
   newDeviceCommandCommand: string = '';
 
-  private destroy$ = new Subject<void>();
-  private pollingSubscription!: Subscription;
-
-  @Input() currentDeviceID: string;
+  @Input() currentDeviceIDe: string;
+  mySub: Subscription;
 
   constructor(private route: ActivatedRoute, private api: ApiService,
-    private toastr: ToastrService, private auth: AuthService, private http: HttpClient) { }
+    private toastr: ToastrService, private auth: AuthService, private http: HttpClient) {
+
+    this.mySub = interval(5000).subscribe((func => {
+      this.deviceConnectionState(this.currentDeviceId);
+      
+    }))
+  }
+
+  ngOnDestroy() {
+    this.mySub.unsubscribe();
+  }
 
   ngOnInit(): void {
 
@@ -70,8 +77,10 @@ export class ControllersComponent implements OnInit {
 
   isUserAuthenticated() {
 
-    if (this.auth.isUserLoggedIn() == true)
+    if (this.auth.isUserLoggedIn() == true && this.currentDeviceId != undefined && this.currentDeviceId != '') {
+      
       return true;
+    }
     else {
       return false;
     }
@@ -84,22 +93,22 @@ export class ControllersComponent implements OnInit {
       console.log(commands);
       this.DeviceCommands = commands
     },
-    (error: HttpErrorResponse) => {
-      if (error.error instanceof ErrorEvent) {
-        //Erro no lado do cliente
-        this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
-        console.log(this.errorMessage);
-      } else {
-        // Erro no Servidor ou API
-        this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
-        console.log(this.errorMessage);
-      }
-    });
+      (error: HttpErrorResponse) => {
+        if (error.error instanceof ErrorEvent) {
+          //Erro no lado do cliente
+          this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
+          console.log(this.errorMessage);
+        } else {
+          // Erro no Servidor ou API
+          this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
+          console.log(this.errorMessage);
+        }
+      });
   }
 
   deviceConnectionString(deviceId: string) {
     this.api.getDeviceConnectionString(deviceId).subscribe(connString => {
-      console.log(connString);
+      
       this.currentDeviceConnectionString = connString
     },
       (error: HttpErrorResponse) => {
@@ -119,7 +128,7 @@ export class ControllersComponent implements OnInit {
 
   deviceConnectionState(deviceId: string) {
     this.api.getDeviceConnectionState(deviceId).subscribe(connState => {
-      console.log(connState);
+      
       this.currentDeviceConnectivityState = connState
     },
       (error: HttpErrorResponse) => {

@@ -163,7 +163,10 @@ export class ControllersComponent implements OnInit {
     this.api.addNewDeviceCommand(this.currentDeviceId, this.newDeviceCommandName, this.newDeviceCommandCommand).subscribe(deviceMessage => {
 
       this.toastr.success("O comando foi criado", "Comando criado");
-      window.location.reload();
+      this.userDeviceCommandsList(this.currentDeviceId);
+
+      const closeButton = document.getElementById("addDeviceCommandCloseBtn");
+      closeButton?.click();
     },
       (error: HttpErrorResponse) => {
         if (error.error instanceof ErrorEvent) {
@@ -182,9 +185,10 @@ export class ControllersComponent implements OnInit {
 
   deleteDeviceCommand() {
     this.api.deleteCommandMessage(this.currentDeviceId, this.selectedDeleteDeviceCommand).subscribe(deviceMessage => {
-
+      this.userDeviceCommandsList(this.currentDeviceId);
       this.toastr.success("O comando foi apagado", "Comando apagado");
-      window.location.reload();
+      const closeButton = document.getElementById("deleteDeviceCommandCloseBtn");
+      closeButton?.click();
     },
       (error: HttpErrorResponse) => {
         if (error.error instanceof ErrorEvent) {

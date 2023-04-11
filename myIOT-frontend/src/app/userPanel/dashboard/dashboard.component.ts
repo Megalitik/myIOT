@@ -115,8 +115,10 @@ export class DashboardComponent implements OnInit {
       console.log(data);
       this.toastr.success("O dispositivo foi adicionado com sucesso", "Dispositivo Adicionado");
       window.location.reload();
-    }, err => {
+    }, (err: HttpErrorResponse) => {
       console.log(err);
+      console.log(err.error.message);
+      console.log(`Server returned code: ${err.status}, error message is: ${err.message}`);
       this.toastr.error("Falha ao registar um novo dispositivo", "Erro - Adicionar Dispositivo");
     })
   }
@@ -126,8 +128,10 @@ export class DashboardComponent implements OnInit {
       console.log(data);
       this.toastr.success("O dispositivo foi apagado com sucesso", "Dispositivo Apagado");
       window.location.reload();
-    }, err => {
+    }, (err: HttpErrorResponse) => {
       console.log(err);
+      console.log(err.error.message);
+      console.log(`Server returned code: ${err.status}, error message is: ${err.message}`);
       this.toastr.error("Falha ao apagar o dispositivo", "Erro - Apagar Dispositivo");
     })
   }

@@ -77,17 +77,23 @@ export class ControllersComponent implements OnInit {
     }
   }
 
-  isUserAllowed() {
-
-  }
-
   userDeviceCommandsList(deviceId: string) {
     this.api.getDeviceCommands(deviceId).subscribe(commands => {
 
       console.log('Command List: ' + commands);
       console.log(commands);
       this.DeviceCommands = commands
-      // this.toastr.success("O comando foi enviado", "Comando enviado");
+    },
+    (error: HttpErrorResponse) => {
+      if (error.error instanceof ErrorEvent) {
+        //Erro no lado do cliente
+        this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
+        console.log(this.errorMessage);
+      } else {
+        // Erro no Servidor ou API
+        this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
+        console.log(this.errorMessage);
+      }
     });
   }
 
@@ -95,22 +101,40 @@ export class ControllersComponent implements OnInit {
     this.api.getDeviceConnectionString(deviceId).subscribe(connString => {
       console.log(connString);
       this.currentDeviceConnectionString = connString
-      // this.toastr.success("O comando foi enviado", "Comando enviado");
-    }, error => {
-      console.log(error)
-      this.currentDeviceConnectionString = "Erro"
-    });
+    },
+      (error: HttpErrorResponse) => {
+        if (error.error instanceof ErrorEvent) {
+          //Erro no lado do cliente
+          this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
+          console.log(this.errorMessage);
+          this.currentDeviceConnectionString = "Erro - Não foi possível obter a cadeia de ligação do dispositivo"
+        } else {
+          // Erro no Servidor ou API
+          this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
+          console.log(this.errorMessage);
+          this.currentDeviceConnectionString = "Erro - Não foi possível obter a cadeia de ligação do dispositivo"
+        }
+      });
   }
 
   deviceConnectionState(deviceId: string) {
     this.api.getDeviceConnectionState(deviceId).subscribe(connState => {
       console.log(connState);
       this.currentDeviceConnectivityState = connState
-      // this.toastr.success("O comando foi enviado", "Comando enviado");
-    }, error => {
-      console.log(error)
-      this.currentDeviceConnectivityState = "Erro - Não foi possível obter o estado de conetividade do dispositivo"
-    });
+    },
+      (error: HttpErrorResponse) => {
+        if (error.error instanceof ErrorEvent) {
+          //Erro no lado do cliente
+          this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
+          console.log(this.errorMessage);
+          this.currentDeviceConnectivityState = "Erro - Não foi possível obter o estado de conetividade do dispositivo"
+        } else {
+          // Erro no Servidor ou API
+          this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
+          console.log(this.errorMessage);
+          this.currentDeviceConnectivityState = "Erro - Não foi possível obter o estado de conetividade do dispositivo"
+        }
+      });
   }
 
   sendCommand() {
@@ -120,10 +144,18 @@ export class ControllersComponent implements OnInit {
       console.log('Sending command: ' + this.selectedCommand.Name);
       this.toastr.success("O comando foi enviado", "Comando enviado");
     },
-      (error) => {
-        this.errorMessage = error.message;
-        console.log(this.errorMessage);
-        this.toastr.error("Houve um erro ao enviar o comando", "Erro")
+      (error: HttpErrorResponse) => {
+        if (error.error instanceof ErrorEvent) {
+          //Erro no lado do cliente
+          this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
+          console.log(this.errorMessage);
+          this.toastr.error("Houve um erro ao enviar o comando", "Erro")
+        } else {
+          // Erro no Servidor ou API
+          this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
+          console.log(this.errorMessage);
+          this.toastr.error("Houve um erro ao enviar o comando", "Erro")
+        }
       });
   }
 

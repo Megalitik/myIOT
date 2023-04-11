@@ -20,8 +20,6 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using Models;
-using MIOTWebAPI.Models;
 using MIOTWebAPI.Context;
 using MIOTWebAPI.UtilityService;
 
@@ -40,7 +38,6 @@ namespace MIOTWebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             //Inject AppSettings
-            services.Configure<ApplicationSettings>(Configuration.GetSection("JWTConfig"));
 
             services.AddDbContext<AppDbContext>(opt => {
                 opt.UseSqlServer(Configuration.GetConnectionString("SQLConnection"));});

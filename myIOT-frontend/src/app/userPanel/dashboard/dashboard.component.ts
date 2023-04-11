@@ -115,12 +115,20 @@ export class DashboardComponent implements OnInit {
       console.log(data);
       this.toastr.success("O dispositivo foi adicionado com sucesso", "Dispositivo Adicionado");
       window.location.reload();
-    }, (err: HttpErrorResponse) => {
-      console.log(err);
-      console.log(err.error.message);
-      console.log(`Server returned code: ${err.status}, error message is: ${err.message}`);
-      this.toastr.error("Falha ao registar um novo dispositivo", "Erro - Adicionar Dispositivo");
-    })
+    },
+      (error: HttpErrorResponse) => {
+        if (error.error instanceof ErrorEvent) {
+          //Erro no lado do cliente
+          this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
+          console.log(this.errorMessage);
+          this.toastr.error("Falha ao registar um novo dispositivo", "Erro - Adicionar Dispositivo");
+        } else {
+          // Erro no Servidor ou API
+          this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
+          console.log(this.errorMessage);
+          this.toastr.error("Falha ao registar um novo dispositivo", "Erro - Adicionar Dispositivo");
+        }
+      })
   }
 
   deleteDevice() {
@@ -128,12 +136,20 @@ export class DashboardComponent implements OnInit {
       console.log(data);
       this.toastr.success("O dispositivo foi apagado com sucesso", "Dispositivo Apagado");
       window.location.reload();
-    }, (err: HttpErrorResponse) => {
-      console.log(err);
-      console.log(err.error.message);
-      console.log(`Server returned code: ${err.status}, error message is: ${err.message}`);
-      this.toastr.error("Falha ao apagar o dispositivo", "Erro - Apagar Dispositivo");
-    })
+    },
+      (error: HttpErrorResponse) => {
+        if (error.error instanceof ErrorEvent) {
+          //Erro no lado do cliente
+          this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
+          console.log(this.errorMessage);
+          this.toastr.error("Falha ao apagar o dispositivo", "Erro - Apagar Dispositivo");
+        } else {
+          // Erro no Servidor ou API
+          this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
+          console.log(this.errorMessage);
+          this.toastr.error("Falha ao apagar o dispositivo", "Erro - Apagar Dispositivo");
+        }
+      })
   }
 
 }

@@ -60,7 +60,7 @@ export class RegisterUserComponent {
 
   register() {
     if (!this.UserForm.valid) {
-      this.toastr.error('Falta preencher campos obrigatórios', 'Validation Error');
+      this.toastr.error('Falta preencher campos obrigatórios', 'Erro Validação');
       return;
     }
 

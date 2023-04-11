@@ -109,7 +109,7 @@ export class ControllersComponent implements OnInit {
       // this.toastr.success("O comando foi enviado", "Comando enviado");
     }, error => {
       console.log(error)
-      this.currentDeviceConnectivityState = "Erro"
+      this.currentDeviceConnectivityState = "Erro - Não foi possível obter o estado de conetividade do dispositivo"
     });
   }
 

@@ -170,6 +170,22 @@ namespace MIOTWebAPI.Controllers
 
             try
             {
+
+                using (var connection = new SqlConnection(sqlconnectionString))
+                {
+                    await connection.OpenAsync();
+
+                    string sql = "DELETE FROM [dbo].[DeviceCommand] WHERE deviceId=" + deviceId;
+                    using (SqlCommand cmd = new SqlCommand(sql, connection))
+                    {
+                        cmd.CommandType = CommandType.Text;
+                        cmd.ExecuteNonQuery();
+
+                    }
+                    await connection.CloseAsync();
+
+                }
+
                 using (var connection = new SqlConnection(sqlconnectionString))
                 {
                     await connection.OpenAsync();
@@ -179,7 +195,10 @@ namespace MIOTWebAPI.Controllers
                     {
                         cmd.CommandType = CommandType.Text;
                         cmd.ExecuteNonQuery();
+
                     }
+                    await connection.CloseAsync();
+
                 }
 
                 Device deviceToBeDeleted = await registryManager.GetDeviceAsync(deviceId);

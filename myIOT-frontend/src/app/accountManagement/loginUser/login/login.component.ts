@@ -52,8 +52,6 @@ export class LoginComponent {
       return;
     }
 
-    console.log(this.loginForm.value);
-
     this.auth.Login(this.loginForm.value).subscribe(
       {
         next: (res) =>{
@@ -72,6 +70,7 @@ export class LoginComponent {
         },
         error: (err) =>{
           console.log(err);
+          console.log(new Error('Erro: ' + err.message));
           this.toastr.error('Erro ao Entrar', 'Acesso Falhou');
           
           return;

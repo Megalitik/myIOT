@@ -20,7 +20,7 @@ import { Device } from 'src/app/Models/Device';
 export class DashboardComponent implements OnInit {
 
   devices: any[] = [];
-  users: any[] = [];
+
   errorMessage: string = "";
   username: string = "";
   role: string = "";
@@ -42,10 +42,7 @@ export class DashboardComponent implements OnInit {
     console.log('UserID: ' + this.deviceUserId);
 
     if (this.isUserAuthenticated()) {
-      this.api.getAllUsers().subscribe(users => {
-        this.users = users;
-      })
-
+      
       this.api.getAllUserDevices(this.deviceUserId).subscribe(
         {
           next: (userDevices) => {
@@ -86,9 +83,6 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  onClick() {
-    console.log('Selected item ID:', this.selectedDeleteDevice);
-  }
 
   isUserAuthenticated() {
 

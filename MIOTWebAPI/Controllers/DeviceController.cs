@@ -99,6 +99,7 @@ namespace MIOTWebAPI.Controllers
         }
 
         [HttpGet("GetDeviceConnectionStateAsync")]
+        //GET: /api/Device/GetDeviceConnectionStateAsync
         public async Task<IActionResult> GetDeviceConnectionStateAsync(string deviceId)
         {
             var registryManager = RegistryManager.CreateFromConnectionString(connectionString);
@@ -111,6 +112,7 @@ namespace MIOTWebAPI.Controllers
         }
 
         [HttpGet("GetDeviceConnectionStringAsync")]
+        //GET: /api/Device/GetDeviceConnectionStringAsync
         public async Task<IActionResult> GetDeviceConnectionStringAsync(string deviceId)
         {
             var registryManager = RegistryManager.CreateFromConnectionString(connectionString);
@@ -124,8 +126,39 @@ namespace MIOTWebAPI.Controllers
             return Ok(deviceConString);
         }
 
+        [HttpGet("GetDeviceUser")]
+        //GET: /api/Device/GetDeviceConnectionStringAsync
+        public async Task<IActionResult> GetDeviceUser(string deviceId)
+        {
+            try
+            {
+
+                string UserId = "";
+                using (var connection = new SqlConnection(sqlconnectionString))
+                {
+                    await connection.OpenAsync();
+
+                    var command = new SqlCommand("SELECT deviceUserId FROM Devices where deviceId = " + deviceId + ";", connection);
+                    var reader = await command.ExecuteReaderAsync();
+
+                    var devices = new List<DeviceModel>();
+                    while (reader.Read())
+                    {
+                        UserId = reader.GetInt32(0).ToString();
+                    }
+                }
+
+                return Ok(UserId);
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet("GetDevices")]
-        //POST: /api/Device/GetDevices
+        //GET: /api/Device/GetDevices
         public async Task<IActionResult> GetDevices(string userId)
         {
             try
@@ -215,30 +248,6 @@ namespace MIOTWebAPI.Controllers
             return Ok(new
             {
                 Message = "Dispositivo foi apagador com sucesso",
-                StatusCode = 200
-            });
-        }
-
-
-        [HttpPost("SendCloudToDeviceMessageAsync")]
-        //POST: /api/Device/SendCloudToDeviceMessageAsync
-        public async Task<ActionResult> SendCloudToDeviceMessageAsync(string targetDevice, string message)
-        {
-            serviceClient = ServiceClient.CreateFromConnectionString(connectionString);
-
-            try
-            {
-                var commandMessage = new Microsoft.Azure.Devices.Message(Encoding.ASCII.GetBytes((message)));
-                await serviceClient.SendAsync(targetDevice, commandMessage);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-
-            return Ok(new
-            {
-                Message = "Comando foi enviado",
                 StatusCode = 200
             });
         }

@@ -14,10 +14,6 @@ export class ApiService {
 
   constructor(private http : HttpClient) { }
 
-  getAllUsers() {
-    return this.http.get<any>(this.baseUserUrl);
-  }
-
   getAllUserDevices(username: string) {
     return this.http.get<any>(`${this.baseDeviceUrl}GetDevices?userId=${username}`);
   }
@@ -28,6 +24,10 @@ export class ApiService {
 
   getDeviceConnectionString(deviceId: string) {
     return this.http.get(`${this.baseDeviceUrl}GetDeviceConnectionStringAsync?deviceId=${deviceId}`, {responseType: 'text'});
+  }
+
+  getDeviceUser(deviceId: string) {
+    return this.http.get<any>(`${this.baseDeviceUrl}GetDeviceUser?deviceId=${deviceId}`);
   }
 
   RegisterNewDeviceAsync(deviceName: string, userID: string) {

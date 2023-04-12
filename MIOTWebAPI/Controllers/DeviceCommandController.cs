@@ -38,7 +38,7 @@ namespace MIOTWebAPI.Controllers
 
 
         [HttpGet("GetDeviceCommands")]
-        //POST: /api/Device/GetDevices
+        //GET: /api/Device/GetDevices
         public async Task<IActionResult> GetDeviceCommands(string deviceId)
         {
             try

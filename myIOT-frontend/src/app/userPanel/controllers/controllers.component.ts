@@ -37,6 +37,7 @@ export class ControllersComponent implements OnInit {
 
   currentDeviceConnectivityState: any = '';
   currentDeviceConnectionString: any = '';
+  currentDeviceUser: any = '';
 
   selectedDeleteDeviceCommand: string = '';
 
@@ -51,7 +52,7 @@ export class ControllersComponent implements OnInit {
 
     this.mySub = interval(5000).subscribe((func => {
       this.deviceConnectionState(this.currentDeviceId);
-      
+
     }))
   }
 
@@ -68,7 +69,10 @@ export class ControllersComponent implements OnInit {
       }
       );
 
-    const tokenPayload = this.auth.decodedJwtToken();
+    this.api.getDeviceUser(this.currentDeviceId).subscribe(deviceUser => {
+
+      this.currentDeviceUser = deviceUser;
+    });
 
     this.userDeviceCommandsList(this.currentDeviceId);
     this.deviceConnectionState(this.currentDeviceId);
@@ -78,7 +82,19 @@ export class ControllersComponent implements OnInit {
   isUserAuthenticated() {
 
     if (this.auth.isUserLoggedIn() == true && this.currentDeviceId != undefined && this.currentDeviceId != '') {
-      
+
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  isDeviceFromUser() {
+
+    const tokenPayload = this.auth.decodedJwtToken();
+
+    if (this.currentDeviceUser == tokenPayload.nameid) {
       return true;
     }
     else {
@@ -108,7 +124,7 @@ export class ControllersComponent implements OnInit {
 
   deviceConnectionString(deviceId: string) {
     this.api.getDeviceConnectionString(deviceId).subscribe(connString => {
-      
+
       this.currentDeviceConnectionString = connString
     },
       (error: HttpErrorResponse) => {
@@ -128,7 +144,7 @@ export class ControllersComponent implements OnInit {
 
   deviceConnectionState(deviceId: string) {
     this.api.getDeviceConnectionState(deviceId).subscribe(connState => {
-      
+
       this.currentDeviceConnectivityState = connState
     },
       (error: HttpErrorResponse) => {
@@ -147,10 +163,10 @@ export class ControllersComponent implements OnInit {
   }
 
   sendCommand() {
-    console.log(this.selectedCommand);
+    // console.log(this.selectedCommand);
     // API POST request todo
     this.api.sendCommandMessage(this.selectedCommand.deviceId, this.selectedCommand.id).subscribe(deviceMessage => {
-      console.log('Sending command: ' + this.selectedCommand.Name);
+      
       this.toastr.success("O comando foi enviado", "Comando enviado");
     },
       (error: HttpErrorResponse) => {

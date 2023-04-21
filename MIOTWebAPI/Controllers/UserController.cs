@@ -149,7 +149,7 @@ namespace MIOTWebAPI.Controllers
             user.ResetPasswordExpirity = DateTime.Now.AddDays(1);
 
             string from = Configuration["EmailSettings:From"];
-            var emailModel = new EmailModel(email, "MyIOT - Repor Password", EmailBody.EmailBodyHtml(email, emailToken));
+            var emailModel = new EmailModel(email, "MyIOT - Repor Password", EmailBody.EmailResetPasswordBodyHtml(email, emailToken));
 
             _emailService.SendEmail(emailModel);
             _appContext.Entry(user).State = EntityState.Modified;

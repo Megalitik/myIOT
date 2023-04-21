@@ -2,15 +2,36 @@
     <h1>Dashboard</h1>
 
     <div class="row mt-5">
-        <button type="button" data-bs-toggle="modal" data-bs-target="#addDeviceModal" class="btn btn-primary btn-sm w-25 mr-5">Adicionar um novo dispositivo</button>
-        <button type="button" data-bs-toggle="modal" data-bs-target="#deleteDeviceModal" class="btn btn-danger btn-sm w-25">Apagar um dispositivo</button>
-    
+        <button type="button" data-bs-toggle="modal" data-bs-target="#addDeviceModal"
+            class="btn btn-primary btn-sm w-25 mr-5">Adicionar um novo dispositivo</button>
+        <button type="button" data-bs-toggle="modal" data-bs-target="#deleteDeviceModal"
+            class="btn btn-danger btn-sm w-25">Apagar um dispositivo</button>
+
     </div>
     <div class="card-deck servers mt-5">
         <div *ngFor="let userdevice of devices">
             <app-user-devices [userDevice]="userdevice"></app-user-devices>
         </div>
     </div>
+
+    <!-- <div class="container mt-5">
+        <h2>Angular 14 Display Data from REST API</h2>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Dispositivo</th>
+              <th>Mensagem</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let message of userdevicemessages">
+              <td>{{ post.id }}</td>
+              <td>{{ post.title }}</td>
+              <td>{{ post.content }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div> -->
 </div>
 
 <div class="modal fade" id="addDeviceModal" tabindex="-1" aria-labelledby="addDeviceModalLabel" aria-hidden="true">
@@ -26,13 +47,13 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                    <div class="form-group pt-3">
-                        <div class="input-field">
-                            <span class="fa fa-user fa-color p-2"></span>
-                            <input [(ngModel)]="newDeviceName" class="form-control" type="text"
-                                placeholder="Nome do Dispositivo">
-                        </div>
+                <div class="form-group pt-3">
+                    <div class="input-field">
+                        <span class="fa fa-user fa-color p-2"></span>
+                        <input [(ngModel)]="newDeviceName" class="form-control" type="text"
+                            placeholder="Nome do Dispositivo">
                     </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button id="addDeviceCloseBtn" type="button" class="btn btn-secondary"
@@ -60,7 +81,8 @@
                 <div class="form-group pt-3">
                     <label for="my-dropdown">Seleciona um dispositivo:</label>
                     <select class="form-control" id="my-dropdown" [(ngModel)]="selectedDeleteDevice">
-                        <option *ngFor="let deleteDevice of devices" [value]="deleteDevice.deviceId">{{ deleteDevice.deviceName
+                        <option *ngFor="let deleteDevice of devices" [value]="deleteDevice.deviceId">{{
+                            deleteDevice.deviceName
                             }}</option>
                     </select>
                 </div>

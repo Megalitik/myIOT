@@ -11,14 +11,6 @@ import { apiServer } from '../../_config/environment';
 import { ApiService } from 'src/app/_services/api/api.service';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/_services/auth/auth.service';
-import { Device } from 'src/app/Models/Device';
-
-interface DeviceCommand {
-  Id: string;
-  deviceId: string;
-  Name: string;
-  Command: string;
-}
 
 @Component({
   selector: 'app-controllers',

@@ -17,6 +17,8 @@ using System.Text.Json;
 using Microsoft.Azure.Devices.Client;
 using System.Data;
 using Azure.Messaging.EventHubs.Consumer;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace MIOTWebAPI.Controllers
 {
@@ -41,7 +43,6 @@ namespace MIOTWebAPI.Controllers
         //GET: /api/Device/GetDeviceConnectionStateAsync
         public async Task GetDeviceEventMessageAsync()
         {
-            string ConsumerGroup = "$Default";
             string consumerGroup = EventHubConsumerClient.DefaultConsumerGroupName;
 
             string eventHubConnectionString = $"Endpoint=sb://ihsuprodamres082dednamespace.servicebus.windows.net/;SharedAccessKeyName=iothubowner;SharedAccessKey=Bj6J9hRQODXMZrMFAygpaGUBqRtttOb4JspTHzNDTDc=;EntityPath=iothub-ehub-myiot-pap-24899739-4cd7aaee27";
@@ -69,11 +70,27 @@ namespace MIOTWebAPI.Controllers
                     string deviceId = partitionEvent.Data.SystemProperties["iothub-connection-device-id"].ToString();
                     string json = Encoding.UTF8.GetString(partitionEvent.Data.Body.ToArray());
                     Console.WriteLine(json);
+
+                    using (var connection = new SqlConnection(sqlconnectionString))
+                        {
+                            await connection.OpenAsync();
+
+                            string sql = "INSERT INTO [dbo].[DeviceMessages] ([deviceId],[Message],[MessageDate]) VALUES (@deviceID,@message,@date)";
+                            using (SqlCommand cmd = new SqlCommand(sql, connection))
+                            {
+                                cmd.Parameters.Add("@deviceID", SqlDbType.Int, int.MaxValue).Value = deviceId;
+                                cmd.Parameters.Add("@message", SqlDbType.VarChar, int.MaxValue).Value = json;
+                                cmd.Parameters.Add("@date", SqlDbType.DateTime).Value = DateTime.Now;
+
+                                cmd.CommandType = CommandType.Text;
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
                 }
             }
         }
 
-        static async Task ReceiveMessagesFromDeviceAsync(string partitionId)
+        public async Task ReceiveMessagesFromDeviceAsync(string partitionId)
         {
             Console.WriteLine($"Starting listener thread for partition: {partitionId}");
             while (true)
@@ -86,6 +103,8 @@ namespace MIOTWebAPI.Controllers
                     {
                         msgSource = receivedEvent.Data.SystemProperties["iothub-message-source"].ToString();
                         Console.WriteLine($"{partitionId} {msgSource} {body}");
+
+                        
                     }
                 }
             }
@@ -238,7 +257,7 @@ namespace MIOTWebAPI.Controllers
                         });
                     }
 
-                    var json = JsonSerializer.Serialize(devices);
+                    var json = System.Text.Json.JsonSerializer.Serialize(devices);
 
                     return Ok(devices);
                 }
@@ -246,6 +265,54 @@ namespace MIOTWebAPI.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetDeviceMessages(string deviceId)
+        {
+            List<string> jsonStrings = new List<string>();
+
+            using (SqlConnection connection = new SqlConnection(sqlconnectionString))
+            {
+                string query = "SELECT Message FROM DeviceMessages WHERE deviceId =" + deviceId;
+
+                SqlCommand command = new SqlCommand(query, connection);
+                connection.Open();
+
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string jsonString = reader.GetString(0);
+
+                        // Check if the JSON string is valid.
+                        if (!IsValidJson(jsonString))
+                        {
+                            return BadRequest("Invalid JSON string: " + jsonString);
+                        }
+
+                        jsonStrings.Add(jsonString);
+                    }
+                }
+            }
+
+            // Convert the list of JSON strings to a JSON array.
+            JArray jsonArray = new JArray(jsonStrings.Select(JsonConvert.DeserializeObject));
+
+            return Ok(jsonArray);
+        }
+
+        public bool IsValidJson(string jsonString)
+        {
+            try
+            {
+                JToken.Parse(jsonString);
+                return true;
+            }
+            catch (JsonReaderException)
+            {
+                return false;
             }
         }
 

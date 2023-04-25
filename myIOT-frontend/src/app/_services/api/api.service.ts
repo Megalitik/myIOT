@@ -26,6 +26,10 @@ export class ApiService {
     return this.http.get(`${this.baseDeviceUrl}GetDeviceConnectionStringAsync?deviceId=${deviceId}`, {responseType: 'text'});
   }
 
+  getDeviceMessages(deviceId: string) {
+    return this.http.get<any>(`${this.baseDeviceUrl}GetDeviceMessages?deviceId=${deviceId}`);
+  }
+
   getDeviceUser(deviceId: string) {
     return this.http.get<any>(`${this.baseDeviceUrl}GetDeviceUser?deviceId=${deviceId}`);
   }

@@ -1,22 +1,68 @@
 <div *ngIf="isUserAuthenticated() && isDeviceFromUser()" class="container-fluid">
     <h3 class="header">Comandos</h3>
-    <div class="row mt-5">
-        <button type="button" class="btn btn-primary btn-sm w-25 mr-5" data-bs-toggle="modal"
-            data-bs-target="#addDeviceCommandModal">Adicionar Comando</button>
-        <button type="button" class="btn btn-primary btn-danger btn-sm w-25" data-bs-toggle="modal"
-            data-bs-target="#deleteDeviceCommandModal">Apagar Comando</button>
+
+    <div class="section-container">
+        <div class="cards">
+            <div class="card-deck">
+                <div class="card mb-3 shadow card-theme">
+                    <div class="card-body pb-0">
+                        <div class="row float-left">
+                            <p class="font-weight-bold text-dark">Nome do Dispositivo</p>
+                        </div>
+                        <div class="row float-right">
+                            <div class="col btn-group float-right p-0">
+                                <button type="button" class="btn btn-circle p-0"
+                                    [ngClass]="currentDeviceConnectivityState === 'Connected' ? 'btn-success' : 'btn-danger'">
+                                </button>
+                            </div>
+                            <div class="col btn-group float-right p-0">
+                                <div class="dropdown">
+                                    <button type="button" class="btn btn-transparent dropdown-toggle p-0"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+                                        <img class="three-dots" src="../../../assets/icons/icons8-menu-vertical-30.png"
+                                            alt="Vertical Dots">
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end">
+                                        <a class="dropdown-item"><i class="ds-icon-start"></i>Adicionar Ferramenta</a>
+                                        <a class="dropdown-item"><i class="ds-icon-restart"></i>Apagar Ferramenta</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <br />
+                        <p class="text-dark float-left">Data Última mensagem:</p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="row mt-5">
-        <select class="form-select form-select-lg mb-3 h-25 p-3 w-25 mr-5" [(ngModel)]="selectedCommand">
-            <option *ngFor="let command of DeviceCommands" [ngValue]="command">{{ command.name }}</option>
-        </select>
-        <button type="button" class="btn btn-primary w-25 mb-3" (click)="sendCommand()">Enviar</button>
+
+    <div class="section-container">
+        <div class="row mt-5">
+
+            <button type="button" class="btn btn-primary btn-sm w-25 mr-5" data-bs-toggle="modal"
+                data-bs-target="#addDeviceCommandModal">Adicionar Comando</button>
+            <button type="button" class="btn btn-primary btn-danger btn-sm w-25" data-bs-toggle="modal"
+                data-bs-target="#deleteDeviceCommandModal">Apagar Comando</button>
+        </div>
+        <div class="row mt-5">
+            <select class="form-select form-select-lg mb-3 h-25 p-3 w-25 mr-5" [(ngModel)]="selectedCommand">
+                <option *ngFor="let command of DeviceCommands" [ngValue]="command">{{ command.name }}</option>
+            </select>
+            <button type="button" class="btn btn-primary w-25 mb-3" (click)="sendCommand()">Enviar</button>
+        </div>
+        <h3 class="header mt-5">Informações do Dispositivo</h3>
+        <div class="row mt-5">
+            <p>Estado de Conetividade: {{ this.currentDeviceConnectivityState }}</p>
+            <p>Chave para o IoT Hub: {{ this.currentDeviceConnectionString }}</p>
+        </div>
     </div>
-    <h3 class="header mt-5">Informações do Dispositivo</h3>
-    <div class="row mt-5">
-        <p>Estado de Conetividade: {{ this.currentDeviceConnectivityState }}</p>
-        <p>Chave para o IoT Hub: {{ this.currentDeviceConnectionString }}</p>
-    </div>
+
+
+    <app-device-message-table [currentDeviceID]="currentDeviceId.toString()"></app-device-message-table>
 </div>
 
 

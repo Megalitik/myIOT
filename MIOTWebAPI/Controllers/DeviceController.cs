@@ -72,20 +72,20 @@ namespace MIOTWebAPI.Controllers
                     Console.WriteLine(json);
 
                     using (var connection = new SqlConnection(sqlconnectionString))
+                    {
+                        await connection.OpenAsync();
+
+                        string sql = "INSERT INTO [dbo].[DeviceMessages] ([deviceId],[Message],[MessageDate]) VALUES (@deviceID,@message,@date)";
+                        using (SqlCommand cmd = new SqlCommand(sql, connection))
                         {
-                            await connection.OpenAsync();
+                            cmd.Parameters.Add("@deviceID", SqlDbType.Int, int.MaxValue).Value = deviceId;
+                            cmd.Parameters.Add("@message", SqlDbType.VarChar, int.MaxValue).Value = json;
+                            cmd.Parameters.Add("@date", SqlDbType.DateTime).Value = DateTime.Now;
 
-                            string sql = "INSERT INTO [dbo].[DeviceMessages] ([deviceId],[Message],[MessageDate]) VALUES (@deviceID,@message,@date)";
-                            using (SqlCommand cmd = new SqlCommand(sql, connection))
-                            {
-                                cmd.Parameters.Add("@deviceID", SqlDbType.Int, int.MaxValue).Value = deviceId;
-                                cmd.Parameters.Add("@message", SqlDbType.VarChar, int.MaxValue).Value = json;
-                                cmd.Parameters.Add("@date", SqlDbType.DateTime).Value = DateTime.Now;
-
-                                cmd.CommandType = CommandType.Text;
-                                cmd.ExecuteNonQuery();
-                            }
+                            cmd.CommandType = CommandType.Text;
+                            cmd.ExecuteNonQuery();
                         }
+                    }
                 }
             }
         }
@@ -104,7 +104,7 @@ namespace MIOTWebAPI.Controllers
                         msgSource = receivedEvent.Data.SystemProperties["iothub-message-source"].ToString();
                         Console.WriteLine($"{partitionId} {msgSource} {body}");
 
-                        
+
                     }
                 }
             }
@@ -268,7 +268,7 @@ namespace MIOTWebAPI.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("GetDeviceMessages")]
         public IActionResult GetDeviceMessages(string deviceId)
         {
             List<string> jsonStrings = new List<string>();
@@ -297,10 +297,79 @@ namespace MIOTWebAPI.Controllers
                 }
             }
 
+            var sortedJsons = jsonStrings.OrderBy(GetSchemaKey);
             // Convert the list of JSON strings to a JSON array.
-            JArray jsonArray = new JArray(jsonStrings.Select(JsonConvert.DeserializeObject));
+            var jsonArray = JsonConvert.SerializeObject(sortedJsons.Select(JsonConvert.DeserializeObject));
+            // JArray jsonArray = new JArray(jsonStrings.Select(JsonConvert.DeserializeObject));
 
             return Ok(jsonArray);
+        }
+
+        [HttpPost]
+    public IActionResult GetPaginatedTableData([FromBody]List<Dictionary<string, object>> tableData, int pageNumber)
+    {
+        const int ROWS_PER_PAGE = 10;
+
+        // Sort the tableData list according to the JSON schema
+        tableData = tableData.OrderBy(t => JsonConvert.SerializeObject(t)).ToList();
+
+        // Get the starting index of the current page
+        int startIndex = (pageNumber - 1) * ROWS_PER_PAGE;
+
+        // Get the data for the current page
+        IEnumerable<Dictionary<string, object>> pageData = tableData.Skip(startIndex).Take(ROWS_PER_PAGE);
+
+        // Find out the columns that are common across all rows in the page
+        List<string> commonColumns = GetCommonColumns(pageData);
+
+        // Generate a list of dictionaries for the current page, with only the common columns
+        List<Dictionary<string, object>> currentPageData = new List<Dictionary<string, object>>();
+        foreach (Dictionary<string, object> row in pageData)
+        {
+            Dictionary<string, object> newRow = new Dictionary<string, object>();
+            foreach (string column in commonColumns)
+            {
+                newRow[column] = row[column];
+            }
+            currentPageData.Add(newRow);
+        }
+
+        // Send the current page data to the client
+        return Ok(currentPageData);
+    }
+
+    private List<string> GetCommonColumns(IEnumerable<Dictionary<string, object>> data)
+    {
+        // Find out the columns that are common across all rows in the given data
+        List<string> commonColumns = new List<string>();
+        foreach (Dictionary<string, object> row in data)
+        {
+            foreach (string column in row.Keys)
+            {
+                if (!commonColumns.Contains(column))
+                {
+                    // Check if the column is common across all rows
+                    bool isCommon = data.All(r => r.ContainsKey(column));
+                    if (isCommon)
+                    {
+                        commonColumns.Add(column);
+                    }
+                }
+            }
+        }
+        return commonColumns;
+    }
+
+        private static string GetSchemaKey(string json)
+        {
+            var jObject = JObject.Parse(json);
+            var properties = jObject.Properties().OrderBy(p => p.Name);
+            var schema = new JObject();
+            foreach (var property in properties)
+            {
+                schema.Add(property.Name.ToLower(), property.Value);
+            }
+            return schema.ToString(Formatting.None);
         }
 
         public bool IsValidJson(string jsonString)

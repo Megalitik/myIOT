@@ -1,0 +1,42 @@
+.card-body {
+    height: 150px;
+    background-color: yellow;
+    border-radius: 10px;
+    padding: 0.75rem 0.80rem 1rem 1.25rem;
+    box-shadow: 1px 2px 9px 1px #A0A0A059;
+    border: 0.25px solid #E6E6E6;
+    border-radius: 7px;
+    opacity: 1;
+}
+
+.card-body:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 17px rgba(0, 0, 0, 0.35);
+}
+
+.dropdown-menu {
+    padding: 0;
+    margin: 0;
+    border-radius: 0;
+    position: absolute;
+    transform: translate3d(31px, 23px, 0px);
+    top: 0px;
+    left: 0px;
+    z-index: 9999;
+    will-change: transform;
+}
+
+.dropdown-item {
+    position: relative;
+    padding: 10px 10px;
+    border-bottom: 1px solid #c2cfd6;
+}
+
+.btn-circle {
+    display: block;
+    height: 10px;
+    width: 10px;
+    top: 25%;
+    border-radius: 50%;
+    border: 1px solid;
+}

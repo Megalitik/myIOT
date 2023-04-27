@@ -1,0 +1,27 @@
+<div class="section-container">
+    <h2>Mensagens</h2>
+    <div>
+        <table class="table table-inverse table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th *ngFor="let column of columns">{{ column }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                  <ng-container *ngFor="let row of getRowsForPage(currentPage)">
+                    <tr *ngIf="checkRowProperties(row)">
+                      <td class="text-white" *ngFor="let column of columns">{{ row[column] }}</td>
+                    </tr>
+                    <tr *ngIf="!checkRowProperties(row)">
+                      <td class="text-white" [attr.colspan]="columns.length">Incomplete row</td>
+                    </tr>
+                  </ng-container>
+            </tbody>
+        </table>
+        <div>
+            <button (click)="previousPage()" [disabled]="!hasPreviousPage()">Previous</button>
+            <span>{{ currentPage }} / {{ totalPages }}</span>
+            <button (click)="nextPage()" [disabled]="!hasNextPage()">Next</button>
+          </div>
+    </div>
+</div>

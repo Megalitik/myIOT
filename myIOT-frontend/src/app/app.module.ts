@@ -24,6 +24,7 @@ import { TokenInterceptor } from './_services/interceptor/token.interceptor';
 import { ResetComponent } from './accountManagement/reset/reset.component';
 import { FilterPipe } from './_services/helper/filter.pipe';
 import { UserDevicesComponent } from './userPanel/user-devices/user-devices.component';
+import { DeviceMessageTableComponent } from './userPanel/device-widgets/device-message-table/device-message-table.component';
 
 
 @NgModule({
@@ -40,7 +41,8 @@ import { UserDevicesComponent } from './userPanel/user-devices/user-devices.comp
     ProfileUserComponent,
     ResetComponent,
     FilterPipe,
-    UserDevicesComponent
+    UserDevicesComponent,
+    DeviceMessageTableComponent
   ],
   imports: [
     BrowserModule,

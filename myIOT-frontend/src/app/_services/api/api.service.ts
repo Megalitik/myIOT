@@ -27,7 +27,7 @@ export class ApiService {
   }
 
   getDeviceMessages(deviceId: string) {
-    return this.http.get<any>(`${this.baseDeviceUrl}GetDeviceMessages?deviceId=${deviceId}`);
+    return this.http.get<any[]>(`${this.baseDeviceUrl}GetDeviceMessages?deviceId=${deviceId}`);
   }
 
   getDeviceUser(deviceId: string) {

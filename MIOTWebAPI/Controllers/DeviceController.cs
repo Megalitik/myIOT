@@ -268,14 +268,16 @@ namespace MIOTWebAPI.Controllers
             }
         }
 
+
         [HttpGet("GetDeviceMessages")]
         public IActionResult GetDeviceMessages(string deviceId)
         {
-            List<string> jsonStrings = new List<string>();
+            List<string> allMessages = new List<string>();
 
+            // Retrieve messages from the database and add them to the allMessages list
             using (SqlConnection connection = new SqlConnection(sqlconnectionString))
             {
-                string query = "SELECT Message FROM DeviceMessages WHERE deviceId =" + deviceId;
+                string query = "SELECT [Message] FROM [myIOT].[dbo].[DeviceMessages] WHERE [deviceId] =" + deviceId + "ORDER BY [MessageDate] DESC";
 
                 SqlCommand command = new SqlCommand(query, connection);
                 connection.Open();
@@ -285,106 +287,55 @@ namespace MIOTWebAPI.Controllers
                     while (reader.Read())
                     {
                         string jsonString = reader.GetString(0);
-
-                        // Check if the JSON string is valid.
-                        if (!IsValidJson(jsonString))
-                        {
-                            return BadRequest("Invalid JSON string: " + jsonString);
-                        }
-
-                        jsonStrings.Add(jsonString);
+                        allMessages.Add(jsonString);
                     }
                 }
             }
 
-            var sortedJsons = jsonStrings.OrderBy(GetSchemaKey);
-            // Convert the list of JSON strings to a JSON array.
-            var jsonArray = JsonConvert.SerializeObject(sortedJsons.Select(JsonConvert.DeserializeObject));
-            // JArray jsonArray = new JArray(jsonStrings.Select(JsonConvert.DeserializeObject));
 
-            return Ok(jsonArray);
-        }
-
-        [HttpPost]
-    public IActionResult GetPaginatedTableData([FromBody]List<Dictionary<string, object>> tableData, int pageNumber)
-    {
-        const int ROWS_PER_PAGE = 10;
-
-        // Sort the tableData list according to the JSON schema
-        tableData = tableData.OrderBy(t => JsonConvert.SerializeObject(t)).ToList();
-
-        // Get the starting index of the current page
-        int startIndex = (pageNumber - 1) * ROWS_PER_PAGE;
-
-        // Get the data for the current page
-        IEnumerable<Dictionary<string, object>> pageData = tableData.Skip(startIndex).Take(ROWS_PER_PAGE);
-
-        // Find out the columns that are common across all rows in the page
-        List<string> commonColumns = GetCommonColumns(pageData);
-
-        // Generate a list of dictionaries for the current page, with only the common columns
-        List<Dictionary<string, object>> currentPageData = new List<Dictionary<string, object>>();
-        foreach (Dictionary<string, object> row in pageData)
-        {
-            Dictionary<string, object> newRow = new Dictionary<string, object>();
-            foreach (string column in commonColumns)
+            // Create a list of lists with a maximum of 10 strings per list and sort it from the allMessages listk
+            List<List<string>> paginatedMessages = new List<List<string>>();
+            List<string> currentList = new List<string>();
+        
+            foreach (string message in allMessages)
             {
-                newRow[column] = row[column];
-            }
-            currentPageData.Add(newRow);
-        }
-
-        // Send the current page data to the client
-        return Ok(currentPageData);
-    }
-
-    private List<string> GetCommonColumns(IEnumerable<Dictionary<string, object>> data)
-    {
-        // Find out the columns that are common across all rows in the given data
-        List<string> commonColumns = new List<string>();
-        foreach (Dictionary<string, object> row in data)
-        {
-            foreach (string column in row.Keys)
-            {
-                if (!commonColumns.Contains(column))
+                try
                 {
-                    // Check if the column is common across all rows
-                    bool isCommon = data.All(r => r.ContainsKey(column));
-                    if (isCommon)
+                    JObject jsonObject = JObject.Parse(message);
+
+                    if (currentList.Count > 0)
                     {
-                        commonColumns.Add(column);
+                        if (currentList.Count == 10 || !IsSameJsonStructure(currentList.First(), message))
+                        {
+                            paginatedMessages.Add(currentList);
+                            currentList = new List<string>();
+                        }
                     }
+
+                    currentList.Add(message);
+                }
+                catch (JsonReaderException)
+                {
+                    return StatusCode(500);
                 }
             }
+        
+            if (currentList.Any())
+            {
+                paginatedMessages.Add(currentList);
+            }
+        
+            // Return the list of lists as a JSON array to paginate an HTML table in Angular v14
+            return Ok(paginatedMessages);
         }
-        return commonColumns;
-    }
 
-        private static string GetSchemaKey(string json)
+        private bool IsSameJsonStructure(string firstMessage, string secondMessage)
         {
-            var jObject = JObject.Parse(json);
-            var properties = jObject.Properties().OrderBy(p => p.Name);
-            var schema = new JObject();
-            foreach (var property in properties)
-            {
-                schema.Add(property.Name.ToLower(), property.Value);
-            }
-            return schema.ToString(Formatting.None);
-        }
+            JObject firstObject = JObject.Parse(firstMessage);
+            JObject secondObject = JObject.Parse(secondMessage);
 
-        public bool IsValidJson(string jsonString)
-        {
-            try
-            {
-                JToken.Parse(jsonString);
-                return true;
-            }
-            catch (JsonReaderException)
-            {
-                return false;
-            }
+            return JToken.DeepEquals(firstObject, secondObject);
         }
-
 
 
         [HttpPost("DeleteDeviceAsync")]

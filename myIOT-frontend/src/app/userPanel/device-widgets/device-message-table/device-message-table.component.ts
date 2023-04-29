@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ApiService } from 'src/app/_services/api/api.service';
 
@@ -11,11 +11,11 @@ import { ApiService } from 'src/app/_services/api/api.service';
 })
 export class DeviceMessageTableComponent {
 
-  rows: any[] = [];
-  columns: string[] = [];
-  currentPage = 1;
-  pageSize = 10;
-  totalPages = 1;
+  messages: any[][] = [];
+  currentMessages: any[] = [];
+  displayedColumns: string[] = [];
+  currentPage = 0;
+  totalPages = 0;
 
   @Input() currentDeviceID: string;
 
@@ -23,50 +23,35 @@ export class DeviceMessageTableComponent {
 
   ngOnInit() {
     console.log(this.currentDeviceID);
-    this.api.getDeviceMessages(this.currentDeviceID).subscribe(data => {
-      this.rows = data;
-      this.totalPages = Math.ceil(this.rows.length / this.pageSize);
-      this.setColumns(this.rows[0]);
+    
+    this.api.getDeviceMessages(this.currentDeviceID).subscribe(messages => {
+      this.messages = messages;
+      console.log(messages);
+      this.totalPages = messages.length;
+
+      if (this.totalPages > 0) {
+        const firstPage = messages[0];
+        const firstMessage = firstPage[0];
+        const firstObject = JSON.parse(firstMessage);
+        this.displayedColumns = Object.keys(firstObject);
+        this.currentMessages = firstPage;
+        console.log(this.currentMessages);
+      }
     });
-  }
-  setColumns(row: any) {
-    this.columns = Object.keys(row);
-  }
-
-  getRowsForPage(page: number) {
-    const startIndex = (page - 1) * this.pageSize;
-    const endIndex = startIndex + this.pageSize;
-    return this.rows.slice(startIndex, endIndex);
-  }
-
-  checkRowProperties(row: any): boolean {
-    return this.columns.every(function(c) {
-      return row.hasOwnProperty(c);
-    });
-  }
-
-  goToPage(page: number) {
-    if (page < 1 || page > this.totalPages) {
-      return;
-    }
-    this.currentPage = page;
-    this.setColumns(this.getRowsForPage(page)[0]);
-  }
-
-  hasNextPage() {
-    return this.currentPage < this.totalPages;
-  }
-
-  hasPreviousPage() {
-    return this.currentPage > 1;
-  }
-
-  nextPage() {
-    this.goToPage(this.currentPage + 1);
   }
 
   previousPage() {
-    this.goToPage(this.currentPage - 1);
+    this.currentPage--;
+    this.currentMessages = this.messages[this.currentPage];
+    const firstObject = JSON.parse(this.currentMessages[0]);
+    this.displayedColumns = Object.keys(firstObject);
   }
+
+  nextPage() {
+    this.currentPage++;
+    this.currentMessages = this.messages[this.currentPage];
+    const firstObject = JSON.parse(this.currentMessages[0]);
+    this.displayedColumns = Object.keys(firstObject);
+  }  
 }
 

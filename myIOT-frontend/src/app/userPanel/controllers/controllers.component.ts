@@ -174,6 +174,24 @@ export class ControllersComponent implements OnInit {
           this.toastr.error("Houve um erro ao enviar o comando", "Erro")
         }
       });
+
+      this.api.sendCommandMethod(this.selectedCommand.deviceId, this.selectedCommand.id).subscribe(deviceMessage => {
+      
+        this.toastr.success("O comando foi enviado", "Comando enviado");
+      },
+        (error: HttpErrorResponse) => {
+          if (error.error instanceof ErrorEvent) {
+            //Erro no lado do cliente
+            this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
+            console.log(this.errorMessage);
+            this.toastr.error("Houve um erro ao enviar o comando", "Erro")
+          } else {
+            // Erro no Servidor ou API
+            this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
+            console.log(this.errorMessage);
+            this.toastr.error("Houve um erro ao enviar o comando", "Erro")
+          }
+        });
   }
 
   addDeviceCommand() {

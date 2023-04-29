@@ -73,6 +73,48 @@ namespace MIOTWebAPI.Controllers
             }
         }
 
+        [HttpPost("CallMethodOnDeviceAsync")]
+        //POST: /api/Device/SendCloudToDeviceMessageAsync
+        public async Task<ActionResult> CallMethodOnDeviceAsync(string targetDevice, string commandId)
+        {
+            serviceClient = ServiceClient.CreateFromConnectionString(connectionString);
+            string message = "";
+
+            try
+            {
+                using (var connection = new SqlConnection(sqlconnectionString))
+                {
+                    await connection.OpenAsync();
+
+                    var command = new SqlCommand("SELECT [Command] FROM [dbo].[DeviceCommand] where Id = " + commandId + ";", connection);
+                    var reader = await command.ExecuteReaderAsync();
+
+                    while (reader.Read())
+                    {
+
+                        message = reader.GetString(0);
+                    }
+                }
+
+                var methodInvocation = new CloudToDeviceMethod(message) { ResponseTimeout = TimeSpan.FromSeconds(30) };
+                methodInvocation.SetPayloadJson("{\"input1\":\"someInput\",\"input2\":\"anotherInput\"}");
+
+                var response = await serviceClient.InvokeDeviceMethodAsync(targetDevice, methodInvocation);
+
+                var commandMessage = new Microsoft.Azure.Devices.Message(Encoding.ASCII.GetBytes((message)));
+                await serviceClient.SendAsync(targetDevice, commandMessage);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+
+            return Ok(new
+            {
+                Message = "Comando foi enviado"
+            });
+        }
+
         [HttpPost("SendCloudToDeviceMessageAsync")]
         //POST: /api/Device/SendCloudToDeviceMessageAsync
         public async Task<ActionResult> SendCloudToDeviceMessageAsync(string targetDevice, string commandId)

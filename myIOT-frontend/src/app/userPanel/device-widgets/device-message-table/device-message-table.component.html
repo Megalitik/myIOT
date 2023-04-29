@@ -13,6 +13,7 @@
         </tr>
       </tbody>
     </table>
+    <!-- Adicionar CSS nos botões -->
     <div>
       <button [disabled]="currentPage == 0" (click)="previousPage()">Previous</button>
       <button [disabled]="currentPage >= totalPages - 1" (click)="nextPage()">Next</button>

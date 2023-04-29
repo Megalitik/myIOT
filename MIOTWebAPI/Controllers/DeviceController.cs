@@ -277,7 +277,7 @@ namespace MIOTWebAPI.Controllers
             // Retrieve messages from the database and add them to the allMessages list
             using (SqlConnection connection = new SqlConnection(sqlconnectionString))
             {
-                string query = "SELECT [Message] FROM [myIOT].[dbo].[DeviceMessages] WHERE [deviceId] =" + deviceId + "ORDER BY [MessageDate] DESC";
+                string query = "SELECT [Message] FROM [myIOT].[dbo].[DeviceMessages] WHERE [deviceId] =" + deviceId + " ORDER BY [MessageDate] DESC";
 
                 SqlCommand command = new SqlCommand(query, connection);
                 connection.Open();
@@ -314,9 +314,10 @@ namespace MIOTWebAPI.Controllers
 
                     currentList.Add(message);
                 }
-                catch (JsonReaderException)
+                catch (Exception ex)
                 {
-                    return StatusCode(500);
+                    // return StatusCode(500, ex.Message);
+                    continue;
                 }
             }
         

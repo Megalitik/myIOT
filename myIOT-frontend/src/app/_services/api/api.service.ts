@@ -46,6 +46,10 @@ export class ApiService {
     return this.http.post<any>(`${this.baseDeviceCommandUrl}SendCloudToDeviceMessageAsync?targetDevice=${deviceId}&commandId=${commandId}`, {});
   }
 
+  sendCommandMethod(deviceId: string, commandId: string) {
+    return this.http.post<any>(`${this.baseDeviceCommandUrl}CallMethodOnDeviceAsync?targetDevice=${deviceId}&commandId=${commandId}`, {});
+  }
+
   getDeviceCommands(deviceId: string) {
     return this.http.get<any>(`${this.baseDeviceCommandUrl}GetDeviceCommands?deviceId=${deviceId}`);
   }

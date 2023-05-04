@@ -15,8 +15,8 @@
     </table>
     <!-- Adicionar CSS nos botões -->
     <div>
-      <button [disabled]="currentPage == 0" (click)="previousPage()">Previous</button>
-      <button [disabled]="currentPage >= totalPages - 1" (click)="nextPage()">Next</button>
+      <button class="btn btn-small btn-info mr-4" [disabled]="currentPage == 0" (click)="previousPage()">Previous</button>
+      <button class="btn btn-small btn-info" [disabled]="currentPage >= totalPages - 1" (click)="nextPage()">Next</button>
     </div>
   </div>
 </div>

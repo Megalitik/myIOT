@@ -177,7 +177,7 @@ namespace MIOTWebAPI.Controllers
                         cmd.Parameters.Add("@Id", SqlDbType.Int).Value = deviceId;
                         cmd.Parameters.Add("@Name", SqlDbType.VarChar, 500).Value = commandName;
                         cmd.Parameters.Add("@Command", SqlDbType.VarChar, 500).Value = command;
-                        cmd.Parameters.Add("@Payload", SqlDbType.VarChar, int.MaxValue).Value = payload;
+                        cmd.Parameters.Add("@Payload", SqlDbType.VarChar, int.MaxValue).Value = String.IsNullOrEmpty(payload) ? DBNull.Value : payload;
 
                         cmd.CommandType = CommandType.Text;
                         cmd.ExecuteNonQuery();

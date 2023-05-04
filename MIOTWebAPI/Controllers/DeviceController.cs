@@ -236,26 +236,25 @@ namespace MIOTWebAPI.Controllers
                 {
                     await connection.OpenAsync();
 
-                    var command = new SqlCommand("SELECT Message, MessageDate FROM DeviceMessages where deviceId = " + deviceId + " ORDER BY MessageDate DESC;", connection);
+                    var command = new SqlCommand("SELECT TOP 20 Message, MessageDate FROM DeviceMessages where deviceId = " + deviceId + " ORDER BY MessageDate DESC;", connection);
                     var reader = await command.ExecuteReaderAsync();
 
                     bool firstMessage = true;
-                    string previousMessage = "";
+                    string firstJsonMessage = "";
                     while (reader.Read())
                     {
-                        if (String.IsNullOrEmpty(previousMessage) && firstMessage == true)
+                        if (String.IsNullOrEmpty(firstJsonMessage) && firstMessage == true)
                         {
                             messages.Add(reader.GetString(0).ToString());
-                            previousMessage = reader.GetString(0).ToString();
+                            firstJsonMessage = reader.GetString(0).ToString();
                             firstMessage = false;
                             messageDates.Add(Convert.ToDateTime(reader.GetDateTime(1).ToString()));
                         }
                         else
                         {
-                            if (IsSameJsonStructure(reader.GetString(0).ToString(), previousMessage))
+                            if (IsSameJsonStructure(reader.GetString(0).ToString(), firstJsonMessage))
                             {
                                 messages.Add(reader.GetString(0).ToString());
-                                previousMessage = reader.GetString(0).ToString();
                                 messageDates.Add(Convert.ToDateTime(reader.GetDateTime(1).ToString()));
                             }
                         }
@@ -274,7 +273,7 @@ namespace MIOTWebAPI.Controllers
                     {
                         double retNum;
                         // Check if the value is a number (integer or float)
-                        if (pair.Value.Type == JTokenType.Integer || pair.Value.Type == JTokenType.Float || Double.TryParse(Convert.ToString(pair.Value), System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum))
+                        if (Double.TryParse(Convert.ToString(pair.Value), System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum))
                         {
                             int numericValue = pair.Value.ToObject<int>();
 
@@ -484,7 +483,7 @@ namespace MIOTWebAPI.Controllers
             }
 
 
-            // Create a list of lists with a maximum of 10 strings per list and sort it from the allMessages listk
+            // Create a list of lists with a maximum of 10 strings per list and sort it from the allMessages list
             List<List<string>> paginatedMessages = new List<List<string>>();
             List<string> currentList = new List<string>();
 
@@ -528,7 +527,12 @@ namespace MIOTWebAPI.Controllers
                 JObject firstObject = JObject.Parse(firstMessage);
                 JObject secondObject = JObject.Parse(secondMessage);
 
-                return JToken.DeepEquals(firstObject, secondObject);
+                var o1Keys = new JObject(firstObject.Properties().Select(p => new JProperty(p.Name, null)));
+                var o2Keys = new JObject(secondObject.Properties().Select(p => new JProperty(p.Name, null)));
+
+                bool areKeysEqual = JToken.DeepEquals(o1Keys, o2Keys);
+
+                return areKeysEqual;
             }
             catch (Exception ex)
             {

@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input } from '@angular/core';
 import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
 import { Label } from 'ng2-charts';
+import { Subscription, interval } from 'rxjs';
 import { ApiService } from 'src/app/_services/api/api.service';
 
 const LINE_CHART_SAMPLE_DATA: any[] = [];
@@ -33,19 +34,31 @@ export class DeviceLineGraphComponent {
 
   @Input() currentDeviceID: string;
 
+  lineChartSub: Subscription;
+
   constructor(private api: ApiService) {
 
+    this.lineChartSub = interval(30000).subscribe((func => {
+      this.getLineChartData(this.currentDeviceID);
+
+    }))
   }
 
   ngOnInit(): void {
     this.getLineChartData(this.currentDeviceID);
   }
 
+  ngOnDestroy() {
+    this.lineChartSub.unsubscribe();
+  }
+
   getLineChartData(deviceId: string) {
     this.api.getDeviceLineChartMessages(deviceId).subscribe(lineChartData => {
-      console.log(lineChartData);
+
       this.lineChartData = lineChartData.data;
       this.lineChartLabels = lineChartData.messageDate;
+      console.log(this.lineChartData);
+      console.log(this.lineChartLabels);
     },
       (error: HttpErrorResponse) => {
         if (error.error instanceof ErrorEvent) {

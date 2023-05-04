@@ -102,7 +102,7 @@ export class ControllersComponent implements OnInit {
   }
 
   updateWidgets() {
-    this.api.updateDeviceWidgets(this.currentDeviceId, this.eventTableDeviceWidget, this.sendMethodOnDeviceWidget, this.lineChartDeviceWidget).subscribe(connString => {
+    this.api.updateDeviceWidgets(this.currentDeviceId, this.sendMethodOnDeviceWidget, this.eventTableDeviceWidget, this.lineChartDeviceWidget).subscribe(connString => {
 
       this.toastr.success("As ferramentas foram atualizadas", "Ferramentas Atualizadas");
       this.getDeviceWidgets();

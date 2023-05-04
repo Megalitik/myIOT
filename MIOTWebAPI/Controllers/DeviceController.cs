@@ -236,7 +236,7 @@ namespace MIOTWebAPI.Controllers
                 {
                     await connection.OpenAsync();
 
-                    var command = new SqlCommand("SELECT Message, MessageDate FROM DeviceMessages where deviceId = " + deviceId + " ORDER BY MessageDate ASC;", connection);
+                    var command = new SqlCommand("SELECT Message, MessageDate FROM DeviceMessages where deviceId = " + deviceId + " ORDER BY MessageDate DESC;", connection);
                     var reader = await command.ExecuteReaderAsync();
 
                     bool firstMessage = true;

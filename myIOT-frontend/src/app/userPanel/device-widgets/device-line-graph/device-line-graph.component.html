@@ -1,1 +1,12 @@
-<p>device-line-graph works!</p>
+<div class="card mb-5 shadow card-theme">
+    <div class="card-body">
+        <div class="chart">
+            <canvas baseChart
+            [datasets]="lineChartData"
+            [labels]="lineChartLabels"
+            [options]="lineChartOptions"
+            [legend]="lineChartLegend"
+            [chartType]="lineChartType"></canvas>
+        </div>
+    </div>
+</div>

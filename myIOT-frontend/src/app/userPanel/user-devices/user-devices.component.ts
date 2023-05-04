@@ -22,7 +22,7 @@ export class UserDevicesComponent implements OnInit {
 
   redirectToDevicePage (device: Device) {
     console.log('redirectToDevicePage DeviceID: ' + device.deviceId)
-    this.route.navigate(['/controllers/'], {queryParams: {currentDeviceID: device.deviceId}});
+    this.route.navigate(['/controllers/'], {queryParams: {currentDeviceID: device.deviceId, currentDeviceName: device.deviceName}});
   }
 
   getDeviceConnectionState(id : string) {

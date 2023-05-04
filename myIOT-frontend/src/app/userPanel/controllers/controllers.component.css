@@ -1,6 +1,6 @@
-.card-body {
+.card-body-device {
     height: 150px;
-    background-color: yellow;
+    background-color: silver;
     border-radius: 10px;
     padding: 0.75rem 0.80rem 1rem 1.25rem;
     box-shadow: 1px 2px 9px 1px #A0A0A059;
@@ -9,7 +9,7 @@
     opacity: 1;
 }
 
-.card-body:hover {
+.card-body-device:hover {
     transform: translateY(-3px);
     box-shadow: 0 4px 17px rgba(0, 0, 0, 0.35);
 }

@@ -1,16 +1,15 @@
 <div *ngIf="isUserAuthenticated() && isDeviceFromUser()" class="container-fluid">
-    <h3 class="header">Comandos</h3>
 
     <div class="section-container">
         <div class="cards">
             <div class="card-deck">
                 <div class="card mb-3 shadow card-theme">
-                    <div class="card-body pb-0">
+                    <div class="card-body-device pb-0">
                         <div class="row float-left">
-                            <p class="font-weight-bold text-dark">Nome do Dispositivo</p>
+                            <p class="font-weight-bold text-dark">{{ this.currentDeviceName }}</p>
                         </div>
                         <div class="row float-right">
-                            <div class="col btn-group float-right p-0">
+                            <div class="col btn-group float-right p-2">
                                 <button type="button" class="btn btn-circle p-0"
                                     [ngClass]="currentDeviceConnectivityState === 'Connected' ? 'btn-success' : 'btn-danger'">
                                 </button>
@@ -24,16 +23,24 @@
                                             alt="Vertical Dots">
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end">
-                                        <a class="dropdown-item"><i class="ds-icon-start"></i>Adicionar Ferramenta</a>
-                                        <a class="dropdown-item"><i class="ds-icon-restart"></i>Apagar Ferramenta</a>
+                                        <a class="dropdown-item" data-bs-toggle="modal"
+                                            data-bs-target="#deviceWidgetModal"><i class="ds-icon-start"></i>Gerir
+                                            Ferramentas</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <br />
                         <br />
-                        <p class="text-dark float-left">Data Última mensagem:</p>
 
+                    </div>
+                </div>
+                <div class="card mb-3 shadow card-theme">
+                    <div class="card-header card-header-theme">
+                        <h5>Cadeia de Conexão do Dispositivo</h5>
+                    </div>
+                    <div class="card-body pb-0">
+                        <p>{{ this.currentDeviceConnectionString }}</p>
                     </div>
                 </div>
             </div>
@@ -41,101 +48,48 @@
     </div>
 
     <div class="section-container">
-        <div class="row mt-5">
-
-            <button type="button" class="btn btn-primary btn-sm w-25 mr-5" data-bs-toggle="modal"
-                data-bs-target="#addDeviceCommandModal">Adicionar Comando</button>
-            <button type="button" class="btn btn-primary btn-danger btn-sm w-25" data-bs-toggle="modal"
-                data-bs-target="#deleteDeviceCommandModal">Apagar Comando</button>
-        </div>
-        <div class="row mt-5">
-            <select class="form-select form-select-lg mb-3 h-25 p-3 w-25 mr-5" [(ngModel)]="selectedCommand">
-                <option *ngFor="let command of DeviceCommands" [ngValue]="command">{{ command.name }}</option>
-            </select>
-            <button type="button" class="btn btn-primary w-25 mb-3" (click)="sendCommand()">Enviar</button>
-        </div>
-        <h3 class="header mt-5">Informações do Dispositivo</h3>
-        <div class="row mt-5">
-            <p>Estado de Conetividade: {{ this.currentDeviceConnectivityState }}</p>
-            <p>Chave para o IoT Hub: {{ this.currentDeviceConnectionString }}</p>
-        </div>
-    </div>
-
-
-    <app-device-message-table [currentDeviceID]="currentDeviceId.toString()"></app-device-message-table>
-</div>
-
-
-
-<div class="modal fade" id="addDeviceCommandModal" tabindex="-1" aria-labelledby="addDeviceCommandModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <p class="modal-title" id="addDeviceCommandModalLabel"> <span
-                        style="font-size: 25px; color: #000; font-weight: 700;">Adicionar um novo comando</span>
-                    <br />
-                    <small style="color: #000;">Por favor, adicione um novo comando abaixo</small>
-                </p>
-
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="row-fluid cards">
+            <div class="card-deck">
+                <app-device-send-commands *ngIf="sendMethodOnDeviceWidget"
+                    [currentDeviceID]="currentDeviceId.toString()"></app-device-send-commands>
+                <app-device-line-graph *ngIf="lineChartDeviceWidget" [currentDeviceID]="currentDeviceId.toString()"></app-device-line-graph>
             </div>
-            <div class="modal-body">
-                <div class="form-group pt-3">
-                    <div class="input-field">
-                        <span class="fa fa-user fa-color p-2"></span>
-                        <input class="form-control" [(ngModel)]="newDeviceCommandName" type="text"
-                            placeholder="Nome do Novo Comando">
-                    </div>
-                </div>
-                <div class="form-group pt-3">
-                    <div class="input-field">
-                        <span class="fa fa-user fa-color p-2"></span>
-                        <input class="form-control" [(ngModel)]="newDeviceCommandCommand" type="text"
-                            placeholder="Novo Comando">
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="addDeviceCommandCloseBtn" type="button" class="btn btn-secondary"
-                    data-bs-dismiss="modal">Fechar</button>
-                <button type="button" class="btn btn-primary" (click)="addDeviceCommand()">Adicionar</button>
-            </div>
+        </div>
+
+        <div *ngIf="eventTableDeviceWidget">
+            <app-device-message-table [currentDeviceID]="currentDeviceId.toString()"></app-device-message-table>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="deleteDeviceCommandModal" tabindex="-1" aria-labelledby="deleteDeviceModalLabel"
+
+
+<div class="modal fade" id="deviceWidgetModal" tabindex="-1" aria-labelledby="deviceWidgetModalLabel"
     aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <p class="modal-title" id="deleteDeviceCommandModalLabel"> <span
-                        style="font-size: 25px; color: #000; font-weight: 700;">Apagar dispositivo</span>
+                <p class="modal-title" id="deviceWidgetModalLabel"> <span
+                        style="font-size: 25px; color: #000; font-weight: 700;">Adicionar ferramenta</span>
                     <br />
-                    <small style="color: #000;">Por favor, indique abaixo o seu dispositivo que quer apagar</small>
+                    <small style="color: #000;">Por favor, selecione as ferramentas que precisa</small>
                 </p>
 
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body text-dark">
                 <div class="form-group pt-3">
-                    <label for="my-dropdown">Seleciona um comando:</label>
-                    <select class="form-control" id="my-dropdown" [(ngModel)]="selectedDeleteDeviceCommand">
-                        <option *ngFor="let deleteDevice of DeviceCommands" [value]="deleteDevice.id">{{
-                            deleteDevice.name
-                            }}</option>
-                    </select>
+                    <div id="widgetCheckboxes">
+                        <input type="checkbox" [(ngModel)]="sendMethodOnDeviceWidget">Chamar Métodos no Dispositivo
+                        <input type="checkbox" [(ngModel)]="eventTableDeviceWidget">Tabela de Mensagens de Evento
+                        <input type="checkbox" [(ngModel)]="lineChartDeviceWidget">Gráfico de Linhas
+                    </div>
                 </div>
-                <!-- <small *ngIf="!resetPwdEmail" class="text-danger">É necessário um dispositivo</small>
-                  <small *ngIf="!isValidEmail && ValidateEmail" class="text-danger">É necessário um dispositivo
-                      válido</small> -->
             </div>
             <div class="modal-footer">
-                <button id="deleteDeviceCommandCloseBtn" type="button" class="btn btn-secondary"
+                <button id="deviceWidgetCloseBtn" type="button" class="btn btn-secondary"
                     data-bs-dismiss="modal">Fechar</button>
-                <button type="button" class="btn btn-primary btn-danger"
-                    (click)="deleteDeviceCommand()">Eliminar</button>
+                <button type="button" class="btn btn-primary" (click)="updateWidgets()">OK</button>
             </div>
         </div>
     </div>

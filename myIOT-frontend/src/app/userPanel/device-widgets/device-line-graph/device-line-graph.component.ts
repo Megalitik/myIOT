@@ -1,4 +1,12 @@
-import { Component } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, Input } from '@angular/core';
+import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
+import { Label } from 'ng2-charts';
+import { ApiService } from 'src/app/_services/api/api.service';
+
+const LINE_CHART_SAMPLE_DATA: any[] = [];
+
+const LINE_CHART_LABELS: string[] = ['1', '2', '3', '4', '5', '6'];
 
 @Component({
   selector: 'app-device-line-graph',
@@ -6,5 +14,48 @@ import { Component } from '@angular/core';
   styleUrls: ['./device-line-graph.component.css']
 })
 export class DeviceLineGraphComponent {
+
+  lineChartData: any[] = [];
+  lineChartLabels: any[] = [];
+  lineChartOptions: any = {
+    responsive: true,
+    scales: {
+      yAxes: [{
+        ticks: {
+          beginAtZero: true,
+          stepSize: 1
+        }
+      }]
+    }
+  };
+  lineChartLegend: true;
+  lineChartType: ChartType = 'line';
+
+  @Input() currentDeviceID: string;
+
+  constructor(private api: ApiService) {
+
+  }
+
+  ngOnInit(): void {
+    this.getLineChartData(this.currentDeviceID);
+  }
+
+  getLineChartData(deviceId: string) {
+    this.api.getDeviceLineChartMessages(deviceId).subscribe(lineChartData => {
+      console.log(lineChartData);
+      this.lineChartData = lineChartData.data;
+      this.lineChartLabels = lineChartData.messageDate;
+    },
+      (error: HttpErrorResponse) => {
+        if (error.error instanceof ErrorEvent) {
+          //Erro no lado do cliente
+          console.log(`LineChart - O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`);
+        } else {
+          // Erro no Servidor ou API
+          console.log(`LineChart - O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`);
+        }
+      });
+  }
 
 }

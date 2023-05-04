@@ -19,6 +19,7 @@ using System.Data;
 using Azure.Messaging.EventHubs.Consumer;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
 
 namespace MIOTWebAPI.Controllers
 {
@@ -124,20 +125,38 @@ namespace MIOTWebAPI.Controllers
             {
                 if (await registryManager.GetDeviceAsync(deviceName) == null)
                 {
-
+                    int deviceId;
                     using (var connection = new SqlConnection(sqlconnectionString))
                     {
                         await connection.OpenAsync();
 
-                        string sql = "INSERT INTO [dbo].[Devices] ([deviceName],[deviceUserId]) VALUES (@name, @userId)";
+                        string sql = "INSERT INTO [dbo].[Devices] ([deviceName],[deviceUserId]) VALUES (@name, @userId); SELECT SCOPE_IDENTITY()";
                         using (SqlCommand cmd = new SqlCommand(sql, connection))
                         {
                             cmd.Parameters.Add("@name", SqlDbType.VarChar, 500).Value = deviceName;
                             cmd.Parameters.Add("@userId", SqlDbType.VarChar, 500).Value = userId;
 
                             cmd.CommandType = CommandType.Text;
+                            deviceId = Convert.ToInt32(cmd.ExecuteScalar());
+                        }
+
+                        await connection.CloseAsync();
+                    }
+
+                    using (var connection = new SqlConnection(sqlconnectionString))
+                    {
+                        await connection.OpenAsync();
+
+                        string sql = "INSERT INTO [dbo].[DeviceWidgets] ([deviceId], [MessageTable], [SendCommands], [LineChart]) VALUES (@Id, 0, 0, 0)";
+                        using (SqlCommand cmd = new SqlCommand(sql, connection))
+                        {
+                            cmd.Parameters.Add("@Id", SqlDbType.Int).Value = deviceId;
+
+                            cmd.CommandType = CommandType.Text;
                             cmd.ExecuteNonQuery();
                         }
+
+                        await connection.CloseAsync();
                     }
 
                     using (var connection = new SqlConnection(sqlconnectionString))
@@ -151,6 +170,8 @@ namespace MIOTWebAPI.Controllers
                         {
                             device = await registryManager.AddDeviceAsync(new Device(reader.GetInt32(0).ToString()));
                         }
+
+                        await connection.CloseAsync();
                     }
 
                     return Ok(new
@@ -200,6 +221,100 @@ namespace MIOTWebAPI.Controllers
             string deviceConString = "HostName=MyIOT-PAP.azure-devices.net;DeviceId=" + deviceId + ";SharedAccessKey=" + device.Authentication.SymmetricKey.PrimaryKey;
 
             return Ok(deviceConString);
+        }
+
+        [HttpGet("GetDeviceLineChartMessages")]
+        //GET: /api/Device/GetDeviceConnectionStringAsync
+        public async Task<IActionResult> GetDeviceLineChartMessages(string deviceId)
+        {
+            try
+            {
+                var messages = new List<string>();
+                var messageDates = new List<DateTime>();
+
+                using (var connection = new SqlConnection(sqlconnectionString))
+                {
+                    await connection.OpenAsync();
+
+                    var command = new SqlCommand("SELECT Message, MessageDate FROM DeviceMessages where deviceId = " + deviceId + " ORDER BY MessageDate ASC;", connection);
+                    var reader = await command.ExecuteReaderAsync();
+
+                    bool firstMessage = true;
+                    string previousMessage = "";
+                    while (reader.Read())
+                    {
+                        if (String.IsNullOrEmpty(previousMessage) && firstMessage == true)
+                        {
+                            messages.Add(reader.GetString(0).ToString());
+                            previousMessage = reader.GetString(0).ToString();
+                            firstMessage = false;
+                            messageDates.Add(Convert.ToDateTime(reader.GetDateTime(1).ToString()));
+                        }
+                        else
+                        {
+                            if (IsSameJsonStructure(reader.GetString(0).ToString(), previousMessage))
+                            {
+                                messages.Add(reader.GetString(0).ToString());
+                                previousMessage = reader.GetString(0).ToString();
+                                messageDates.Add(Convert.ToDateTime(reader.GetDateTime(1).ToString()));
+                            }
+                        }
+                    }
+                }
+
+                Dictionary<string, List<int>> chartData = new Dictionary<string, List<int>>();
+
+                // loop through each message and parse the JSON object
+                foreach (string message in messages)
+                {
+                    JObject json = JObject.Parse(message);
+
+                    // loop through each key in the JSON object and add its value to the chartData dictionary
+                    foreach (var pair in json)
+                    {
+                        double retNum;
+                        // Check if the value is a number (integer or float)
+                        if (pair.Value.Type == JTokenType.Integer || pair.Value.Type == JTokenType.Float || Double.TryParse(Convert.ToString(pair.Value), System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum))
+                        {
+                            int numericValue = pair.Value.ToObject<int>();
+
+                            if (chartData.ContainsKey(pair.Key))
+                            {
+                                chartData[pair.Key].Add(numericValue);
+                            }
+                            else
+                            {
+                                chartData.Add(pair.Key, new List<int> { numericValue });
+                            }
+                        }
+                    }
+                }
+
+                List<Dictionary<string, object>> result = new List<Dictionary<string, object>>();
+
+                foreach (var kv in chartData)
+                {
+                    Dictionary<string, object> transformed = new Dictionary<string, object>
+                    {
+                        { "data", kv.Value },
+                        { "label", kv.Key }
+                    };
+                    result.Add(transformed);
+                }
+
+                var returnMessage = new
+                {
+                    Data = result,
+                    MessageDate = messageDates
+                };
+
+                return Ok(returnMessage);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+
         }
 
         [HttpGet("GetDeviceUser")]
@@ -269,6 +384,82 @@ namespace MIOTWebAPI.Controllers
         }
 
 
+        [HttpGet("GetDeviceWidgets")]
+        //GET: /api/Device/GetDevices
+        public async Task<IActionResult> GetDeviceWidgets(string deviceId)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(sqlconnectionString))
+                {
+                    await connection.OpenAsync();
+
+                    var command = new SqlCommand("SELECT [ID], [deviceId], [MessageTable], [SendCommands], [LineChart] FROM [myIOT].[dbo].[DeviceWidgets] WHERE [deviceId] =" + deviceId + ";", connection);
+                    var reader = await command.ExecuteReaderAsync();
+
+                    DeviceWidgetModel widgets = new DeviceWidgetModel();
+                    while (reader.Read())
+                    {
+                        widgets = new DeviceWidgetModel
+                        {
+                            ID = reader.GetInt32(0),
+                            DeviceId = reader.GetInt32(1),
+                            MessageTable = reader.GetBoolean(2),
+                            SendCommands = reader.GetBoolean(3),
+                            LineChart = reader.GetBoolean(4),
+                        };
+                    }
+
+                    var json = System.Text.Json.JsonSerializer.Serialize(widgets);
+
+                    return Ok(widgets);
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("UpdateDeviceWidgetsAsync")]
+        //POST: /api/Device/AddDeviceCommandAsync
+        public async Task<ActionResult> UpdateDeviceWidgetsAsync(string deviceId, bool sendMethod, bool eventTable, bool lineChart)
+        {
+
+            registryManager = RegistryManager.CreateFromConnectionString(connectionString);
+
+            try
+            {
+                using (var connection = new SqlConnection(sqlconnectionString))
+                {
+                    await connection.OpenAsync();
+
+                    string sql = "UPDATE [dbo].[DeviceWidgets] SET [MessageTable] = @messageTable, [SendCommands] = @sendCommands, [LineChart] = @lineChart WHERE [deviceId] = @Id";
+                    using (SqlCommand cmd = new SqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.Add("@Id", SqlDbType.Int).Value = deviceId;
+                        cmd.Parameters.Add("@messageTable", SqlDbType.Bit).Value = eventTable;
+                        cmd.Parameters.Add("@sendCommands", SqlDbType.Bit).Value = sendMethod;
+                        cmd.Parameters.Add("@lineChart", SqlDbType.Bit).Value = lineChart;
+
+                        cmd.CommandType = CommandType.Text;
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+
+            return Ok(new
+            {
+                Message = "Comando foi adicionado"
+            });
+        }
+
+
         [HttpGet("GetDeviceMessages")]
         public IActionResult GetDeviceMessages(string deviceId)
         {
@@ -296,7 +487,7 @@ namespace MIOTWebAPI.Controllers
             // Create a list of lists with a maximum of 10 strings per list and sort it from the allMessages listk
             List<List<string>> paginatedMessages = new List<List<string>>();
             List<string> currentList = new List<string>();
-        
+
             foreach (string message in allMessages)
             {
                 try
@@ -320,22 +511,29 @@ namespace MIOTWebAPI.Controllers
                     continue;
                 }
             }
-        
+
             if (currentList.Any())
             {
                 paginatedMessages.Add(currentList);
             }
-        
+
             // Return the list of lists as a JSON array to paginate an HTML table in Angular v14
             return Ok(paginatedMessages);
         }
 
         private bool IsSameJsonStructure(string firstMessage, string secondMessage)
         {
-            JObject firstObject = JObject.Parse(firstMessage);
-            JObject secondObject = JObject.Parse(secondMessage);
+            try
+            {
+                JObject firstObject = JObject.Parse(firstMessage);
+                JObject secondObject = JObject.Parse(secondMessage);
 
-            return JToken.DeepEquals(firstObject, secondObject);
+                return JToken.DeepEquals(firstObject, secondObject);
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
 

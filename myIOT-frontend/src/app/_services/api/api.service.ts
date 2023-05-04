@@ -30,6 +30,18 @@ export class ApiService {
     return this.http.get<any[][]>(`${this.baseDeviceUrl}GetDeviceMessages?deviceId=${deviceId}`);
   }
 
+  getDeviceWidgets(deviceId: string) {
+    return this.http.get<any>(`${this.baseDeviceUrl}GetDeviceWidgets?deviceId=${deviceId}`);
+  }
+
+  updateDeviceWidgets(deviceId: string, sendMethod: boolean, eventTable: boolean, lineChart: boolean) {
+    return this.http.post<any>(`${this.baseDeviceUrl}UpdateDeviceWidgetsAsync?deviceId=${deviceId}&sendMethod=${sendMethod}&eventTable=${eventTable}&lineChart=${lineChart}`, {});
+  }
+
+  getDeviceLineChartMessages(deviceId: string) {
+    return this.http.get<any>(`${this.baseDeviceUrl}GetDeviceLineChartMessages?deviceId=${deviceId}`);
+  }
+
   getDeviceUser(deviceId: string) {
     return this.http.get<any>(`${this.baseDeviceUrl}GetDeviceUser?deviceId=${deviceId}`);
   }
@@ -54,8 +66,8 @@ export class ApiService {
     return this.http.get<any>(`${this.baseDeviceCommandUrl}GetDeviceCommands?deviceId=${deviceId}`);
   }
 
-  addNewDeviceCommand(deviceId: string, commandName: string, command: string) {
-    return this.http.post<any>(`${this.baseDeviceCommandUrl}AddDeviceCommandAsync?deviceId=${deviceId}&commandName=${commandName}&command=${command}`, {});
+  addNewDeviceCommand(deviceId: string, commandName: string, command: string, payload: string) {
+    return this.http.post<any>(`${this.baseDeviceCommandUrl}AddDeviceCommandAsync?deviceId=${deviceId}&commandName=${commandName}&command=${command}&payload=${payload}`, {});
   }
 
   deleteCommandMessage(deviceId: string, commandId: string) {

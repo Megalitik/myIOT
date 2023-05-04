@@ -2,12 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Subject, interval, Subscription, timer } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
-import { Label } from 'ng2-charts';
 
-
-import { apiServer } from '../../_config/environment';
 import { ApiService } from 'src/app/_services/api/api.service';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/_services/auth/auth.service';
@@ -19,24 +14,19 @@ import { AuthService } from 'src/app/_services/auth/auth.service';
 })
 export class ControllersComponent implements OnInit {
 
-  private apiUrl = apiServer.APIUrl + '/api/devices';
-
   errorMessage: string = "";
 
-  DeviceCommands: any[] = [];
-  selectedCommand: any;
   currentDeviceId: string = '';
+  currentDeviceName: string = '';
+
+  eventTableDeviceWidget: boolean;
+  sendMethodOnDeviceWidget: boolean;
+  lineChartDeviceWidget: boolean;
 
   currentDeviceConnectivityState: any = '';
   currentDeviceConnectionString: any = '';
   currentDeviceUser: any = '';
 
-  selectedDeleteDeviceCommand: string = '';
-
-  newDeviceCommandName: string = '';
-  newDeviceCommandCommand: string = '';
-
-  @Input() currentDeviceIDe: string;
   mySub: Subscription;
 
   constructor(private route: ActivatedRoute, private api: ApiService,
@@ -58,6 +48,7 @@ export class ControllersComponent implements OnInit {
       .subscribe(params => {
         console.log(params);
         this.currentDeviceId = params.currentDeviceID;
+        this.currentDeviceName = params.currentDeviceName;
       }
       );
 
@@ -66,7 +57,14 @@ export class ControllersComponent implements OnInit {
       this.currentDeviceUser = deviceUser;
     });
 
-    this.userDeviceCommandsList(this.currentDeviceId);
+    this.api.getDeviceWidgets(this.currentDeviceId).subscribe(result => {
+
+      this.sendMethodOnDeviceWidget = result.sendCommands;
+      this.eventTableDeviceWidget = result.messageTable;
+      this.lineChartDeviceWidget = result.lineChart;
+    });
+
+    
     this.deviceConnectionState(this.currentDeviceId);
     this.deviceConnectionString(this.currentDeviceId);
   }
@@ -94,22 +92,35 @@ export class ControllersComponent implements OnInit {
     }
   }
 
-  userDeviceCommandsList(deviceId: string) {
-    this.api.getDeviceCommands(deviceId).subscribe(commands => {
+  getDeviceWidgets() {
+    this.api.getDeviceWidgets(this.currentDeviceId).subscribe(result => {
 
-      console.log('Command List: ' + commands);
-      console.log(commands);
-      this.DeviceCommands = commands
+      this.sendMethodOnDeviceWidget = result.sendCommands;
+      this.eventTableDeviceWidget = result.messageTable;
+      this.lineChartDeviceWidget = result.lineChart;
+    });
+  }
+
+  updateWidgets() {
+    this.api.updateDeviceWidgets(this.currentDeviceId, this.eventTableDeviceWidget, this.sendMethodOnDeviceWidget, this.lineChartDeviceWidget).subscribe(connString => {
+
+      this.toastr.success("As ferramentas foram atualizadas", "Ferramentas Atualizadas");
+      this.getDeviceWidgets();
+
+      const closeButton = document.getElementById("deviceWidgetCloseBtn");
+      closeButton?.click();
     },
       (error: HttpErrorResponse) => {
         if (error.error instanceof ErrorEvent) {
           //Erro no lado do cliente
           this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
           console.log(this.errorMessage);
+          this.currentDeviceConnectionString = "Erro - Não foi possível obter a cadeia de ligação do dispositivo"
         } else {
           // Erro no Servidor ou API
           this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
           console.log(this.errorMessage);
+          this.currentDeviceConnectionString = "Erro - Não foi possível obter a cadeia de ligação do dispositivo"
         }
       });
   }
@@ -150,92 +161,6 @@ export class ControllersComponent implements OnInit {
           this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
           console.log(this.errorMessage);
           this.currentDeviceConnectivityState = "Erro - Não foi possível obter o estado de conetividade do dispositivo"
-        }
-      });
-  }
-
-  sendCommand() {
-    // console.log(this.selectedCommand);
-    // API POST request todo
-    this.api.sendCommandMessage(this.selectedCommand.deviceId, this.selectedCommand.id).subscribe(deviceMessage => {
-      
-      this.toastr.success("O comando foi enviado", "Comando enviado");
-    },
-      (error: HttpErrorResponse) => {
-        if (error.error instanceof ErrorEvent) {
-          //Erro no lado do cliente
-          this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
-          console.log(this.errorMessage);
-          this.toastr.error("Houve um erro ao enviar o comando", "Erro")
-        } else {
-          // Erro no Servidor ou API
-          this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
-          console.log(this.errorMessage);
-          this.toastr.error("Houve um erro ao enviar o comando", "Erro")
-        }
-      });
-
-      this.api.sendCommandMethod(this.selectedCommand.deviceId, this.selectedCommand.id).subscribe(deviceMessage => {
-      
-        this.toastr.success("O comando foi enviado", "Comando enviado");
-      },
-        (error: HttpErrorResponse) => {
-          if (error.error instanceof ErrorEvent) {
-            //Erro no lado do cliente
-            this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
-            console.log(this.errorMessage);
-            this.toastr.error("Houve um erro ao enviar o comando", "Erro")
-          } else {
-            // Erro no Servidor ou API
-            this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
-            console.log(this.errorMessage);
-            this.toastr.error("Houve um erro ao enviar o comando", "Erro")
-          }
-        });
-  }
-
-  addDeviceCommand() {
-    this.api.addNewDeviceCommand(this.currentDeviceId, this.newDeviceCommandName, this.newDeviceCommandCommand).subscribe(deviceMessage => {
-
-      this.toastr.success("O comando foi criado", "Comando criado");
-      this.userDeviceCommandsList(this.currentDeviceId);
-
-      const closeButton = document.getElementById("addDeviceCommandCloseBtn");
-      closeButton?.click();
-    },
-      (error: HttpErrorResponse) => {
-        if (error.error instanceof ErrorEvent) {
-          //Erro no lado do cliente
-          this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
-          console.log(this.errorMessage);
-          this.toastr.error("Houve um erro ao adicionar o comando", "Erro")
-        } else {
-          // Erro no Servidor ou API
-          this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
-          console.log(this.errorMessage);
-          this.toastr.error("Houve um erro ao adicionar o comando", "Erro")
-        }
-      });
-  }
-
-  deleteDeviceCommand() {
-    this.api.deleteCommandMessage(this.currentDeviceId, this.selectedDeleteDeviceCommand).subscribe(deviceMessage => {
-      this.userDeviceCommandsList(this.currentDeviceId);
-      this.toastr.success("O comando foi apagado", "Comando apagado");
-      const closeButton = document.getElementById("deleteDeviceCommandCloseBtn");
-      closeButton?.click();
-    },
-      (error: HttpErrorResponse) => {
-        if (error.error instanceof ErrorEvent) {
-          //Erro no lado do cliente
-          this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
-          console.log(this.errorMessage);
-          this.toastr.error("Houve um erro ao apagar o comando", "Erro")
-        } else {
-          // Erro no Servidor ou API
-          this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
-          console.log(this.errorMessage);
-          this.toastr.error("Houve um erro ao apagar o comando", "Erro")
         }
       });
   }

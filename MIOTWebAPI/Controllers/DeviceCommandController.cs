@@ -156,23 +156,28 @@ namespace MIOTWebAPI.Controllers
 
         [HttpPost("AddDeviceCommandAsync")]
         //POST: /api/Device/AddDeviceCommandAsync
-        public async Task<ActionResult> AddDeviceCommandAsync(string deviceId, string commandName, string command)
+        public async Task<ActionResult> AddDeviceCommandAsync(string deviceId, string commandName, string command, string payload)
         {
 
             registryManager = RegistryManager.CreateFromConnectionString(connectionString);
 
             try
             {
+                if(String.IsNullOrWhiteSpace(payload) || String.IsNullOrEmpty(payload))
+                {
+                    payload = null;
+                }
                 using (var connection = new SqlConnection(sqlconnectionString))
                 {
                     await connection.OpenAsync();
 
-                    string sql = "INSERT INTO [dbo].[DeviceCommand] ([deviceId], [Name], [Command]) VALUES (@Id, @Name, @Command)";
+                    string sql = "INSERT INTO [dbo].[DeviceCommand] ([deviceId], [Name], [Command], [Payload]) VALUES (@Id, @Name, @Command, @Payload)";
                     using (SqlCommand cmd = new SqlCommand(sql, connection))
                     {
                         cmd.Parameters.Add("@Id", SqlDbType.Int).Value = deviceId;
                         cmd.Parameters.Add("@Name", SqlDbType.VarChar, 500).Value = commandName;
                         cmd.Parameters.Add("@Command", SqlDbType.VarChar, 500).Value = command;
+                        cmd.Parameters.Add("@Payload", SqlDbType.VarChar, int.MaxValue).Value = payload;
 
                         cmd.CommandType = CommandType.Text;
                         cmd.ExecuteNonQuery();

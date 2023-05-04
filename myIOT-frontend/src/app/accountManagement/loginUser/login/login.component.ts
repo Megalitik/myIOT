@@ -22,7 +22,7 @@ export class LoginComponent {
   password: string = "";
   loginForm!: FormGroup;
 
-  isValidEmail!: boolean;
+  isValidEmail: boolean = true;
   resetPwdEmail: string = "";
 
   eyeIcon: string = "fa-eye-slash";
@@ -111,6 +111,7 @@ export class LoginComponent {
   }
 
   ValidateEmail(email: string) {
+
     const regEx = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
     this.isValidEmail = regEx.test(email);
 

@@ -58,12 +58,12 @@
                         <input [(ngModel)]="resetPwdEmail" (ngModelChange)="ValidateEmail($event)" type="text" placeholder="Email">
                     </div>
                 </div>
-                <small *ngIf="!resetPwdEmail" class="text-danger">É necessário um Email</small>
+                <small *ngIf="resetPwdEmail.length === 0" class="text-danger">É necessário um Email</small>
                 <small *ngIf="!isValidEmail && ValidateEmail" class="text-danger">É necessário um Email válido</small>
             </div>
             <div class="modal-footer">
                 <button id="resetPwdCloseBtn" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                <button type="button" class="btn btn-primary" (click)="RecoverPassword()">Recuperar</button>
+                <button type="button" class="btn btn-primary" [disabled]="resetPwdEmail.length === 0 || !isValidEmail" (click)="RecoverPassword()">Recuperar</button>
             </div>
         </div>
     </div>

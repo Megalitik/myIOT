@@ -41,7 +41,7 @@ export class DeviceLineGraphComponent {
     this.lineChartSub = interval(30000).subscribe((func => {
       this.getLineChartData(this.currentDeviceID);
 
-    }))
+    }));
   }
 
   ngOnInit(): void {
@@ -57,8 +57,6 @@ export class DeviceLineGraphComponent {
 
       this.lineChartData = lineChartData.data;
       this.lineChartLabels = lineChartData.messageDate;
-      console.log(this.lineChartData);
-      console.log(this.lineChartLabels);
     },
       (error: HttpErrorResponse) => {
         if (error.error instanceof ErrorEvent) {

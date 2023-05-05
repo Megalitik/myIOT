@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ApiService } from 'src/app/_services/api/api.service';
+import { Subscription, interval } from 'rxjs';
 
 
 
@@ -19,12 +20,29 @@ export class DeviceMessageTableComponent {
 
   @Input() currentDeviceID: string;
 
-  constructor(private http: HttpClient, private api: ApiService) { }
+  messageTableSub: Subscription;
+
+  constructor(private http: HttpClient, private api: ApiService) { 
+
+    this.messageTableSub = interval(30000).subscribe((func => {
+      this.getMessages(this.currentDeviceID);
+
+    }));
+  }
 
   ngOnInit() {
     console.log(this.currentDeviceID);
 
-    this.api.getDeviceMessages(this.currentDeviceID).subscribe(messages => {
+    this.getMessages(this.currentDeviceID);
+  }
+
+  ngOnDestroy() {
+    this.messageTableSub.unsubscribe();
+  }
+
+  getMessages(deviceID: string)
+  {
+    this.api.getDeviceMessages(deviceID).subscribe(messages => {
       this.messages = messages;
       console.log(messages);
       this.totalPages = messages.length;
@@ -42,7 +60,7 @@ export class DeviceMessageTableComponent {
     this.displayedColumns = Object.keys(firstObject);
     this.currentMessages = firstPage;
     this.currentMessages = firstPage.map(jsonString => this.stringifyNestedJsonObjects(JSON.parse(jsonString)));
-    console.log(this.currentMessages);
+    
   }
 
   private stringifyNestedJsonObjects(obj: any): any {
@@ -64,7 +82,7 @@ export class DeviceMessageTableComponent {
     const firstObject = JSON.parse(this.currentMessages[0]);
     this.displayedColumns = Object.keys(firstObject);
     this.currentMessages = this.currentMessages.map(jsonString => this.stringifyNestedJsonObjects(JSON.parse(jsonString)));
-    console.log(this.currentMessages);
+    
   }
 
   nextPage() {
@@ -73,6 +91,6 @@ export class DeviceMessageTableComponent {
     const firstObject = JSON.parse(this.currentMessages[0]);
     this.displayedColumns = Object.keys(firstObject);
     this.currentMessages = this.currentMessages.map(jsonString => this.stringifyNestedJsonObjects(JSON.parse(jsonString)));
-    console.log(this.currentMessages);
+    
   }
 }

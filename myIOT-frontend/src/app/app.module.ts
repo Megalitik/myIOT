@@ -9,7 +9,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
-import { SettingsComponent } from './userPanel/settings/settings.component';
 import { DashboardComponent } from './userPanel/dashboard/dashboard.component';
 import { ControllersComponent } from './userPanel/controllers/controllers.component';
 import { appRoutes } from 'src/routes';
@@ -34,7 +33,6 @@ import { DeviceSendCommandsComponent } from './userPanel/device-widgets/device-s
     AppComponent,
     NavbarComponent,
     SidebarComponent,
-    SettingsComponent,
     DashboardComponent,
     ControllersComponent,
     UserComponent,

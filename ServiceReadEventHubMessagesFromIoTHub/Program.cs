@@ -30,18 +30,11 @@ namespace ConsoleAppSimulatedIoTHubSensor
 
             eventHubConsumerClient = new EventHubConsumerClient(consumerGroup, eventHubConnectionString);
 
-            // var tasks = new List<Task>();
-            // var partitions = await eventHubConsumerClient.GetPartitionIdsAsync();
-            // foreach (string partition in partitions)
-            // {
-            //     tasks.Add(ReceiveMessagesFromDeviceAsync(partition));
-            // }
-
 
             await using (var consumerClient = eventHubConsumerClient)
             {
-                DateTimeOffset timesamp = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromMinutes(10)); // In your case this line would be DateTimeOffset timesamp = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromHours(1));
-                EventPosition timestamp = EventPosition.FromEnqueuedTime(timesamp);
+                DateTimeOffset lastTenMinuteMessages = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromMinutes(10));
+                EventPosition timestamp = EventPosition.FromEnqueuedTime(lastTenMinuteMessages);
                 using CancellationTokenSource cancellationSource = new CancellationTokenSource();
                 string partitionId = (await consumerClient.GetPartitionIdsAsync(cancellationSource.Token)).First();
 
@@ -49,10 +42,14 @@ namespace ConsoleAppSimulatedIoTHubSensor
                    partitionId,
                     timestamp))
                 {
+                    //Obter o ID do dispositivo
                     string deviceId = partitionEvent.Data.SystemProperties["iothub-connection-device-id"].ToString();
+                    DateTime messageDate = Convert.ToDateTime(partitionEvent.Data.SystemProperties["iothub-enqueuedtime"].ToString());
+                    //Mensagem do dispositivo
                     string json = Encoding.UTF8.GetString(partitionEvent.Data.Body.ToArray());
-                    Console.WriteLine(json);
+                    Console.WriteLine("Dispositivo: " + deviceId + " | Data: " + messageDate.ToString() + " | Mensagem: " +json);
 
+                    //Guardar na Base de dados a mensagem do dispositivo
                     using (var connection = new SqlConnection(sqlconnectionString))
                     {
                         await connection.OpenAsync();
@@ -62,7 +59,7 @@ namespace ConsoleAppSimulatedIoTHubSensor
                         {
                             cmd.Parameters.Add("@deviceID", SqlDbType.Int, int.MaxValue).Value = deviceId;
                             cmd.Parameters.Add("@message", SqlDbType.VarChar, int.MaxValue).Value = json;
-                            cmd.Parameters.Add("@date", SqlDbType.DateTime).Value = DateTime.Now;
+                            cmd.Parameters.Add("@date", SqlDbType.DateTime).Value = messageDate;
 
                             cmd.CommandType = CommandType.Text;
                             cmd.ExecuteNonQuery();
@@ -71,28 +68,6 @@ namespace ConsoleAppSimulatedIoTHubSensor
                 }
             }
         }
-
-        public async Task ReceiveMessagesFromDeviceAsync(string partitionId)
-        {
-            Console.WriteLine($"Starting listener thread for partition: {partitionId}");
-            while (true)
-            {
-                await foreach (PartitionEvent receivedEvent in eventHubConsumerClient.ReadEventsFromPartitionAsync(partitionId, EventPosition.Latest))
-                {
-                    string msgSource;
-                    string body = Encoding.UTF8.GetString(receivedEvent.Data.Body.ToArray());
-                    if (receivedEvent.Data.SystemProperties.ContainsKey("iothub-message-source"))
-                    {
-                        msgSource = receivedEvent.Data.SystemProperties["iothub-message-source"].ToString();
-                        Console.WriteLine($"{partitionId} {msgSource} {body}");
-
-
-                    }
-                }
-            }
-        }
     }
-
-
 }
 

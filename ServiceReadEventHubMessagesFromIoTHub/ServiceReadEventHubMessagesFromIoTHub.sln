@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31911.196
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceReadEventHubMessagesFromIoTHub", "ServiceReadEventHubMessagesFromIoTHub.csproj", "{F7265552-A154-4170-99A0-5F6A13AA312B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F7265552-A154-4170-99A0-5F6A13AA312B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7265552-A154-4170-99A0-5F6A13AA312B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7265552-A154-4170-99A0-5F6A13AA312B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7265552-A154-4170-99A0-5F6A13AA312B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D5B0C658-32AD-4B8B-B613-C7AEEF44FC3D}
+	EndGlobalSection
+EndGlobal

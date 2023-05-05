@@ -54,10 +54,6 @@ a:hover {
     flex-direction: column;
 }
 
-.section-container {
-    padding: 30px;
-}
-
 div.form-group.required>label:first-child:after{
     content: '*';
     color: #dc3545;

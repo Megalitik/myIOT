@@ -1,21 +1,28 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\i0851\\Desktop\\myIOT\\MIOTWebAPI\\MIOTWebAPI.csproj": {}
+    "C:\\Users\\Carvalho\\Desktop\\myIOT\\MIOTWebAPI\\MIOTWebAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\i0851\\Desktop\\myIOT\\MIOTWebAPI\\MIOTWebAPI.csproj": {
+    "C:\\Users\\Carvalho\\Desktop\\myIOT\\MIOTWebAPI\\MIOTWebAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\i0851\\Desktop\\myIOT\\MIOTWebAPI\\MIOTWebAPI.csproj",
+        "projectUniqueName": "C:\\Users\\Carvalho\\Desktop\\myIOT\\MIOTWebAPI\\MIOTWebAPI.csproj",
         "projectName": "MIOTWebAPI",
-        "projectPath": "C:\\Users\\i0851\\Desktop\\myIOT\\MIOTWebAPI\\MIOTWebAPI.csproj",
-        "packagesPath": "C:\\Users\\i0851\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\i0851\\Desktop\\myIOT\\MIOTWebAPI\\obj\\",
+        "projectPath": "C:\\Users\\Carvalho\\Desktop\\myIOT\\MIOTWebAPI\\MIOTWebAPI.csproj",
+        "packagesPath": "C:\\Users\\Carvalho\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Carvalho\\Desktop\\myIOT\\MIOTWebAPI\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
         "configFilePaths": [
-          "C:\\Users\\i0851\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\Carvalho\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net5.0"
@@ -132,7 +139,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.408\\RuntimeIdentifierGraph.json"
         }
       }
     }

@@ -39,80 +39,6 @@ namespace MIOTWebAPI.Controllers
             sqlconnectionString = _configuration.GetConnectionString("SQLConnection");
         }
 
-
-        [HttpGet("GetDeviceEventMessageAsync")]
-        //GET: /api/Device/GetDeviceConnectionStateAsync
-        public async Task GetDeviceEventMessageAsync()
-        {
-            string consumerGroup = EventHubConsumerClient.DefaultConsumerGroupName;
-
-            string eventHubConnectionString = $"Endpoint=sb://ihsuprodamres082dednamespace.servicebus.windows.net/;SharedAccessKeyName=iothubowner;SharedAccessKey=Bj6J9hRQODXMZrMFAygpaGUBqRtttOb4JspTHzNDTDc=;EntityPath=iothub-ehub-myiot-pap-24899739-4cd7aaee27";
-            eventHubConsumerClient = new EventHubConsumerClient(consumerGroup, eventHubConnectionString);
-
-            // var tasks = new List<Task>();
-            // var partitions = await eventHubConsumerClient.GetPartitionIdsAsync();
-            // foreach (string partition in partitions)
-            // {
-            //     tasks.Add(ReceiveMessagesFromDeviceAsync(partition));
-            // }
-
-
-            await using (var consumerClient = eventHubConsumerClient)
-            {
-                DateTimeOffset timesamp = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromMinutes(10)); // In your case this line would be DateTimeOffset timesamp = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromHours(1));
-                EventPosition timestamp = EventPosition.FromEnqueuedTime(timesamp);
-                using CancellationTokenSource cancellationSource = new CancellationTokenSource();
-                string partitionId = (await consumerClient.GetPartitionIdsAsync(cancellationSource.Token)).First();
-
-                await foreach (PartitionEvent partitionEvent in consumerClient.ReadEventsFromPartitionAsync(
-                   partitionId,
-                    timestamp))
-                {
-                    string deviceId = partitionEvent.Data.SystemProperties["iothub-connection-device-id"].ToString();
-                    string json = Encoding.UTF8.GetString(partitionEvent.Data.Body.ToArray());
-                    Console.WriteLine(json);
-
-                    using (var connection = new SqlConnection(sqlconnectionString))
-                    {
-                        await connection.OpenAsync();
-
-                        string sql = "INSERT INTO [dbo].[DeviceMessages] ([deviceId],[Message],[MessageDate]) VALUES (@deviceID,@message,@date)";
-                        using (SqlCommand cmd = new SqlCommand(sql, connection))
-                        {
-                            cmd.Parameters.Add("@deviceID", SqlDbType.Int, int.MaxValue).Value = deviceId;
-                            cmd.Parameters.Add("@message", SqlDbType.VarChar, int.MaxValue).Value = json;
-                            cmd.Parameters.Add("@date", SqlDbType.DateTime).Value = DateTime.Now;
-
-                            cmd.CommandType = CommandType.Text;
-                            cmd.ExecuteNonQuery();
-                        }
-                    }
-                }
-            }
-        }
-
-        public async Task ReceiveMessagesFromDeviceAsync(string partitionId)
-        {
-            Console.WriteLine($"Starting listener thread for partition: {partitionId}");
-            while (true)
-            {
-                await foreach (PartitionEvent receivedEvent in eventHubConsumerClient.ReadEventsFromPartitionAsync(partitionId, EventPosition.Latest))
-                {
-                    string msgSource;
-                    string body = Encoding.UTF8.GetString(receivedEvent.Data.Body.ToArray());
-                    if (receivedEvent.Data.SystemProperties.ContainsKey("iothub-message-source"))
-                    {
-                        msgSource = receivedEvent.Data.SystemProperties["iothub-message-source"].ToString();
-                        Console.WriteLine($"{partitionId} {msgSource} {body}");
-
-
-                    }
-                }
-            }
-        }
-
-
-
         [HttpPost("RegisterNewDeviceAsync")]
         //POST: /api/Device/RegisterNewDeviceAsync
         public async Task<IActionResult> RegisterNewDeviceAsync(string deviceName, string userId)
@@ -263,16 +189,16 @@ namespace MIOTWebAPI.Controllers
 
                 Dictionary<string, List<int>> chartData = new Dictionary<string, List<int>>();
 
-                // loop through each message and parse the JSON object
+                // ver cada mensagem e converter para um objeto JSON
                 foreach (string message in messages)
                 {
                     JObject json = JObject.Parse(message);
 
-                    // loop through each key in the JSON object and add its value to the chartData dictionary
+                    // Ver cada JSON key de cada mensagem e adicionar o seu valo ao Dictionary chartData
                     foreach (var pair in json)
                     {
                         double retNum;
-                        // Check if the value is a number (integer or float)
+                        // Verificar se é um número (integer or float)
                         if (Double.TryParse(Convert.ToString(pair.Value), System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum))
                         {
                             int numericValue = pair.Value.ToObject<int>();
@@ -291,6 +217,7 @@ namespace MIOTWebAPI.Controllers
 
                 List<Dictionary<string, object>> result = new List<Dictionary<string, object>>();
 
+                //Transformar as mensagens no formato para o gráfico de linhas
                 foreach (var kv in chartData)
                 {
                     Dictionary<string, object> transformed = new Dictionary<string, object>
@@ -464,7 +391,6 @@ namespace MIOTWebAPI.Controllers
         {
             List<string> allMessages = new List<string>();
 
-            // Retrieve messages from the database and add them to the allMessages list
             using (SqlConnection connection = new SqlConnection(sqlconnectionString))
             {
                 string query = "SELECT [Message] FROM [myIOT].[dbo].[DeviceMessages] WHERE [deviceId] =" + deviceId + " ORDER BY [MessageDate] DESC";
@@ -483,7 +409,7 @@ namespace MIOTWebAPI.Controllers
             }
 
 
-            // Create a list of lists with a maximum of 10 strings per list and sort it from the allMessages list
+            // Criar uma Lista de Listas com o máximo de 10 mensagens por lista e ordenar
             List<List<string>> paginatedMessages = new List<List<string>>();
             List<string> currentList = new List<string>();
 
@@ -506,20 +432,21 @@ namespace MIOTWebAPI.Controllers
                 }
                 catch (Exception ex)
                 {
-                    // return StatusCode(500, ex.Message);
                     continue;
                 }
             }
 
+            //Caso estiver vazio
             if (currentList.Any())
             {
                 paginatedMessages.Add(currentList);
             }
 
-            // Return the list of lists as a JSON array to paginate an HTML table in Angular v14
+
             return Ok(paginatedMessages);
         }
 
+        //Verifica se dois objetos JSON têm as mesmas chaves
         private bool IsSameJsonStructure(string firstMessage, string secondMessage)
         {
             try

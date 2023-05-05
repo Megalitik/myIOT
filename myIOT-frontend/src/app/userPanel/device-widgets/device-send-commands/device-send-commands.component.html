@@ -35,6 +35,7 @@
                         <input class="form-control" [(ngModel)]="newDeviceCommandName" type="text"
                             placeholder="Nome do Novo Comando">
                     </div>
+                    <small *ngIf="!validCommandName" class="text-danger">É necessário um nome para o comando</small>
                 </div>
                 <div class="form-group pt-3">
                     <div class="input-field">
@@ -42,20 +43,23 @@
                         <input class="form-control" [(ngModel)]="newDeviceCommandCommand" type="text"
                             placeholder="Novo Comando">
                     </div>
+                    <small *ngIf="!validCommand" class="text-danger">É necessário um nome para o comando</small>
                 </div>
                 <div class="form-group pt-3">
                     <div class="input-field">
                         <span class="fa fa-user fa-color p-2"></span>
-                        <textarea class="form-control" [(ngModel)]="newDeviceCommandPayload" type="text" rows="4"
-                            cols="50" placeholder="Payload"></textarea>
+                        <textarea class="form-control" [(ngModel)]="newDeviceCommandPayload" type="text" rows="6"
+                            cols="60" placeholder="Payload"></textarea>
 
                     </div>
+                    <small *ngIf="!validPayload" class="text-danger">O formato JSON do Payload é inválido</small>
+                    
                 </div>
             </div>
             <div class="modal-footer">
                 <button id="addDeviceCommandCloseBtn" type="button" class="btn btn-secondary"
                     data-bs-dismiss="modal">Fechar</button>
-                <button type="button" class="btn btn-primary" (click)="addDeviceCommand()">Adicionar</button>
+                <button type="button" class="btn btn-primary"  (click)="addDeviceCommand()">Adicionar</button>
             </div>
         </div>
     </div>
@@ -81,6 +85,7 @@
                         <option *ngFor="let deleteDevice of DeviceCommands" [value]="deleteDevice.id">{{
                             deleteDevice.name }}</option>
                     </select>
+                    <small *ngIf="!isDeleteCommandSelected" class="text-danger">Não há comando selecionado</small>
                 </div>
                 <!-- <small *ngIf="!resetPwdEmail" class="text-danger">É necessário um dispositivo</small>
                   <small *ngIf="!isValidEmail && ValidateEmail" class="text-danger">É necessário um dispositivo

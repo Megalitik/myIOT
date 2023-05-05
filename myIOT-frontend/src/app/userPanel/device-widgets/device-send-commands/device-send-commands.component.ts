@@ -19,6 +19,11 @@ export class DeviceSendCommandsComponent {
   newDeviceCommandCommand: string = '';
   newDeviceCommandPayload: string = '';
 
+  validPayload: boolean = true;
+  validCommandName: boolean = true;
+  validCommand: boolean = true;
+  isDeleteCommandSelected: boolean = true;
+
   @Input() currentDeviceID: string;
 
   constructor(private api: ApiService, private toastr: ToastrService, private http: HttpClient) {
@@ -47,8 +52,6 @@ export class DeviceSendCommandsComponent {
   }
 
   sendCommand() {
-    // console.log(this.selectedCommand);
-    // API POST request todo
     this.api.sendCommandMethod(this.selectedCommand.deviceId, this.selectedCommand.id).subscribe(deviceMessage => {
 
       this.toastr.success("Método foi chamado", "Método Chamado");
@@ -65,33 +68,45 @@ export class DeviceSendCommandsComponent {
   }
 
   addDeviceCommand() {
-    if(this.CheckPayload(this.newDeviceCommandPayload) == false )
-    {
-      this.toastr.error("A estrutura JSON do Payload está inválida", "Erro");
-      return;
+
+    if (this.ValidateAddCommand()) {
+
+      this.validPayload = this.CheckPayload(this.newDeviceCommandPayload);
+
+      if (this.validPayload) {
+
+        this.api.addNewDeviceCommand(this.currentDeviceID, this.newDeviceCommandName, this.newDeviceCommandCommand, this.newDeviceCommandPayload).subscribe(deviceMessage => {
+
+          this.toastr.success("O comando foi criado", "Comando criado");
+          this.userDeviceCommandsList(this.currentDeviceID);
+
+          const closeButton = document.getElementById("addDeviceCommandCloseBtn");
+          closeButton?.click();
+        },
+          (error: HttpErrorResponse) => {
+            if (error.error instanceof ErrorEvent) {
+              //Erro no lado do cliente
+              this.toastr.error("Houve um erro ao adicionar o comando", "Erro")
+            } else {
+              // Erro no Servidor ou API
+              this.toastr.error("Houve um erro ao adicionar o comando", "Erro")
+            }
+          });
+      }
     }
-    this.api.addNewDeviceCommand(this.currentDeviceID, this.newDeviceCommandName, this.newDeviceCommandCommand, this.newDeviceCommandPayload).subscribe(deviceMessage => {
-
-      this.toastr.success("O comando foi criado", "Comando criado");
-      this.userDeviceCommandsList(this.currentDeviceID);
-
-      const closeButton = document.getElementById("addDeviceCommandCloseBtn");
-      closeButton?.click();
-    },
-      (error: HttpErrorResponse) => {
-        if (error.error instanceof ErrorEvent) {
-          //Erro no lado do cliente
-          this.toastr.error("Houve um erro ao adicionar o comando", "Erro")
-        } else {
-          // Erro no Servidor ou API
-          this.toastr.error("Houve um erro ao adicionar o comando", "Erro")
-        }
-      });
   }
 
   deleteDeviceCommand() {
+
+    if (this.ValidateDeleteCommand() == false) {
+
+      return;
+    }
     this.api.deleteCommandMessage(this.currentDeviceID, this.selectedDeleteDeviceCommand).subscribe(deviceMessage => {
       this.userDeviceCommandsList(this.currentDeviceID);
+      this.isDeleteCommandSelected = true;
+      this.selectedDeleteDeviceCommand = '';
+
       this.toastr.success("O comando foi apagado", "Comando apagado");
       const closeButton = document.getElementById("deleteDeviceCommandCloseBtn");
       closeButton?.click();
@@ -107,18 +122,52 @@ export class DeviceSendCommandsComponent {
       });
   }
 
+  ValidateAddCommand() {
 
+    if (this.CheckPayload(this.newDeviceCommandPayload) == false) {
+      this.validPayload = false;
+
+      return false;
+    }
+
+    if (this.newDeviceCommandName.length === 0) {
+      this.validCommandName = false;
+      this.newDeviceCommandName = '';
+      return false;
+    }
+
+    if (this.newDeviceCommandCommand.length === 0) {
+      this.validCommand = false;
+      this.newDeviceCommandCommand = '';
+      return false;
+    }
+
+    return true;
+
+  }
+
+  ValidateDeleteCommand() {
+
+    if (this.selectedDeleteDeviceCommand.length === 0) {
+      this.isDeleteCommandSelected = false;
+      this.selectedDeleteDeviceCommand = '';
+      return false;
+    }
+
+    return true;
+
+  }
 
   CheckPayload(str: string) {
-    if(str == null || str.length === 0)
-    {
+    if (str == null || str.length === 0) {
       return true;
     }
     try {
-        JSON.parse(str);
+      JSON.parse(str);
     } catch (e) {
-        return false;
+      this.newDeviceCommandPayload = '';
+      return false;
     }
     return true;
-}
+  }
 }

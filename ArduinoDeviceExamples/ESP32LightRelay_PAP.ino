@@ -41,6 +41,8 @@ int networkLoss;
 bool firmwareUpdated;
 const char* updateLink = "";
 
+bool factoryReset = false;
+
 //testing
 int len = 0;
 //end testing
@@ -543,9 +545,8 @@ static int  DeviceMethodCallback(const char *methodName, const unsigned char *pa
   else if (strcmp(methodName, "factoryreset") == 0)
   {
     LogInfo("A fazer Factory Reset...");
-    clearEEPROM();
-    
-    ESP.restart();
+
+    factoryReset = true;    
   }
   else if (strcmp(methodName, "off") == 0)
   {
@@ -739,6 +740,11 @@ void loop()
     button();
 
     if (WiFi.status() == WL_CONNECTED) {
+      if(factoryReset == true){
+        clearEEPROM();
+    
+        ESP.restart();
+      }
       if(updateLink != ""){
         StartOTA(updateLink);//Faz update pela OTA
       }

@@ -30,13 +30,16 @@ const char* password = "";
 
 static const char* connectionString;
 
-const char *messageData = "{\"deviceID\":\"%s\", \"deviceTipo\":\"%s\", \"data\":{\"Relay1\":\"%d\", \"Relay2\":\"%d\", \"Relay3\":\"%d\", \"Relay4\":\"%d\"}}";
+const char *messageData = "{\"deviceID\":\"%s\", \"deviceTipo\":\"%s\", \"Relay1\":\"%d\", \"Relay2\":\"%d\", \"Relay3\":\"%d\", \"Relay4\":\"%d\"}";
 
 int messageCount = 1;
 static bool hasWifi = false;
 static bool messageSending = true;
 static uint64_t send_interval_ms;
 int networkLoss;
+
+bool firmwareUpdated;
+const char* updateLink = "";
 
 //testing
 int len = 0;
@@ -78,11 +81,11 @@ String style =
   "</script>"
   "<style>#file-input,input{width:100%;height:44px;border-radius:4px;margin:10px auto;font-size:15px}"
   "select{background: #f1f1f1;padding: 0 15px;border: 1px solid #ddd;line-height: 44px;text-align: left;display: block;cursor: pointerwidth: 100%;height: 44px;border-radius: 4px;margin: 10px auto;font-size: 15px}"
-  "input{background:#f1f1f1;border:0;padding:0 15px}body{background:#3498db;font-family:sans-serif;font-size:14px;color:#777}"
+  "input{background:#f1f1f1;border:0;padding:0 15px}body{background:#1C2228;font-family:sans-serif;font-size:14px;color:#777}"
   "#file-input{padding:0;border:1px solid #ddd;line-height:44px;text-align:left;display:block;cursor:pointer}"
-  "#bar,#prgbar{background-color:#f1f1f1;border-radius:10px}#bar{background-color:#3498db;width:0%;height:10px}"
+  "#bar,#prgbar{background-color:#f1f1f1;border-radius:10px}#bar{background-color:#1C2228;width:0%;height:10px}"
   "form{background:#fff;max-width:258px;margin:75px auto;padding:30px;border-radius:5px;text-align:center}"
-  ".btn{background:#3498db;color:#fff;cursor:pointer}</style>";
+  ".btn{background:#1C2228;color:#fff;cursor:pointer}</style>";
 
 
 // Utilities
@@ -196,6 +199,7 @@ bool StartWebServer() {
   Serial.println("StartWebServer");
   try
   {
+    pinMode(LED, OUTPUT);
     digitalWrite (LED, HIGH);  // turn on the ESP32 LED
     WiFi.mode(WIFI_AP);
     IPAddress ip(192, 168, 1, 100);
@@ -212,7 +216,7 @@ bool StartWebServer() {
     server.on("/ok", handleRestart);
     server.on("/inline", []()
     {
-      server.send(200, "text/plain", "this works without need of authentification");
+      server.send(200, "text/plain", "funciona sem autenticação");
     });
 
     server.onNotFound(handleNotFound);
@@ -226,13 +230,13 @@ bool StartWebServer() {
   catch (const std::exception&)
   {
   }
-  digitalWrite (LED, LOW);  // turn on the ESP32 LED
+  //digitalWrite (LED, LOW);  // desligar o ESP32 LED
 
   return true;
 }
 bool StartClient()
 {
-  if (ssid == "" && password == "")
+  if (ssid == "" && password == "" || ssid == NULL || password == NULL)
   {
     return false;
   }
@@ -276,11 +280,11 @@ void handleBye() {
     server.send(301);
     return;
   }
-  String content = "<html><body><form name=loginForm><H2>Goodbye!!</H2><br>";
+  String content = "<html><body><form name=loginForm><H2>Dispositivo Configurado</H2><br>";
   if (server.hasHeader("User-Agent")) {
     content +=  "<br><br>";
   }
-  content += "You can access the page  <a href=\"/login?DISCONNECT=YES\">here</a></form></body></html>";
+  content += "Para desconectar, prima  <a href=\"/login?DISCONNECT=YES\">aqui</a></form></body></html>";
   content += style;
   server.send(200, "text/html", content);
 }
@@ -292,11 +296,11 @@ void handleRoot() {
     server.send(301);
     return;
   }
-  String content = "<html><body><form name=loginForm><H2>Bem Vindo!!</H2><br>";
+  String content = "<html><body><form name=loginForm><H2>SmartMeterRelay</H2><br>";
   if (server.hasHeader("User-Agent")) {
     content +=  "<br><br>";
   }
-  content += "You can access the page  <a href=\"/login?DISCONNECT=YES\">here</a></form></body></html>";
+  content += "Para configurar o dispositivo, entre  <a href=\"/login?DISCONNECT=YES\">aqui</a></form></body></html>";
   content += style;
   server.send(200, "text/html", content);
 }
@@ -335,7 +339,7 @@ void handleConfiguration() {
       server.send(301);
       return;
     }
-    msg = "Utilizador/Palavra-Passe está errada. Tente outra vez.";
+    msg = "Palavra-Passe está errada. Tente outra vez.";
   }
   //int strLen = Redes.length();
   Scan();
@@ -347,7 +351,7 @@ void handleConfiguration() {
   }
   content += "</select>";
   content += "Palavra-Passe:<input type='password' name='password' placeholder='password'><br>";
-  content += "ConnectionString:<input type='text' name='AzureConnectionString' placeholder='AzureConnectionString'><br>";
+  content += "Ligar ao IoT Hub:<input type='text' name='AzureConnectionString' placeholder='AzureConnectionString'><br>";
   content += "<input type='submit' name='SUBMIT' value='Submit' class=btn id=btn></form>";
   content += teste;
   content += "</body></html>";
@@ -526,7 +530,6 @@ static int  DeviceMethodCallback(const char *methodName, const unsigned char *pa
   int result = 200;
   int lightState = 0;
   const char* checkdeviceVersion;
-  const char* updateLink;
   const char* checkDeviceID;
   String link;
 
@@ -542,8 +545,6 @@ static int  DeviceMethodCallback(const char *methodName, const unsigned char *pa
       //Link de update
       updateLink = jsonDocument["payload"];
       link = updateLink;
-
-      StartOTA(link);//Faz update pela OTA
     }
 
   }
@@ -556,7 +557,7 @@ static int  DeviceMethodCallback(const char *methodName, const unsigned char *pa
   }
   else if (strcmp(methodName, "off") == 0)
   {
-    //WriteEEPROM();//Escreve as configuraÃ§Ãµes para a EEPROM
+    
     messageSending = false;
     ESP.deepSleep(1 * 60000000); //Entra em Deep-Sleep em 1 minuto
   }
@@ -650,7 +651,7 @@ static int  DeviceMethodCallback(const char *methodName, const unsigned char *pa
 void SendLightState()
 {
   //Read Relay PIN states.
-  int relay1 = digitalRead ( v);
+  int relay1 = digitalRead (RELAY1);
   int relay2 = digitalRead (RELAY2);
   int relay3 = digitalRead (RELAY3);
   int relay4 = digitalRead (RELAY4);
@@ -746,6 +747,9 @@ void loop()
     button();
 
     if (WiFi.status() == WL_CONNECTED) {
+      if(updateLink != ""){
+        StartOTA(updateLink);//Faz update pela OTA
+      }
       //Verificar se pode enviar os eventos para o IoT Hub e apenas a cada 10 segundos (INTERVAL time)
       if (messageSending &&
           (int)(millis() - send_interval_ms) >= INTERVAL)

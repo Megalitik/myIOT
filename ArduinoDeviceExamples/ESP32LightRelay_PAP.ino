@@ -339,7 +339,7 @@ void handleConfiguration() {
       server.send(301);
       return;
     }
-    msg = "Palavra-Passe está errada. Tente outra vez.";
+    msg = "Existem campos por preencher. Por favor preencha os campos em falta.";
   }
   //int strLen = Redes.length();
   Scan();
@@ -352,7 +352,7 @@ void handleConfiguration() {
   content += "</select>";
   content += "Palavra-Passe:<input type='password' name='password' placeholder='password'><br>";
   content += "Ligar ao IoT Hub:<input type='text' name='AzureConnectionString' placeholder='AzureConnectionString'><br>";
-  content += "<input type='submit' name='SUBMIT' value='Submit' class=btn id=btn></form>";
+  content += "<input type='submit' name='SUBMIT' value='Submit' class=btn id=btn></form>" + msg + "<br>";
   content += teste;
   content += "</body></html>";
   content += selected;
@@ -361,28 +361,20 @@ void handleConfiguration() {
   server.send(200, "text/html", content);
 }
 void handleSave() {
+  
   if (!isAuthenticated()) {
     server.sendHeader("Location", "/login");
     server.sendHeader("Cache-Control", "no-cache");
     server.send(301);
     return;
   }
-  if (ssid != "" && password != "")
+  if (ssid != "" && password != "" && AuxAzureCon != "")
   {
     server.sendHeader("Location", "/ok");
     server.sendHeader("Cache-Control", "no-cache");
     server.sendHeader("Set-Cookie", "ESPSESSIONID=1");
     server.send(301);
   }
-  String content = "<html><body><form action='/save' method='POST'name=loginForm>Insert data to ESP<br>";
-  content += "SSID:<input type='text' name='ssid' placeholder='SSID'><br>";
-  content += "Password:<input type='password' name='password' placeholder='Password'><br>";
-  content += "ConnectionString:<input type='text' name='AzureConnectionString' placeholder='AzureConnectionString'><br>";
-  content += "<input type='submit' name='SUBMIT' value='Submit' class=btn></form>";
-  content += "</body></html>";
-  content += style;
-
-  server.send(200, "text/html", content);
 
 }
 void handleNotFound() {
@@ -419,7 +411,7 @@ void handleLogin() {
       server.send(301);
       return;
     }
-    msg = "Wrong username/password! try again.";
+    msg = "Palavra-passe errada. Tente outra vez";
   }
   String content = "<html><body><form action='/login' method='POST' name=loginForm>Entrar no ESP<br>";
   content += "Palavra-Passe:<input type='password' name='PASSWORD' placeholder='palavra-passe'><br>";

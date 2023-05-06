@@ -31,7 +31,6 @@ export class DeviceMessageTableComponent {
   }
 
   ngOnInit() {
-    console.log(this.currentDeviceID);
 
     this.getMessages(this.currentDeviceID);
   }
@@ -44,7 +43,7 @@ export class DeviceMessageTableComponent {
   {
     this.api.getDeviceMessages(deviceID).subscribe(messages => {
       this.messages = messages;
-      console.log(messages);
+      // console.log(messages);
       this.totalPages = messages.length;
 
       if (this.totalPages > 0) {

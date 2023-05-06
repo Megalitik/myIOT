@@ -46,7 +46,7 @@ export class ControllersComponent implements OnInit {
 
     this.route.queryParams
       .subscribe(params => {
-        console.log(params);
+        // console.log(params);
         this.currentDeviceId = params.currentDeviceID;
         this.currentDeviceName = params.currentDeviceName;
       }

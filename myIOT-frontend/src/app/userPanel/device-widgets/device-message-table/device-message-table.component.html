@@ -1,6 +1,6 @@
 <div class="section-container">
   <h2>Mensagens</h2>
-  <div>
+  <div *ngIf="messages.length > 0">
     <table class="table table-inverse table-hover">
       <thead class="thead-dark">
         <tr>
@@ -18,5 +18,8 @@
       <button class="btn btn-small btn-info mr-4" [disabled]="currentPage == 0" (click)="previousPage()">Anterior</button>
       <button class="btn btn-small btn-info" [disabled]="currentPage >= totalPages - 1" (click)="nextPage()">Próximo</button>
     </div>
+  </div>
+  <div *ngIf="messages.length === 0">
+    <p>Não há mensagens do dispositivo</p>
   </div>
 </div>

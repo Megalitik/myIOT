@@ -26,6 +26,7 @@ import { UserDevicesComponent } from './userPanel/user-devices/user-devices.comp
 import { DeviceMessageTableComponent } from './userPanel/device-widgets/device-message-table/device-message-table.component';
 import { DeviceLineGraphComponent } from './userPanel/device-widgets/device-line-graph/device-line-graph.component';
 import { DeviceSendCommandsComponent } from './userPanel/device-widgets/device-send-commands/device-send-commands.component';
+import { PagenotfoundComponent } from './pagenotfound/pagenotfound.component';
 
 
 @NgModule({
@@ -44,7 +45,8 @@ import { DeviceSendCommandsComponent } from './userPanel/device-widgets/device-s
     UserDevicesComponent,
     DeviceMessageTableComponent,
     DeviceLineGraphComponent,
-    DeviceSendCommandsComponent
+    DeviceSendCommandsComponent,
+    PagenotfoundComponent
   ],
   imports: [
     BrowserModule,

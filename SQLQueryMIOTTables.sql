@@ -1,4 +1,5 @@
 
+
 	IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = 'myIOT')
 	BEGIN
 		CREATE DATABASE [myIOT]
@@ -98,5 +99,3 @@
 			REFERENCES [dbo].[Devices] ([deviceId])
 
 		END
-
-

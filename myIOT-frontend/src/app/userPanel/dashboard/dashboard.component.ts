@@ -55,7 +55,7 @@ export class DashboardComponent implements OnInit {
           },
           error: (err) => {
             console.log(err);
-            this.toastr.error('Erro ao Entrar', 'Acesso Falhou');
+            this.toastr.error('Não foi possível obter os Dispositivos', 'Erro - Dispositivos');
 
             return;
           }

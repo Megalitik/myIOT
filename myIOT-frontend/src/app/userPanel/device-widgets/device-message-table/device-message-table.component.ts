@@ -1,7 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ApiService } from 'src/app/_services/api/api.service';
 import { Subscription, interval } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
 
 
 
@@ -22,7 +23,7 @@ export class DeviceMessageTableComponent {
 
   messageTableSub: Subscription;
 
-  constructor(private http: HttpClient, private api: ApiService) { 
+  constructor(private http: HttpClient, private api: ApiService, private toastr: ToastrService) { 
 
     this.messageTableSub = interval(30000).subscribe((func => {
       this.getMessages(this.currentDeviceID);
@@ -48,6 +49,15 @@ export class DeviceMessageTableComponent {
 
       if (this.totalPages > 0) {
         this.populateRows();
+      }
+    },
+    (error: HttpErrorResponse) => {
+      if (error.error instanceof ErrorEvent) {
+        //Erro no lado do cliente
+        this.toastr.error("Falha ao criar a tabela", "Erro - Tabela de Mansagens");
+      } else {
+        // Erro no Servidor ou API
+        this.toastr.error("Falha ao criar a tabela", "Erro - Tabela de Mansagens");
       }
     });
   }

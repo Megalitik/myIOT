@@ -113,14 +113,10 @@ export class ControllersComponent implements OnInit {
       (error: HttpErrorResponse) => {
         if (error.error instanceof ErrorEvent) {
           //Erro no lado do cliente
-          this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
-          console.log(this.errorMessage);
-          this.currentDeviceConnectionString = "Erro - Não foi possível obter a cadeia de ligação do dispositivo"
+          this.toastr.error("Falha ao salvar as ferramentas", "Erro - Ferramentas");
         } else {
           // Erro no Servidor ou API
-          this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
-          console.log(this.errorMessage);
-          this.currentDeviceConnectionString = "Erro - Não foi possível obter a cadeia de ligação do dispositivo"
+          this.toastr.error("Falha ao salvar as ferramentas", "Erro - Ferramentas");
         }
       });
   }
@@ -133,13 +129,9 @@ export class ControllersComponent implements OnInit {
       (error: HttpErrorResponse) => {
         if (error.error instanceof ErrorEvent) {
           //Erro no lado do cliente
-          this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
-          console.log(this.errorMessage);
           this.currentDeviceConnectionString = "Erro - Não foi possível obter a cadeia de ligação do dispositivo"
         } else {
           // Erro no Servidor ou API
-          this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
-          console.log(this.errorMessage);
           this.currentDeviceConnectionString = "Erro - Não foi possível obter a cadeia de ligação do dispositivo"
         }
       });
@@ -153,14 +145,10 @@ export class ControllersComponent implements OnInit {
       (error: HttpErrorResponse) => {
         if (error.error instanceof ErrorEvent) {
           //Erro no lado do cliente
-          this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
-          console.log(this.errorMessage);
-          this.currentDeviceConnectivityState = "Erro - Não foi possível obter o estado de conetividade do dispositivo"
+          this.currentDeviceConnectivityState = "Disconnected"
         } else {
           // Erro no Servidor ou API
-          this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
-          console.log(this.errorMessage);
-          this.currentDeviceConnectivityState = "Erro - Não foi possível obter o estado de conetividade do dispositivo"
+          this.currentDeviceConnectivityState = "Disconnected"
         }
       });
   }

@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input } from '@angular/core';
 import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
 import { Label } from 'ng2-charts';
+import { ToastrService } from 'ngx-toastr';
 import { Subscription, interval } from 'rxjs';
 import { ApiService } from 'src/app/_services/api/api.service';
 
@@ -36,7 +37,7 @@ export class DeviceLineGraphComponent {
 
   lineChartSub: Subscription;
 
-  constructor(private api: ApiService) {
+  constructor(private api: ApiService, private toastr: ToastrService) {
 
     this.lineChartSub = interval(30000).subscribe((func => {
       this.getLineChartData(this.currentDeviceID);
@@ -61,10 +62,10 @@ export class DeviceLineGraphComponent {
       (error: HttpErrorResponse) => {
         if (error.error instanceof ErrorEvent) {
           //Erro no lado do cliente
-          console.log(`LineChart - O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`);
+          this.toastr.error("Erro ao criar o Gráfico de Linhas", "Erro - Gráfico de Linhas");
         } else {
           // Erro no Servidor ou API
-          console.log(`LineChart - O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`);
+          this.toastr.error("Erro ao criar o Gráfico de Linhas", "Erro - Gráfico de Linhas");
         }
       });
   }

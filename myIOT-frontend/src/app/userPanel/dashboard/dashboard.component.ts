@@ -42,7 +42,7 @@ export class DashboardComponent implements OnInit {
     console.log('UserID: ' + this.deviceUserId);
 
     if (this.isUserAuthenticated()) {
-      
+
       this.api.getAllUserDevices(this.deviceUserId).subscribe(
         {
           next: (userDevices) => {
@@ -111,17 +111,8 @@ export class DashboardComponent implements OnInit {
       window.location.reload();
     },
       (error: HttpErrorResponse) => {
-        if (error.error instanceof ErrorEvent) {
-          //Erro no lado do cliente
-          this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
-          console.log(this.errorMessage);
-          this.toastr.error("Falha ao registar um novo dispositivo", "Erro - Adicionar Dispositivo");
-        } else {
-          // Erro no Servidor ou API
-          this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
-          console.log(this.errorMessage);
-          this.toastr.error("Falha ao registar um novo dispositivo", "Erro - Adicionar Dispositivo");
-        }
+
+        this.toastr.error("Falha ao registar um novo dispositivo", "Erro - Adicionar Dispositivo");
       })
   }
 
@@ -132,17 +123,8 @@ export class DashboardComponent implements OnInit {
       window.location.reload();
     },
       (error: HttpErrorResponse) => {
-        if (error.error instanceof ErrorEvent) {
-          //Erro no lado do cliente
-          this.errorMessage = `Ocorreu um erro: ${error.error.message}`;
-          console.log(this.errorMessage);
-          this.toastr.error("Falha ao apagar o dispositivo", "Erro - Apagar Dispositivo");
-        } else {
-          // Erro no Servidor ou API
-          this.errorMessage = `O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`;
-          console.log(this.errorMessage);
-          this.toastr.error("Falha ao apagar o dispositivo", "Erro - Apagar Dispositivo");
-        }
+
+        this.toastr.error("Falha ao apagar o dispositivo", "Erro - Apagar Dispositivo");
       })
   }
 

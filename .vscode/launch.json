@@ -5,11 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "pwa-chrome",
+            "name": "Launch Angular",  // name of task
+            "type": "chrome",
             "request": "launch",
-            "name": "Launch Chrome against localhost",
-            "url": "http://localhost:4200",
-            "webRoot": "${workspaceFolder}\\myIOT-frontend"
+            "preLaunchTask": "npm: start - myIOT-frontend", // task of task.json
+            "url": "http://localhost:4200/", // route where it will launch
+            "webRoot": "${workspaceFolder}\\myIOT-frontend\\" // path of work space
         },
         {
             "name": ".NET Core Launch (console)",

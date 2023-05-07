@@ -1,6 +1,6 @@
 {
-	"version": "2.0.0",
-	"tasks": [
+    "version": "2.0.0",
+    "tasks": [
         {
             "label": "build",
             "command": "dotnet",
@@ -10,6 +10,14 @@
                 "${workspaceFolder}\\MIOTWebAPI\\MIOTWebAPI.csproj"
             ],
             "problemMatcher": "$msCompile"
+        },
+        {
+            "type": "npm",
+            "script": "start",
+            "path": "myIOT-frontend",
+            "problemMatcher": [],
+            "label": "npm: start - myIOT-frontend",
+            "detail": "ng serve",
         }
     ]
 }

@@ -31,19 +31,25 @@ export class LoginComponent {
 
   url = configurl.apiServer.APIUrl;
 
-  constructor(private router: Router, 
-    private auth: AuthService, 
+  constructor(private router: Router,
+    private auth: AuthService,
     private http: HttpClient,
     private toastr: ToastrService, private formBuilder: FormBuilder,
-    private userStore : UserStoreService,
-    private resetService : ResetPasswordService) { }
+    private userStore: UserStoreService,
+    private resetService: ResetPasswordService) { }
 
-    ngOnInit(): void {
-      this.loginForm = this.formBuilder.group({
-        username: ['', Validators.required],
-        password: ['', Validators.required]
-      });
+  ngOnInit(): void {
+
+    if (this.auth.isUserLoggedIn() == true) {
+      this.router.navigate(["/dashboard"]);
     }
+
+
+    this.loginForm = this.formBuilder.group({
+      username: ['', Validators.required],
+      password: ['', Validators.required]
+    });
+  }
 
 
   login() {
@@ -54,11 +60,11 @@ export class LoginComponent {
 
     this.auth.Login(this.loginForm.value).subscribe(
       {
-        next: (res) =>{
+        next: (res) => {
           this.toastr.success('Utilizador com Acesso Garantido', 'Successo');
           console.log(res);
           this.loginForm.reset();
-          this.auth.storeJwtToken(res.token); 
+          this.auth.storeJwtToken(res.token);
 
 
           const tokenPayload = this.auth.decodedJwtToken();
@@ -68,11 +74,11 @@ export class LoginComponent {
 
           this.router.navigate(["/dashboard"]);
         },
-        error: (err) =>{
+        error: (err) => {
           console.log(err);
           console.log(new Error('Erro: ' + err.message));
           this.toastr.error('Erro ao Entrar', 'Acesso Falhou');
-          
+
           return;
         }
       }
@@ -80,22 +86,21 @@ export class LoginComponent {
   }
 
   RecoverPassword() {
-    if (this.ValidateEmail(this.resetPwdEmail))
-    {
+    if (this.ValidateEmail(this.resetPwdEmail)) {
       console.log(this.resetPwdEmail);
 
       const closeButton = document.getElementById("resetPwdCloseBtn");
 
       this.resetService.SendResetPasswordLink(this.resetPwdEmail).subscribe({
-        next:(response) => {
+        next: (response) => {
           console.log(response);
           this.resetPwdEmail = "";
-          
+
           closeButton?.click();
 
           this.toastr.success(response.message, "Sucesso");
         },
-        error:(err)=>{
+        error: (err) => {
           console.log('Erro --: ' + err);
           this.toastr.error("Email inválido", "Erro ao repor a Palavra-Passe");
           closeButton?.click();
@@ -117,6 +122,6 @@ export class LoginComponent {
 
     return this.isValidEmail;
   }
-  
+
 
 }

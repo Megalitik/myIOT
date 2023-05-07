@@ -28,6 +28,11 @@ export class RegisterUserComponent {
     private router: Router, private http: HttpClient, private toastr: ToastrService) { }
 
   ngOnInit() {
+
+    if (this.auth.isUserLoggedIn() == true) {
+      this.router.navigate(["/dashboard"]);
+    }
+
     this.UserForm = this.formbulider.group({
       UserName: ['', [Validators.required]],
       Password: ['', [Validators.required]],

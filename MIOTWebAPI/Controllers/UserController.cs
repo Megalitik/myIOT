@@ -120,13 +120,6 @@ namespace MIOTWebAPI.Controllers
             }
         }
 
-        [Authorize]
-        [HttpGet]
-        public async Task<ActionResult<User>> GetAllUsers()
-        {
-            return Ok(await _appContext.Users.ToListAsync());
-        }
-
         [HttpPost("send-reset-email/{email}")]
         public async Task<ActionResult> SendEmail(string email)
         {
@@ -236,8 +229,5 @@ namespace MIOTWebAPI.Controllers
 
             return jwtTokenHandler.WriteToken(token);
         }
-
-
-
     }
 }

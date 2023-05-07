@@ -39,19 +39,15 @@ export class DeviceSendCommandsComponent {
     this.api.getDeviceCommands(deviceId).subscribe(commands => {
 
       this.DeviceCommands = commands
-    },
-      (error: HttpErrorResponse) => {
-        if (error.error instanceof ErrorEvent) {
-          //Erro no lado do cliente
-          console.log(`O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`);
-        } else {
-          // Erro no Servidor ou API
-          console.log(`O Servidor devolveu um código ${error.status}. Detalhes: ${error.error}`);
-        }
-      });
+    });
   }
 
   sendCommand() {
+    if (this.selectedCommand == undefined)
+    {
+      this.toastr.error("Não foi selecionado um método", "Erro - Método no Dispositivo")
+    }
+
     this.api.sendCommandMethod(this.selectedCommand.deviceId, this.selectedCommand.id).subscribe(deviceMessage => {
 
       this.toastr.success("Método foi chamado", "Método Chamado");
@@ -59,10 +55,10 @@ export class DeviceSendCommandsComponent {
       (error: HttpErrorResponse) => {
         if (error.error instanceof ErrorEvent) {
           //Erro no lado do cliente
-          this.toastr.error("Houve um erro ao chamar o método", "Erro")
+          this.toastr.error("Houve um erro ao chamar o método", "Erro - Método no Dispositivo")
         } else {
           // Erro no Servidor ou API
-          this.toastr.error("Houve um erro ao chamar o método", "Erro")
+          this.toastr.error("Houve um erro ao chamar o método", "Erro - Método no Dispositivo")
         }
       });
   }
@@ -77,7 +73,7 @@ export class DeviceSendCommandsComponent {
 
         this.api.addNewDeviceCommand(this.currentDeviceID, this.newDeviceCommandName, this.newDeviceCommandCommand, this.newDeviceCommandPayload).subscribe(deviceMessage => {
 
-          this.toastr.success("O comando foi criado", "Comando criado");
+          this.toastr.success("O método foi criado", "Método criado");
           this.userDeviceCommandsList(this.currentDeviceID);
 
           const closeButton = document.getElementById("addDeviceCommandCloseBtn");
@@ -86,10 +82,10 @@ export class DeviceSendCommandsComponent {
           (error: HttpErrorResponse) => {
             if (error.error instanceof ErrorEvent) {
               //Erro no lado do cliente
-              this.toastr.error("Houve um erro ao adicionar o comando", "Erro")
+              this.toastr.error("Houve um erro ao adicionar o método", "Erro - Adicionar Método")
             } else {
               // Erro no Servidor ou API
-              this.toastr.error("Houve um erro ao adicionar o comando", "Erro")
+              this.toastr.error("Houve um erro ao adicionar o método", "Erro - Adicionar Método")
             }
           });
       }
@@ -107,17 +103,17 @@ export class DeviceSendCommandsComponent {
       this.isDeleteCommandSelected = true;
       this.selectedDeleteDeviceCommand = '';
 
-      this.toastr.success("O comando foi apagado", "Comando apagado");
+      this.toastr.success("O método foi apagado", "Método apagado");
       const closeButton = document.getElementById("deleteDeviceCommandCloseBtn");
       closeButton?.click();
     },
       (error: HttpErrorResponse) => {
         if (error.error instanceof ErrorEvent) {
           //Erro no lado do cliente
-          this.toastr.error("Houve um erro ao apagar o comando", "Erro")
+          this.toastr.error("Houve um erro ao apagar o método", "Erro - Apagar Método")
         } else {
           // Erro no Servidor ou API
-          this.toastr.error("Houve um erro ao apagar o comando", "Erro")
+          this.toastr.error("Houve um erro ao apagar o método", "Erro - Apagar Método")
         }
       });
   }

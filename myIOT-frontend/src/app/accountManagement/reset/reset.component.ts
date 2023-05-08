@@ -19,18 +19,20 @@ export class ResetComponent {
   resetPasswordObject = new ResetPassword();
 
   hasPassword: boolean = true;
+  hasConfirmedPassword: boolean = true;
+  isPasswordMatch: boolean = true;
 
-  constructor(private formBuilder: FormBuilder, private activatedRoute : ActivatedRoute,
-    private resetService : ResetPasswordService, private toastr : ToastrService, private router : Router) {  }
+  constructor(private formBuilder: FormBuilder, private activatedRoute: ActivatedRoute,
+    private resetService: ResetPasswordService, private toastr: ToastrService, private router: Router) { }
 
   ngOnInit() {
     this.resetPwdForm = this.formBuilder.group({
       password: [null, Validators.required],
       confirmPassword: [null, Validators.required]
     },
-    {
-      validator: ConfirmPasswordValidator("password", "confirmPassword")
-    });
+      {
+        validator: ConfirmPasswordValidator("password", "confirmPassword")
+      });
 
     this.activatedRoute.queryParams.subscribe(params => {
       this.emailToReset = params['email'];
@@ -42,6 +44,7 @@ export class ResetComponent {
 
   reset() {
     console.log('reset');
+    console.log(this.resetPwdForm);
     if (this.resetPwdForm.valid) {
       this.resetPasswordObject.email = this.emailToReset;
       this.resetPasswordObject.newPassword = this.resetPwdForm.value.password;
@@ -49,16 +52,29 @@ export class ResetComponent {
       this.resetPasswordObject.emailToken = this.emailToken;
 
       this.resetService.ResetPassword(this.resetPasswordObject).subscribe({
-        next:(res)=> {
+        next: (res) => {
           this.toastr.success('A Palavra-passe foi reposta', 'Successo');
           this.router.navigate(['login']);
         },
-        error:(err)=> {
-          this.toastr.error('Erro ao Repor a Palavra-Passe ', 'Acesso Falhou');
+        error: (err) => {
+          this.toastr.error('Erro ao Repor a Palavra-Passe ', 'Erro');
         }
       });
     }
     else {
+      this.isPasswordMatch = true;
+      this.hasPassword = true;
+      this.hasConfirmedPassword = true;
+
+      if (this.resetPwdForm.controls['password'].value != this.resetPwdForm.controls['confirmPassword'].value) {
+        this.isPasswordMatch = false;
+      }
+      if (this.resetPwdForm.controls['password'].value === null || this.resetPwdForm.controls['password'].value.length === 0) {
+        this.hasPassword = false;
+      }
+      if (this.resetPwdForm.controls['confirmPassword'].value === null || this.resetPwdForm.controls['confirmPassword'].value.length === 0) {
+        this.hasConfirmedPassword = false;
+      }
     }
   }
 

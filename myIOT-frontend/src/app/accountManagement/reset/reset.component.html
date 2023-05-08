@@ -18,7 +18,7 @@
                                 </div>
                             </div>
                             <small
-                                *ngIf="resetPwdForm.controls['password'].dirty && resetPwdForm.hasError('required', 'password')"
+                                *ngIf="this.hasPassword == false"
                                 class="text-danger">É necessário introduzir uma Palavra-Passe</small>
                             <div class="form-group pt-3">
                                 <div class="input-field"
@@ -29,10 +29,11 @@
                                 </div>
                             </div>
                             <small
-                                *ngIf="resetPwdForm.controls['confirmPassword'].dirty && resetPwdForm.hasError('required', 'confirmPassword')"
+                                *ngIf="this.hasConfirmedPassword == false"
                                 class="text-danger">É necessário confirmar a Palavra-Passe</small>
+                                <br>
                             <small
-                                *ngIf="resetPwdForm.hasError('ConfirmPasswordValidator', 'confirmPassword')"
+                                *ngIf="this.isPasswordMatch == false"
                                 class="text-danger">As Palavras-Passe não estão iguais</small>
 
                             <button type="submit" class="btn btn-primary btn-block mt-4 w-100">Repor

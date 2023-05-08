@@ -8,7 +8,7 @@
                     </div>
 
                     <div class="panel-body p-3">
-                        <form [formGroup]="resetPwdForm">
+                        <form [formGroup]="resetPwdForm" (ngSubmit)="reset()">
                             <div class="form-group pt-3">
                                 <div class="input-field"
                                     [class.error]="resetPwdForm.controls['password'].dirty && resetPwdForm.hasError('required','password')">

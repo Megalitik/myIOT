@@ -18,6 +18,8 @@ export class ResetComponent {
   emailToken!: string;
   resetPasswordObject = new ResetPassword();
 
+  hasPassword: boolean = true;
+
   constructor(private formBuilder: FormBuilder, private activatedRoute : ActivatedRoute,
     private resetService : ResetPasswordService, private toastr : ToastrService, private router : Router) {  }
 
@@ -39,6 +41,7 @@ export class ResetComponent {
   }
 
   reset() {
+    console.log('reset');
     if (this.resetPwdForm.valid) {
       this.resetPasswordObject.email = this.emailToReset;
       this.resetPasswordObject.newPassword = this.resetPwdForm.value.password;
@@ -56,7 +59,6 @@ export class ResetComponent {
       });
     }
     else {
-      // ValidateForm.validateAllFormFields(this.resetPwdForm);
     }
   }
 

@@ -17,7 +17,6 @@ import { UserComponent } from './accountManagement/user/user.component';
 import { UserService } from './shared/user.service';
 import { LoginComponent } from './accountManagement/loginUser/login/login.component';
 import { RegisterUserComponent } from './accountManagement/register-user/register-user.component';
-import { ProfileUserComponent } from './accountManagement/profile-user/profile-user.component';
 import { ToastrModule } from 'ngx-toastr';
 import { TokenInterceptor } from './_services/interceptor/token.interceptor';
 import { ResetComponent } from './accountManagement/reset/reset.component';
@@ -39,7 +38,6 @@ import { PagenotfoundComponent } from './pagenotfound/pagenotfound.component';
     UserComponent,
     LoginComponent,
     RegisterUserComponent,
-    ProfileUserComponent,
     ResetComponent,
     FilterPipe,
     UserDevicesComponent,

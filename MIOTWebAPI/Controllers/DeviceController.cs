@@ -497,6 +497,21 @@ namespace MIOTWebAPI.Controllers
                 {
                     await connection.OpenAsync();
 
+                    string sql = "DELETE FROM [dbo].[DeviceMessages] WHERE deviceId=" + deviceId;
+                    using (SqlCommand cmd = new SqlCommand(sql, connection))
+                    {
+                        cmd.CommandType = CommandType.Text;
+                        cmd.ExecuteNonQuery();
+
+                    }
+                    await connection.CloseAsync();
+
+                }
+
+                using (var connection = new SqlConnection(sqlconnectionString))
+                {
+                    await connection.OpenAsync();
+
                     string sql = "DELETE FROM [dbo].[DeviceWidgets] WHERE deviceId=" + deviceId;
                     using (SqlCommand cmd = new SqlCommand(sql, connection))
                     {

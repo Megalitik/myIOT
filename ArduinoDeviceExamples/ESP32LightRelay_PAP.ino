@@ -269,8 +269,8 @@ bool StartClient()
 //
 void handleRestart()
 {
-  handleBye();
   WriteEEPROM();
+  handleBye();
   ESP.restart();
 
 }

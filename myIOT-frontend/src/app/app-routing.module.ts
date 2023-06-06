@@ -5,6 +5,7 @@ import { ControllersComponent } from './userPanel/controllers/controllers.compon
 import { DashboardComponent } from './userPanel/dashboard/dashboard.component';
 import { AuthGuard } from './auth/auth.guard';
 import { LoginComponent } from './accountManagement/loginUser/login/login.component';
+import { RegisterUserComponent } from './accountManagement/register-user/register-user.component';
 import { ResetComponent } from './accountManagement/reset/reset.component';
 import { PagenotfoundComponent } from './pagenotfound/pagenotfound.component';
 
@@ -12,6 +13,7 @@ const routes: Routes = [
   { path: 'user', component: UserComponent },
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterUserComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'controllers', component: ControllersComponent, canActivate: [AuthGuard] },
   { path: 'reset', component: ResetComponent },
